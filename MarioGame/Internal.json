@@ -1,4 +1,83 @@
 {
+  "MeshCube|2022-10-12T10:37:58.485Z|29953": {
+    "ƒ.MeshCube": {
+      "idResource": "MeshCube|2022-10-12T10:37:58.485Z|29953",
+      "name": "FloorMesh",
+      "type": "MeshCube"
+    }
+  },
+  "Material|2022-10-12T10:44:39.927Z|98240": {
+    "ƒ.Material": {
+      "name": "ExMarkShader",
+      "idResource": "Material|2022-10-12T10:44:39.927Z|98240",
+      "shader": "ShaderLitTextured",
+      "coat": {
+        "ƒ.CoatTextured": {
+          "color": "[1, 1, 1, 1]",
+          "idTexture": "TextureImage|2022-10-12T10:45:32.224Z|26974"
+        }
+      }
+    }
+  },
+  "TextureImage|2022-10-12T10:45:32.224Z|26974": {
+    "ƒ.TextureImage": {
+      "url": "Images\\SpirteSheet\\ExMarkSheet.png",
+      "type": "TextureImage",
+      "Texture": {
+        "idResource": "TextureImage|2022-10-12T10:45:32.224Z|26974",
+        "name": "Images\\SpirteSheet\\ExMarkSheet.png",
+        "mipmap": "CRISP"
+      }
+    }
+  },
+  "Material|2022-10-12T10:38:14.621Z|76930": {
+    "ƒ.Material": {
+      "name": "FloorShader",
+      "idResource": "Material|2022-10-12T10:38:14.621Z|76930",
+      "shader": "ShaderLitTextured",
+      "coat": {
+        "ƒ.CoatTextured": {
+          "color": "[1, 1, 1, 1]",
+          "idTexture": "TextureImage|2022-10-12T10:38:33.248Z|21873"
+        }
+      }
+    }
+  },
+  "TextureImage|2022-10-12T10:38:33.248Z|21873": {
+    "ƒ.TextureImage": {
+      "url": "Images\\SpirteSheet\\FloorSprite.png",
+      "type": "TextureImage",
+      "Texture": {
+        "idResource": "TextureImage|2022-10-12T10:38:33.248Z|21873",
+        "name": "Images\\SpirteSheet\\FloorSprite.png",
+        "mipmap": "CRISP"
+      }
+    }
+  },
+  "Material|2022-10-12T11:23:57.177Z|18891": {
+    "ƒ.Material": {
+      "name": "TubeShader",
+      "idResource": "Material|2022-10-12T11:23:57.177Z|18891",
+      "shader": "ShaderLitTextured",
+      "coat": {
+        "ƒ.CoatTextured": {
+          "color": "[1, 1, 1, 1]",
+          "idTexture": "TextureImage|2022-10-12T11:23:46.507Z|03352"
+        }
+      }
+    }
+  },
+  "TextureImage|2022-10-12T11:23:46.507Z|03352": {
+    "ƒ.TextureImage": {
+      "url": "Images\\SpirteSheet\\TubeSheet.png",
+      "type": "TextureImage",
+      "Texture": {
+        "idResource": "TextureImage|2022-10-12T11:23:46.507Z|03352",
+        "name": "Images\\SpirteSheet\\TubeSheet.png",
+        "mipmap": "CRISP"
+      }
+    }
+  },
   "Graph|2022-10-12T10:37:33.815Z|43907": {
     "ƒ.Graph": {
       "name": "Level",
@@ -1768,6 +1847,411 @@
                     }
                   ]
                 }
+              },
+              {
+                "ƒ.Node": {
+                  "name": "TubePosition",
+                  "active": true,
+                  "components": {
+                    "ComponentTransform": [
+                      {
+                        "ƒ.ComponentTransform": {
+                          "local": {
+                            "translation": "[18, 1, 0]",
+                            "rotation": "[0, 0, 0]",
+                            "scaling": "[1, 1, 1]"
+                          },
+                          "Component": {
+                            "active": true
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "children": [
+                    {
+                      "ƒ.Node": {
+                        "name": "Tube",
+                        "active": true,
+                        "components": {
+                          "ComponentMaterial": [
+                            {
+                              "ƒ.ComponentMaterial": {
+                                "sortForAlpha": false,
+                                "clrPrimary": "[1, 1, 1, 1]",
+                                "clrSecondary": "[1, 1, 1, 1]",
+                                "pivot": {
+                                  "translation": "[0, 0]",
+                                  "rotation": 0,
+                                  "scaling": "[1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                },
+                                "idMaterial": "Material|2022-10-12T11:23:57.177Z|18891"
+                              }
+                            }
+                          ],
+                          "ComponentMesh": [
+                            {
+                              "ƒ.ComponentMesh": {
+                                "idMesh": "MeshCube|2022-10-12T10:37:58.485Z|29953",
+                                "pivot": {
+                                  "translation": "[0, 0, 0]",
+                                  "rotation": "[0, 0, 0]",
+                                  "scaling": "[1, 1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "children": []
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "ƒ.Node": {
+            "name": "Coins",
+            "active": true,
+            "components": {},
+            "children": [
+              {
+                "ƒ.Node": {
+                  "name": "CoinPosition",
+                  "active": true,
+                  "components": {
+                    "ComponentTransform": [
+                      {
+                        "ƒ.ComponentTransform": {
+                          "local": {
+                            "translation": "[3, 1, 0]",
+                            "rotation": "[0, 0, 0]",
+                            "scaling": "[1, 1, 1]"
+                          },
+                          "Component": {
+                            "active": true
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "children": [
+                    {
+                      "ƒ.Node": {
+                        "name": "Coin",
+                        "active": true,
+                        "components": {
+                          "ComponentMesh": [
+                            {
+                              "ƒ.ComponentMesh": {
+                                "idMesh": "MeshSprite|2022-10-12T12:00:53.574Z|76637",
+                                "pivot": {
+                                  "translation": "[0, 0, 0]",
+                                  "rotation": "[0, 0, 0]",
+                                  "scaling": "[1, 1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                }
+                              }
+                            }
+                          ],
+                          "ComponentMaterial": [
+                            {
+                              "ƒ.ComponentMaterial": {
+                                "sortForAlpha": false,
+                                "clrPrimary": "[1, 1, 1, 1]",
+                                "clrSecondary": "[1, 1, 1, 1]",
+                                "pivot": {
+                                  "translation": "[0, 0]",
+                                  "rotation": 0,
+                                  "scaling": "[1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                },
+                                "idMaterial": "Material|2022-10-12T12:00:15.674Z|39462"
+                              }
+                            }
+                          ]
+                        },
+                        "children": []
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "ƒ.Node": {
+                  "name": "CoinPosition",
+                  "active": true,
+                  "components": {
+                    "ComponentTransform": [
+                      {
+                        "ƒ.ComponentTransform": {
+                          "local": {
+                            "translation": "[4, 1, 0]",
+                            "rotation": "[0, 0, 0]",
+                            "scaling": "[1, 1, 1]"
+                          },
+                          "Component": {
+                            "active": true
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "children": [
+                    {
+                      "ƒ.Node": {
+                        "name": "Coin",
+                        "active": true,
+                        "components": {
+                          "ComponentMesh": [
+                            {
+                              "ƒ.ComponentMesh": {
+                                "idMesh": "MeshSprite|2022-10-12T12:00:53.574Z|76637",
+                                "pivot": {
+                                  "translation": "[0, 0, 0]",
+                                  "rotation": "[0, 0, 0]",
+                                  "scaling": "[1, 1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                }
+                              }
+                            }
+                          ],
+                          "ComponentMaterial": [
+                            {
+                              "ƒ.ComponentMaterial": {
+                                "sortForAlpha": false,
+                                "clrPrimary": "[1, 1, 1, 1]",
+                                "clrSecondary": "[1, 1, 1, 1]",
+                                "pivot": {
+                                  "translation": "[0, 0]",
+                                  "rotation": 0,
+                                  "scaling": "[1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                },
+                                "idMaterial": "Material|2022-10-12T12:00:15.674Z|39462"
+                              }
+                            }
+                          ]
+                        },
+                        "children": []
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "ƒ.Node": {
+                  "name": "CoinPosition",
+                  "active": true,
+                  "components": {
+                    "ComponentTransform": [
+                      {
+                        "ƒ.ComponentTransform": {
+                          "local": {
+                            "translation": "[5, 1, 0]",
+                            "rotation": "[0, 0, 0]",
+                            "scaling": "[1, 1, 1]"
+                          },
+                          "Component": {
+                            "active": true
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "children": [
+                    {
+                      "ƒ.Node": {
+                        "name": "Coin",
+                        "active": true,
+                        "components": {
+                          "ComponentMesh": [
+                            {
+                              "ƒ.ComponentMesh": {
+                                "idMesh": "MeshSprite|2022-10-12T12:00:53.574Z|76637",
+                                "pivot": {
+                                  "translation": "[0, 0, 0]",
+                                  "rotation": "[0, 0, 0]",
+                                  "scaling": "[1, 1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                }
+                              }
+                            }
+                          ],
+                          "ComponentMaterial": [
+                            {
+                              "ƒ.ComponentMaterial": {
+                                "sortForAlpha": false,
+                                "clrPrimary": "[1, 1, 1, 1]",
+                                "clrSecondary": "[1, 1, 1, 1]",
+                                "pivot": {
+                                  "translation": "[0, 0]",
+                                  "rotation": 0,
+                                  "scaling": "[1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                },
+                                "idMaterial": "Material|2022-10-12T12:00:15.674Z|39462"
+                              }
+                            }
+                          ]
+                        },
+                        "children": []
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "ƒ.Node": {
+                  "name": "CoinPosition",
+                  "active": true,
+                  "components": {
+                    "ComponentTransform": [
+                      {
+                        "ƒ.ComponentTransform": {
+                          "local": {
+                            "translation": "[13, 3, 0]",
+                            "rotation": "[0, 0, 0]",
+                            "scaling": "[1, 1, 1]"
+                          },
+                          "Component": {
+                            "active": true
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "children": [
+                    {
+                      "ƒ.Node": {
+                        "name": "Coin",
+                        "active": true,
+                        "components": {
+                          "ComponentMesh": [
+                            {
+                              "ƒ.ComponentMesh": {
+                                "idMesh": "MeshSprite|2022-10-12T12:00:53.574Z|76637",
+                                "pivot": {
+                                  "translation": "[0, 0, 0]",
+                                  "rotation": "[0, 0, 0]",
+                                  "scaling": "[1, 1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                }
+                              }
+                            }
+                          ],
+                          "ComponentMaterial": [
+                            {
+                              "ƒ.ComponentMaterial": {
+                                "sortForAlpha": false,
+                                "clrPrimary": "[1, 1, 1, 1]",
+                                "clrSecondary": "[1, 1, 1, 1]",
+                                "pivot": {
+                                  "translation": "[0, 0]",
+                                  "rotation": 0,
+                                  "scaling": "[1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                },
+                                "idMaterial": "Material|2022-10-12T12:00:15.674Z|39462"
+                              }
+                            }
+                          ]
+                        },
+                        "children": []
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "ƒ.Node": {
+                  "name": "CoinPosition",
+                  "active": true,
+                  "components": {
+                    "ComponentTransform": [
+                      {
+                        "ƒ.ComponentTransform": {
+                          "local": {
+                            "translation": "[4, 6, 0]",
+                            "rotation": "[0, 0, 0]",
+                            "scaling": "[1, 1, 1]"
+                          },
+                          "Component": {
+                            "active": true
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  "children": [
+                    {
+                      "ƒ.Node": {
+                        "name": "Coin",
+                        "active": true,
+                        "components": {
+                          "ComponentMesh": [
+                            {
+                              "ƒ.ComponentMesh": {
+                                "idMesh": "MeshSprite|2022-10-12T12:00:53.574Z|76637",
+                                "pivot": {
+                                  "translation": "[0, 0, 0]",
+                                  "rotation": "[0, 0, 0]",
+                                  "scaling": "[1, 1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                }
+                              }
+                            }
+                          ],
+                          "ComponentMaterial": [
+                            {
+                              "ƒ.ComponentMaterial": {
+                                "sortForAlpha": false,
+                                "clrPrimary": "[1, 1, 1, 1]",
+                                "clrSecondary": "[1, 1, 1, 1]",
+                                "pivot": {
+                                  "translation": "[0, 0]",
+                                  "rotation": 0,
+                                  "scaling": "[1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                },
+                                "idMaterial": "Material|2022-10-12T12:00:15.674Z|39462"
+                              }
+                            }
+                          ]
+                        },
+                        "children": []
+                      }
+                    }
+                  ]
+                }
               }
             ]
           }
@@ -1787,83 +2271,35 @@
       "type": "Graph"
     }
   },
-  "MeshCube|2022-10-12T10:37:58.485Z|29953": {
-    "ƒ.MeshCube": {
-      "idResource": "MeshCube|2022-10-12T10:37:58.485Z|29953",
-      "name": "FloorMesh",
-      "type": "MeshCube"
-    }
-  },
-  "Material|2022-10-12T10:38:14.621Z|76930": {
-    "ƒ.Material": {
-      "name": "FloorShader",
-      "idResource": "Material|2022-10-12T10:38:14.621Z|76930",
-      "shader": "ShaderLitTextured",
-      "coat": {
-        "ƒ.CoatTextured": {
-          "color": "[1, 1, 1, 1]",
-          "idTexture": "TextureImage|2022-10-12T10:38:33.248Z|21873"
-        }
-      }
-    }
-  },
-  "TextureImage|2022-10-12T10:38:33.248Z|21873": {
+  "TextureImage|2022-10-12T12:00:02.535Z|48803": {
     "ƒ.TextureImage": {
-      "url": "Images\\SpirteSheet\\FloorSprite.png",
+      "url": "Images\\SpirteSheet\\Coin.png",
       "type": "TextureImage",
       "Texture": {
-        "idResource": "TextureImage|2022-10-12T10:38:33.248Z|21873",
-        "name": "Images\\SpirteSheet\\FloorSprite.png",
+        "idResource": "TextureImage|2022-10-12T12:00:02.535Z|48803",
+        "name": "Images\\SpirteSheet\\Coin.png",
         "mipmap": "CRISP"
       }
     }
   },
-  "Material|2022-10-12T10:44:39.927Z|98240": {
+  "Material|2022-10-12T12:00:15.674Z|39462": {
     "ƒ.Material": {
-      "name": "ExMarkShader",
-      "idResource": "Material|2022-10-12T10:44:39.927Z|98240",
+      "name": "ShaderLitTextured",
+      "idResource": "Material|2022-10-12T12:00:15.674Z|39462",
       "shader": "ShaderLitTextured",
       "coat": {
         "ƒ.CoatTextured": {
           "color": "[1, 1, 1, 1]",
-          "idTexture": "TextureImage|2022-10-12T10:45:32.224Z|26974"
+          "idTexture": "TextureImage|2022-10-12T12:00:02.535Z|48803"
         }
       }
     }
   },
-  "TextureImage|2022-10-12T10:45:32.224Z|26974": {
-    "ƒ.TextureImage": {
-      "url": "Images\\SpirteSheet\\ExMarkSheet.png",
-      "type": "TextureImage",
-      "Texture": {
-        "idResource": "TextureImage|2022-10-12T10:45:32.224Z|26974",
-        "name": "Images\\SpirteSheet\\ExMarkSheet.png",
-        "mipmap": "CRISP"
-      }
-    }
-  },
-  "TextureImage|2022-10-12T11:23:46.507Z|03352": {
-    "ƒ.TextureImage": {
-      "url": "Images\\SpirteSheet\\TubeSheet.png",
-      "type": "TextureImage",
-      "Texture": {
-        "idResource": "TextureImage|2022-10-12T11:23:46.507Z|03352",
-        "name": "Images\\SpirteSheet\\TubeSheet.png",
-        "mipmap": "CRISP"
-      }
-    }
-  },
-  "Material|2022-10-12T11:23:57.177Z|18891": {
-    "ƒ.Material": {
-      "name": "TubeShader",
-      "idResource": "Material|2022-10-12T11:23:57.177Z|18891",
-      "shader": "ShaderLitTextured",
-      "coat": {
-        "ƒ.CoatTextured": {
-          "color": "[1, 1, 1, 1]",
-          "idTexture": "TextureImage|2022-10-12T11:23:46.507Z|03352"
-        }
-      }
+  "MeshSprite|2022-10-12T12:00:53.574Z|76637": {
+    "ƒ.MeshSprite": {
+      "idResource": "MeshSprite|2022-10-12T12:00:53.574Z|76637",
+      "name": "Plane",
+      "type": "MeshSprite"
     }
   }
 }
