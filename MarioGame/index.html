@@ -12,8 +12,9 @@
 <!--<script type="text/javascript" src="https://jirkadelloro.github.io/FUDGE/Physics/OimoPhysics.js"></script>-->
 
 <!--Load FUDGE. You may want to download local copies to work offline and be independent from future changes! Developers working on FUDGE itself may want to create symlinks-->
-<script type="text/javascript" src="https://jirkadelloro.github.io/FUDGE/Core/Build/FudgeCore.js"></script>
-<script type="text/javascript" src="https://jirkadelloro.github.io/FUDGE/Aid/Build/FudgeAid.js"></script>
+<script type="text/javascript" src="./FudgeCore/FudgeCore.js"></script>
+<script type="text/javascript" src="./FudgeAid/FudgeAid.js"></script>
+
 
 <!--Link internal resources. The editor only loads the first, but at runtime, multiple files can contribute-->
 <link type="resources" src="Internal.json" />
@@ -24,6 +25,7 @@
 <!--Load Autoview script-->
 <script type="text/javascript" src="Autoview.js"></script>
 
+<script type="text/javascript" src="./Player.js"></script>
 </head>
 <body>
 <!--Dialog shown at startup only-->
@@ -32,6 +34,11 @@
 <h1>Title (will be replaced by Autoview)</h1>
 <p>click to start</p>
 </dialog>
+
+<div id="UI">
+    <input id="fps" name="fps" value="10" type="number" key="fps" disabled />
+</div>
+
 <!--Canvas for FUDGE to render to-->
 <canvas class="fullscreen">
 </canvas>

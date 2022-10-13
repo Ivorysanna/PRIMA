@@ -14,3 +14,15 @@ canvas.fullscreen {
   width: 100vw; 
   height: 100vh; 
 }
+
+#UI {
+  position: absolute;
+  width: 100vw;
+  height: 100px;
+  top: 1px;
+  color: white;
+  display: flex;
+  font-size: 50px;
+  font-weight: lighter;
+  align-self: center;
+}
