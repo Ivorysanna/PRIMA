@@ -4,23 +4,27 @@ namespace Script {
 
   let viewport: ƒ.Viewport;
   document.addEventListener("interactiveViewportStarted", <EventListener>start);
+  let marioPos: ƒ.Node;
 
   function start(_event: CustomEvent): void {
     viewport = _event.detail;
 
     ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, update);
-    // ƒ.Loop.start();  // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
+    ƒ.Loop.start();  // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
     let branch: ƒ.Node = viewport.getBranch();
 
     console.log(branch);
-    let mario: ƒ.Node[] = branch.getChildrenByName("Mario");
+    marioPos = branch.getChildrenByName("MarioPosition")[0];
 
-    console.log(mario);
+    console.log(marioPos);
   }
 
   function update(_event: Event): void {
+
     // ƒ.Physics.simulate();  // if physics is included and used
     viewport.draw();
     ƒ.AudioManager.default.update();
+    console.log("Update");
+    marioPos.getComponent(ƒ.ComponentTransform).mtxLocal.translateX(0.01);
   }
 }

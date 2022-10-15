@@ -42,19 +42,22 @@ var Script;
     ƒ.Debug.info("Main Program Template running!");
     let viewport;
     document.addEventListener("interactiveViewportStarted", start);
+    let marioPos;
     function start(_event) {
         viewport = _event.detail;
         ƒ.Loop.addEventListener("loopFrame" /* ƒ.EVENT.LOOP_FRAME */, update);
-        // ƒ.Loop.start();  // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
+        ƒ.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
         let branch = viewport.getBranch();
         console.log(branch);
-        let mario = branch.getChildrenByName("Mario");
-        console.log(mario);
+        marioPos = branch.getChildrenByName("MarioPosition")[0];
+        console.log(marioPos);
     }
     function update(_event) {
         // ƒ.Physics.simulate();  // if physics is included and used
         viewport.draw();
         ƒ.AudioManager.default.update();
+        console.log("Update");
+        marioPos.getComponent(ƒ.ComponentTransform).mtxLocal.translateX(0.01);
     }
 })(Script || (Script = {}));
 //# sourceMappingURL=Script.js.map
