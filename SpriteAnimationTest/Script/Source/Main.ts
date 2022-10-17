@@ -1,10 +1,13 @@
+///<reference path="./../../../Core/Build/FudgeCore.d.ts"/>
+///<reference path="./../../../Aid/Build/FudgeAid.d.ts"/>
+
 namespace Script {
   import ƒ = FudgeCore;
   import ƒAid = FudgeAid;
 
   window.addEventListener("load", hndLoad);
 
-  const clrWhite: ƒ.Color = ƒ.Color.CSS("white");
+  // const clrWhite: ƒ.Color = ƒ.Color.CSS("white");
 
   let viewport: ƒ.Viewport;
   

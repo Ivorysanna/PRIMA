@@ -36,12 +36,16 @@ var Script;
     }
     Script.CustomComponentScript = CustomComponentScript;
 })(Script || (Script = {}));
+///<reference path="./../../../Core/Build/FudgeCore.d.ts"/>
+///<reference path="./../../../Aid/Build/FudgeAid.d.ts"/>
 var Script;
+///<reference path="./../../../Core/Build/FudgeCore.d.ts"/>
+///<reference path="./../../../Aid/Build/FudgeAid.d.ts"/>
 (function (Script) {
     var ƒ = FudgeCore;
     var ƒAid = FudgeAid;
     window.addEventListener("load", hndLoad);
-    const clrWhite = ƒ.Color.CSS("white");
+    // const clrWhite: ƒ.Color = ƒ.Color.CSS("white");
     let viewport;
     let spriteNode;
     async function hndLoad(_event) {

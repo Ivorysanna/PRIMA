@@ -1,3 +1,5 @@
+///<reference path="./../../../Core/Build/FudgeCore.d.ts"/>
+///<reference path="./../../../Aid/Build/FudgeAid.d.ts"/>
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -39,7 +41,7 @@ var Script;
     var ƒ = FudgeCore;
     var ƒAid = FudgeAid;
     window.addEventListener("load", hndLoad);
-    var clrWhite = ƒ.Color.CSS("white");
+    // const clrWhite: ƒ.Color = ƒ.Color.CSS("white");
     var viewport;
     var spriteNode;
     function hndLoad(_event) {
@@ -71,7 +73,7 @@ var Script;
                         viewport.initialize("Viewport", root, cmpCamera, canvas);
                         viewport.camera.clrBackground = ƒ.Color.CSS("White");
                         viewport.draw();
-                        ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, hndLoop);
+                        ƒ.Loop.addEventListener("loopFrame" /* ƒ.EVENT.LOOP_FRAME */, hndLoop);
                         ƒ.Loop.start(ƒ.LOOP_MODE.TIME_GAME, 30);
                         return [2 /*return*/];
                 }
