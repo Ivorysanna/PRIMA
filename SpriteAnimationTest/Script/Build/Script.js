@@ -51,16 +51,16 @@ var Script;
     async function hndLoad(_event) {
         let root = new ƒ.Node("root");
         let imgSpriteSheet = new ƒ.TextureImage();
-        await imgSpriteSheet.load("./images/MarioSpriteSheet.png");
+        await imgSpriteSheet.load("./images/mario_walk.png");
         let coat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
         let animation = new ƒAid.SpriteSheetAnimation("Walk", coat);
-        animation.generateByGrid(ƒ.Rectangle.GET(0, 0, 17, 35), 5, 29, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(48));
+        animation.generateByGrid(ƒ.Rectangle.GET(3, 0, 17, 33), 4, 12, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(17));
         spriteNode = new ƒAid.NodeSprite("Sprite");
         spriteNode.addComponent(new ƒ.ComponentTransform(new ƒ.Matrix4x4()));
         spriteNode.setAnimation(animation);
         spriteNode.setFrameDirection(1);
         spriteNode.mtxLocal.translateY(-1);
-        spriteNode.framerate = 2;
+        spriteNode.framerate = 12;
         root.addChild(spriteNode);
         // camera setup
         let cmpCamera = new ƒ.ComponentCamera();
