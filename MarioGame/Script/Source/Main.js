@@ -1,3 +1,5 @@
+///<reference path="./../../../Core/Build/FudgeCore.d.ts"/>
+///<reference path="./../../../Aid/Build/FudgeAid.d.ts"/>
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,59 +36,59 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var Player;
-(function (Player) {
+var Script;
+(function (Script) {
     var ƒ = FudgeCore;
     var ƒAid = FudgeAid;
-    window.addEventListener("load", hndLoad);
-    var clrWhite = ƒ.Color.CSS("white");
+    ƒ.Debug.info("Main Program Template running!");
     var viewport;
-    var spriteNode;
-    function hndLoad(_event) {
+    document.addEventListener("interactiveViewportStarted", start);
+    var marioPos;
+    var walkSpeed = 1.5;
+    function start(_event) {
         return __awaiter(this, void 0, void 0, function () {
-            var root, imgSpriteSheet, coat, animation, cmpCamera, canvas;
+            var branch, marioNode, texture, coat, animWalk, animRun;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        root = new ƒ.Node("root");
-                        imgSpriteSheet = new ƒ.TextureImage();
-                        return [4 /*yield*/, imgSpriteSheet.load("./Images/CharacterSheet/MarioSpriteSheet.png")];
+                        viewport = _event.detail;
+                        ƒ.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
+                        console.log(viewport);
+                        branch = viewport.getBranch();
+                        marioPos = branch.getChildrenByName("MarioPosition")[0];
+                        marioPos.removeAllChildren();
+                        marioNode = new ƒAid.NodeSprite("Mario");
+                        marioNode.addComponent(new ƒ.ComponentTransform());
+                        marioPos.appendChild(marioNode);
+                        texture = new ƒ.TextureImage();
+                        return [4 /*yield*/, texture.load("./../../../Images/CharacterSheet/mario_walk.png")];
                     case 1:
                         _a.sent();
-                        coat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
-                        animation = new ƒAid.SpriteSheetAnimation("Bounce", coat);
-                        animation.generateByGrid(ƒ.Rectangle.GET(1, 0, 17, 60), 8, 22, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(20));
-                        spriteNode = new ƒAid.NodeSprite("Sprite");
-                        spriteNode.addComponent(new ƒ.ComponentTransform(new ƒ.Matrix4x4()));
-                        spriteNode.setAnimation(animation);
-                        spriteNode.setFrameDirection(1);
-                        spriteNode.mtxLocal.translateY(-1);
-                        spriteNode.framerate = parseInt(document.querySelector("[name=fps]").value);
-                        root.addChild(spriteNode);
-                        cmpCamera = new ƒ.ComponentCamera();
-                        cmpCamera.mtxPivot.translateZ(5);
-                        cmpCamera.mtxPivot.rotateY(180);
-                        canvas = document.querySelector("canvas");
-                        viewport = new ƒ.Viewport();
-                        viewport.initialize("Viewport", root, cmpCamera, canvas);
-                        viewport.camera.clrBackground = ƒ.Color.CSS("White");
-                        viewport.draw();
-                        ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, hndLoop);
-                        ƒ.Loop.start(ƒ.LOOP_MODE.TIME_GAME, 10);
-                        document.forms[0].addEventListener("change", handleChange);
+                        coat = new ƒ.CoatTextured(ƒ.Color.CSS("white"), texture);
+                        animWalk = new ƒAid.SpriteSheetAnimation("Walk", coat);
+                        animWalk.generateByGrid(ƒ.Rectangle.GET(176, 38, 16, 32), 3, 32, ƒ.ORIGIN2D.TOPLEFT, ƒ.Vector2.X(52));
+                        animRun = new ƒAid.SpriteSheetAnimation("Run", coat);
+                        animRun.generateByGrid(ƒ.Rectangle.GET(332, 38, 18, 32), 3, 32, ƒ.ORIGIN2D.TOPLEFT, ƒ.Vector2.X(52));
+                        marioNode.setAnimation(animWalk);
+                        marioNode.setFrameDirection(1);
+                        marioNode.framerate = 12;
+                        ƒ.Loop.addEventListener("loopFrame" /* ƒ.EVENT.LOOP_FRAME */, update);
                         return [2 /*return*/];
                 }
             });
         });
     }
-    function hndLoop(_event) {
-        var avg = document.querySelector("[name=currentframe]");
-        avg.value = spriteNode.getCurrentFrame.toString();
+    function update(_event) {
+        if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.D, ƒ.KEYBOARD_CODE.ARROW_RIGHT])) {
+            marioPos.mtxLocal.translateX(walkSpeed * ƒ.Loop.timeFrameGame / 1000);
+        }
+        if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.A, ƒ.KEYBOARD_CODE.ARROW_LEFT])) {
+            marioPos.mtxLocal.translateX(-walkSpeed * ƒ.Loop.timeFrameGame / 1000);
+        }
+        //let cmpTransL: ƒ.ComponentTransform = marioPos.getComponent(ƒ.ComponentTransform);
+        //cmpTransL.mtxLocal.translateX(0.01);
+        // ƒ.Physics.simulate();  // if physics is included and used
         viewport.draw();
+        ƒ.AudioManager["default"].update();
     }
-    function handleChange(_event) {
-        var value = parseInt(_event.target.value);
-        spriteNode.framerate = value;
-        console.log("framerate set to: " + value);
-    }
-})(Player || (Player = {}));
+})(Script || (Script = {}));
