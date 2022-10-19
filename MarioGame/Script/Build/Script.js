@@ -39,25 +39,52 @@ var Script;
 var Script;
 (function (Script) {
     var ƒ = FudgeCore;
-    ƒ.Debug.info("Main Program Template running!");
+    var ƒAid = FudgeAid;
+    //Viewport
     let viewport;
     document.addEventListener("interactiveViewportStarted", start);
-    let marioPos;
     function start(_event) {
         viewport = _event.detail;
-        ƒ.Loop.addEventListener("loopFrame" /* ƒ.EVENT.LOOP_FRAME */, update);
-        ƒ.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
-        let branch = viewport.getBranch();
-        console.log(branch);
-        marioPos = branch.getChildrenByName("MarioPosition")[0];
-        console.log(marioPos);
+        hndLoad(_event);
     }
+    //Create Mario
+    let marioPos;
+    async function hndLoad(_event) {
+        // texture Mario
+        let texture = new ƒ.TextureImage();
+        await texture.load("./Images/CharacterSheet/mario_walk.png");
+        let coat = new ƒ.CoatTextured(ƒ.Color.CSS("white"), texture);
+        // animation
+        // Walk
+        let animWalk = new ƒAid.SpriteSheetAnimation("Walk", coat);
+        animWalk.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 64, ƒ.ORIGIN2D.TOPLEFT, ƒ.Vector2.X(17));
+        // Run
+        // let animRun: ƒAid.SpriteSheetAnimation = new ƒAid.SpriteSheetAnimation("Run", coat);
+        // animWalk.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 64, ƒ.ORIGIN2D.TOPLEFT, ƒ.Vector2.X(17));
+        // create Mario
+        let marioNode = new ƒAid.NodeSprite("Mario");
+        marioNode.addComponent(new ƒ.ComponentTransform());
+        //marioPos.appendChild(marioNode);
+        marioNode.setAnimation(animWalk);
+        marioNode.setFrameDirection(1);
+        marioNode.framerate = 12;
+        let branch = viewport.getBranch();
+        marioPos = branch.getChildrenByName("MarioPosition")[0];
+        marioPos.addChild(marioNode);
+        ƒ.Loop.addEventListener("loopFrame" /* ƒ.EVENT.LOOP_FRAME */, update);
+        ƒ.Loop.start(ƒ.LOOP_MODE.TIME_GAME, 30);
+    }
+    let walkSpeed = 1.5;
+    let amount = (walkSpeed * ƒ.Loop.timeFrameGame) / 1000;
     function update(_event) {
-        // ƒ.Physics.simulate();  // if physics is included and used
+        if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.D, ƒ.KEYBOARD_CODE.ARROW_RIGHT])) {
+            marioPos.mtxLocal.translateX(amount);
+        }
+        if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.A, ƒ.KEYBOARD_CODE.ARROW_LEFT])) {
+            marioPos.mtxLocal.translateX(-amount);
+        }
         viewport.draw();
         ƒ.AudioManager.default.update();
-        console.log("Update");
-        marioPos.getComponent(ƒ.ComponentTransform).mtxLocal.translateX(0.01);
     }
 })(Script || (Script = {}));
 //# sourceMappingURL=Script.js.map

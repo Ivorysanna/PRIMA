@@ -157,6 +157,30 @@
       }
     }
   },
+  "Material|2022-10-13T13:13:43.851Z|55725": {
+    "ƒ.Material": {
+      "name": "MarioShader",
+      "idResource": "Material|2022-10-13T13:13:43.851Z|55725",
+      "shader": "ShaderLitTextured",
+      "coat": {
+        "ƒ.CoatTextured": {
+          "color": "[1, 1, 1, 1]",
+          "idTexture": "TextureImage|2022-10-13T13:13:39.953Z|64217"
+        }
+      }
+    }
+  },
+  "TextureImage|2022-10-13T13:13:39.953Z|64217": {
+    "ƒ.TextureImage": {
+      "url": "Images\\CharacterSheet\\MarioOnly.png",
+      "type": "TextureImage",
+      "Texture": {
+        "idResource": "TextureImage|2022-10-13T13:13:39.953Z|64217",
+        "name": "Images\\CharacterSheet\\MarioOnly.png",
+        "mipmap": "CRISP"
+      }
+    }
+  },
   "Graph|2022-10-12T10:37:33.815Z|43907": {
     "ƒ.Graph": {
       "name": "Level",
@@ -2445,50 +2469,7 @@
                 }
               ]
             },
-            "children": [
-              {
-                "ƒ.Node": {
-                  "name": "Mario",
-                  "active": true,
-                  "components": {
-                    "ComponentMesh": [
-                      {
-                        "ƒ.ComponentMesh": {
-                          "idMesh": "MeshSprite|2022-10-12T12:00:53.574Z|76637",
-                          "pivot": {
-                            "translation": "[0, 0, 0]",
-                            "rotation": "[0, 0, 0]",
-                            "scaling": "[1, 1, 1]"
-                          },
-                          "Component": {
-                            "active": true
-                          }
-                        }
-                      }
-                    ],
-                    "ComponentMaterial": [
-                      {
-                        "ƒ.ComponentMaterial": {
-                          "sortForAlpha": false,
-                          "clrPrimary": "[1, 1, 1, 1]",
-                          "clrSecondary": "[1, 1, 1, 1]",
-                          "pivot": {
-                            "translation": "[0, 0]",
-                            "rotation": 0,
-                            "scaling": "[1, 1]"
-                          },
-                          "Component": {
-                            "active": true
-                          },
-                          "idMaterial": "Material|2022-10-13T13:13:43.851Z|55725"
-                        }
-                      }
-                    ]
-                  },
-                  "children": []
-                }
-              }
-            ]
+            "children": []
           }
         }
       ],
@@ -2504,30 +2485,6 @@
       "children": [],
       "idResource": "Graph|2022-10-12T10:37:44.579Z|53394",
       "type": "Graph"
-    }
-  },
-  "TextureImage|2022-10-13T13:13:39.953Z|64217": {
-    "ƒ.TextureImage": {
-      "url": "Images\\CharacterSheet\\MarioOnly.png",
-      "type": "TextureImage",
-      "Texture": {
-        "idResource": "TextureImage|2022-10-13T13:13:39.953Z|64217",
-        "name": "Images\\CharacterSheet\\MarioOnly.png",
-        "mipmap": "CRISP"
-      }
-    }
-  },
-  "Material|2022-10-13T13:13:43.851Z|55725": {
-    "ƒ.Material": {
-      "name": "MarioShader",
-      "idResource": "Material|2022-10-13T13:13:43.851Z|55725",
-      "shader": "ShaderLitTextured",
-      "coat": {
-        "ƒ.CoatTextured": {
-          "color": "[1, 1, 1, 1]",
-          "idTexture": "TextureImage|2022-10-13T13:13:39.953Z|64217"
-        }
-      }
     }
   }
 }
