@@ -23,10 +23,10 @@ namespace Script {
         // animation
         // Walk
         let animWalk: ƒAid.SpriteSheetAnimation = new ƒAid.SpriteSheetAnimation("Walk", coat);
-        animWalk.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 64, ƒ.ORIGIN2D.TOPLEFT, ƒ.Vector2.X(17));
+        animWalk.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 16, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(17));
         // Run
         // let animRun: ƒAid.SpriteSheetAnimation = new ƒAid.SpriteSheetAnimation("Run", coat);
-        // animWalk.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 64, ƒ.ORIGIN2D.TOPLEFT, ƒ.Vector2.X(17));
+        // animWalk.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 16, ƒ.ORIGIN2D.TOPLEFT, ƒ.Vector2.X(17));
 
         // create Mario
         let marioNode: ƒAid.NodeSprite = new ƒAid.NodeSprite("Mario");
@@ -44,7 +44,7 @@ namespace Script {
         ƒ.Loop.start(ƒ.LOOP_MODE.TIME_GAME, 30);
     }
 
-    let walkSpeed: number = 1.5;
+    let walkSpeed: number = 3;
 
     function update(_event: Event): void {
         let amount: number = (walkSpeed * ƒ.Loop.timeFrameGame) / 1000;

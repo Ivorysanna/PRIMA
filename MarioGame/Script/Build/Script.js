@@ -57,10 +57,10 @@ var Script;
         // animation
         // Walk
         let animWalk = new ƒAid.SpriteSheetAnimation("Walk", coat);
-        animWalk.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 64, ƒ.ORIGIN2D.TOPLEFT, ƒ.Vector2.X(17));
+        animWalk.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 16, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(17));
         // Run
         // let animRun: ƒAid.SpriteSheetAnimation = new ƒAid.SpriteSheetAnimation("Run", coat);
-        // animWalk.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 64, ƒ.ORIGIN2D.TOPLEFT, ƒ.Vector2.X(17));
+        // animWalk.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 16, ƒ.ORIGIN2D.TOPLEFT, ƒ.Vector2.X(17));
         // create Mario
         let marioNode = new ƒAid.NodeSprite("Mario");
         marioNode.addComponent(new ƒ.ComponentTransform());
@@ -74,7 +74,7 @@ var Script;
         ƒ.Loop.addEventListener("loopFrame" /* ƒ.EVENT.LOOP_FRAME */, update);
         ƒ.Loop.start(ƒ.LOOP_MODE.TIME_GAME, 30);
     }
-    let walkSpeed = 1.5;
+    let walkSpeed = 3;
     function update(_event) {
         let amount = (walkSpeed * ƒ.Loop.timeFrameGame) / 1000;
         if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.D, ƒ.KEYBOARD_CODE.ARROW_RIGHT])) {
