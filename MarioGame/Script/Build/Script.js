@@ -75,7 +75,7 @@ var Script;
         ƒ.Loop.start(ƒ.LOOP_MODE.TIME_GAME, 30);
     }
     let walkSpeed = 3;
-    function update(_event) {
+    function animationWalk() {
         let amount = (walkSpeed * ƒ.Loop.timeFrameGame) / 1000;
         if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.D, ƒ.KEYBOARD_CODE.ARROW_RIGHT])) {
             marioPos.mtxLocal.translateX(amount);
@@ -83,6 +83,9 @@ var Script;
         if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.A, ƒ.KEYBOARD_CODE.ARROW_LEFT])) {
             marioPos.mtxLocal.translateX(-amount);
         }
+    }
+    function update(_event) {
+        animationWalk();
         viewport.draw();
         ƒ.AudioManager.default.update();
     }

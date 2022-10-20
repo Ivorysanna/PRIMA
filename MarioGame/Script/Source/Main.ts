@@ -46,7 +46,7 @@ namespace Script {
 
     let walkSpeed: number = 3;
 
-    function update(_event: Event): void {
+    function animationWalk(): void{
         let amount: number = (walkSpeed * ƒ.Loop.timeFrameGame) / 1000;
         if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.D, ƒ.KEYBOARD_CODE.ARROW_RIGHT])) {
             marioPos.mtxLocal.translateX(amount);
@@ -54,6 +54,10 @@ namespace Script {
         if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.A, ƒ.KEYBOARD_CODE.ARROW_LEFT])) {
             marioPos.mtxLocal.translateX(-amount);
         }
+    }
+
+    function update(_event: Event): void {
+        animationWalk();
 
         viewport.draw();
         ƒ.AudioManager.default.update();
