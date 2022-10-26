@@ -1,65 +1,152 @@
 namespace Script {
-    import ƒ = FudgeCore;
-    import ƒAid = FudgeAid;
+  import ƒ = FudgeCore;
+  import ƒAid = FudgeAid;
 
-    //Viewport
-    let viewport: ƒ.Viewport;
-    document.addEventListener("interactiveViewportStarted", <EventListener>(<unknown>start));
+  // Initialize Viewport
+  let viewport: ƒ.Viewport;
+  document.addEventListener("interactiveViewportStarted", <EventListener>start);
 
-    function start(_event: CustomEvent): void {
-        viewport = _event.detail;
-        hndLoad(_event);
+  function start(_event: CustomEvent): void {
+    viewport = _event.detail;
+    hndLoad(_event);
+  }
+
+  let animWalk: ƒAid.SpriteSheetAnimation;
+  let animSprint: ƒAid.SpriteSheetAnimation;
+  let animJump: ƒAid.SpriteSheetAnimation;
+  let animLook: ƒAid.SpriteSheetAnimation;
+  let animDeath: ƒAid.SpriteSheetAnimation;
+
+  function initializeAnimations(coat: ƒ.CoatTextured): void {
+    animWalk = new ƒAid.SpriteSheetAnimation("Walk", coat);
+    animWalk.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 16, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(17));
+
+    animSprint = new ƒAid.SpriteSheetAnimation("Sprint", coat);
+    animSprint.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 16, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(17));
+
+    animJump = new ƒAid.SpriteSheetAnimation("Jump", coat);
+    animJump.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 16, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(17));
+
+    animLook = new ƒAid.SpriteSheetAnimation("Look", coat);
+    animLook.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 16, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(17));
+
+    animDeath = new ƒAid.SpriteSheetAnimation("Death", coat);
+    animDeath.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 16, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(17));
+  }
+
+  // Load Sprite
+  let avatar: ƒAid.NodeSprite;
+  async function hndLoad(_event: Event): Promise<void> {
+    let imgSpriteSheet: ƒ.TextureImage = new ƒ.TextureImage();
+    await imgSpriteSheet.load("./Images/CharacterSheet/mario_walk.png");
+    let coat: ƒ.CoatTextured = new ƒ.CoatTextured(undefined, imgSpriteSheet);
+
+    initializeAnimations(coat);
+
+    avatar = new ƒAid.NodeSprite("Avatar");
+    avatar.addComponent(new ƒ.ComponentTransform(new ƒ.Matrix4x4()));
+    avatar.setAnimation(animWalk);
+    avatar.setFrameDirection(1);
+    avatar.framerate = 20;
+
+    avatar.mtxLocal.translateY(0);
+    avatar.mtxLocal.translateX(-1);
+    avatar.mtxLocal.translateZ(0.001);
+
+    let branch: ƒ.Node = viewport.getBranch();
+    branch.addChild(avatar);
+
+    ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, update);
+    ƒ.Loop.start(ƒ.LOOP_MODE.FRAME_REQUEST, 30);
+  }
+
+  const xSpeedDefault: number = 2;
+  const xSpeedSprint: number = 5;
+  const jumpForce: number = 0.05;
+  let ySpeed: number = 0;
+  let gravity: number = 0.1;
+
+  let leftDirection: boolean = false;
+  let prevSprint: boolean = false;
+
+  function update(_event: Event): void {
+    let deltaTime: number = ƒ.Loop.timeFrameGame / 1000;
+    ySpeed -= gravity * deltaTime;
+    avatar.mtxLocal.translateY(ySpeed);
+
+    let pos: ƒ.Vector3 = avatar.mtxLocal.translation;
+    if (pos.y + ySpeed > 0)
+      avatar.mtxLocal.translateY(ySpeed);
+    else {
+      ySpeed = 0;
+      pos.y = 0;
+      avatar.mtxLocal.translation = pos;
     }
 
-    //Create Mario
-    let marioPos: ƒ.Node;
+    let speed: number = xSpeedDefault;
+    if (leftDirection)
+      speed = -xSpeedDefault;
 
-    async function hndLoad(_event: CustomEvent): Promise<void> {
-        // texture Mario
-        let texture: ƒ.TextureImage = new ƒ.TextureImage();
-        await texture.load("./Images/CharacterSheet/mario_walk.png");
-        let coat: ƒ.CoatTextured = new ƒ.CoatTextured(ƒ.Color.CSS("white"), texture);
-
-        // animation
-        // Walk
-        let animWalk: ƒAid.SpriteSheetAnimation = new ƒAid.SpriteSheetAnimation("Walk", coat);
-        animWalk.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 16, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(17));
-        // Run
-        // let animRun: ƒAid.SpriteSheetAnimation = new ƒAid.SpriteSheetAnimation("Run", coat);
-        // animWalk.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 16, ƒ.ORIGIN2D.TOPLEFT, ƒ.Vector2.X(17));
-
-        // create Mario
-        let marioNode: ƒAid.NodeSprite = new ƒAid.NodeSprite("Mario");
-        marioNode.addComponent(new ƒ.ComponentTransform());
-        //marioPos.appendChild(marioNode);
-        marioNode.setAnimation(animWalk);
-        marioNode.setFrameDirection(1);
-        marioNode.framerate = 12;
-
-        let branch: ƒ.Node = viewport.getBranch();
-        marioPos = branch.getChildrenByName("MarioPosition")[0];
-        marioPos.addChild(marioNode);
-
-        ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, update);
-        ƒ.Loop.start(ƒ.LOOP_MODE.TIME_GAME, 30);
+    if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SHIFT_LEFT, ƒ.KEYBOARD_CODE.SHIFT_RIGHT])) {
+      speed = xSpeedSprint;
+      if (leftDirection)
+        speed = -xSpeedSprint;
     }
 
-    let walkSpeed: number = 3;
+    // Calculate (walk) speed
+    const moveDistance: number = speed * ƒ.Loop.timeFrameGame / 1000;
 
-    function animationWalk(): void{
-        let amount: number = (walkSpeed * ƒ.Loop.timeFrameGame) / 1000;
-        if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.D, ƒ.KEYBOARD_CODE.ARROW_RIGHT])) {
-            marioPos.mtxLocal.translateX(amount);
+    // Check for key presses
+    if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.A, ƒ.KEYBOARD_CODE.ARROW_LEFT])) {
+      avatar.mtxLocal.translateX(-moveDistance);
+      leftDirection = true;
+      if (speed < -1) {
+        if (!prevSprint) {
+          prevSprint = true;
+          avatar.setAnimation(animSprint);
         }
-        if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.A, ƒ.KEYBOARD_CODE.ARROW_LEFT])) {
-            marioPos.mtxLocal.translateX(-amount);
+      } else {
+        prevSprint = false;
+      }
+    } else if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.D, ƒ.KEYBOARD_CODE.ARROW_RIGHT])) {
+      avatar.mtxLocal.translateX(moveDistance);
+      leftDirection = false;
+      if (speed > 1) {
+        if (!prevSprint) {
+          prevSprint = true;
+          avatar.setAnimation(animSprint);
         }
+      } else {
+        prevSprint = false;
+      }
+    } else if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.W, ƒ.KEYBOARD_CODE.ARROW_UP])) {
+      avatar.setAnimation(animLook);
+      avatar.showFrame(1);
+    } else if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.S, ƒ.KEYBOARD_CODE.ARROW_DOWN])) {
+      avatar.setAnimation(animLook);
+      avatar.showFrame(0);
+    } else {
+      avatar.setAnimation(animWalk);
+      avatar.showFrame(0);
     }
 
-    function update(_event: Event): void {
-        animationWalk();
-
-        viewport.draw();
-        ƒ.AudioManager.default.update();
+    if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SPACE]) && ySpeed === 0) {
+      avatar.mtxLocal.translation = new ƒ.Vector3(pos.x, 0, 0.001);
+      ySpeed = jumpForce;
     }
+
+    if (ySpeed > 0) {
+      avatar.setAnimation(animJump);
+      avatar.showFrame(0);
+    } else if (ySpeed < 0) {
+      avatar.setAnimation(animJump);
+      avatar.showFrame(1);
+    }
+
+    // Rotate based on direction
+    avatar.mtxLocal.rotation = ƒ.Vector3.Y(leftDirection ? 180 : 0);
+
+    viewport.draw();
+    //ƒ.AudioManager.default.update();
+  }
 }

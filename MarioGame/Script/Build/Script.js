@@ -40,54 +40,134 @@ var Script;
 (function (Script) {
     var ƒ = FudgeCore;
     var ƒAid = FudgeAid;
-    //Viewport
+    // Initialize Viewport
     let viewport;
     document.addEventListener("interactiveViewportStarted", start);
     function start(_event) {
         viewport = _event.detail;
         hndLoad(_event);
     }
-    //Create Mario
-    let marioPos;
-    async function hndLoad(_event) {
-        // texture Mario
-        let texture = new ƒ.TextureImage();
-        await texture.load("./Images/CharacterSheet/mario_walk.png");
-        let coat = new ƒ.CoatTextured(ƒ.Color.CSS("white"), texture);
-        // animation
-        // Walk
-        let animWalk = new ƒAid.SpriteSheetAnimation("Walk", coat);
+    let animWalk;
+    let animSprint;
+    let animJump;
+    let animLook;
+    let animDeath;
+    function initializeAnimations(coat) {
+        animWalk = new ƒAid.SpriteSheetAnimation("Walk", coat);
         animWalk.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 16, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(17));
-        // Run
-        // let animRun: ƒAid.SpriteSheetAnimation = new ƒAid.SpriteSheetAnimation("Run", coat);
-        // animWalk.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 16, ƒ.ORIGIN2D.TOPLEFT, ƒ.Vector2.X(17));
-        // create Mario
-        let marioNode = new ƒAid.NodeSprite("Mario");
-        marioNode.addComponent(new ƒ.ComponentTransform());
-        //marioPos.appendChild(marioNode);
-        marioNode.setAnimation(animWalk);
-        marioNode.setFrameDirection(1);
-        marioNode.framerate = 12;
+        animSprint = new ƒAid.SpriteSheetAnimation("Sprint", coat);
+        animSprint.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 16, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(17));
+        animJump = new ƒAid.SpriteSheetAnimation("Jump", coat);
+        animJump.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 16, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(17));
+        animLook = new ƒAid.SpriteSheetAnimation("Look", coat);
+        animLook.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 16, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(17));
+        animDeath = new ƒAid.SpriteSheetAnimation("Death", coat);
+        animDeath.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 16, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(17));
+    }
+    // Load Sprite
+    let avatar;
+    async function hndLoad(_event) {
+        let imgSpriteSheet = new ƒ.TextureImage();
+        await imgSpriteSheet.load("./Images/CharacterSheet/mario_walk.png");
+        let coat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
+        initializeAnimations(coat);
+        avatar = new ƒAid.NodeSprite("Avatar");
+        avatar.addComponent(new ƒ.ComponentTransform(new ƒ.Matrix4x4()));
+        avatar.setAnimation(animWalk);
+        avatar.setFrameDirection(1);
+        avatar.framerate = 20;
+        avatar.mtxLocal.translateY(0);
+        avatar.mtxLocal.translateX(-1);
+        avatar.mtxLocal.translateZ(0.001);
         let branch = viewport.getBranch();
-        marioPos = branch.getChildrenByName("MarioPosition")[0];
-        marioPos.addChild(marioNode);
+        branch.addChild(avatar);
         ƒ.Loop.addEventListener("loopFrame" /* ƒ.EVENT.LOOP_FRAME */, update);
-        ƒ.Loop.start(ƒ.LOOP_MODE.TIME_GAME, 30);
+        ƒ.Loop.start(ƒ.LOOP_MODE.FRAME_REQUEST, 30);
     }
-    let walkSpeed = 3;
-    function animationWalk() {
-        let amount = (walkSpeed * ƒ.Loop.timeFrameGame) / 1000;
-        if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.D, ƒ.KEYBOARD_CODE.ARROW_RIGHT])) {
-            marioPos.mtxLocal.translateX(amount);
-        }
-        if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.A, ƒ.KEYBOARD_CODE.ARROW_LEFT])) {
-            marioPos.mtxLocal.translateX(-amount);
-        }
-    }
+    const xSpeedDefault = 2;
+    const xSpeedSprint = 5;
+    const jumpForce = 0.05;
+    let ySpeed = 0;
+    let gravity = 0.1;
+    let leftDirection = false;
+    let prevSprint = false;
     function update(_event) {
-        animationWalk();
+        let deltaTime = ƒ.Loop.timeFrameGame / 1000;
+        ySpeed -= gravity * deltaTime;
+        avatar.mtxLocal.translateY(ySpeed);
+        let pos = avatar.mtxLocal.translation;
+        if (pos.y + ySpeed > 0)
+            avatar.mtxLocal.translateY(ySpeed);
+        else {
+            ySpeed = 0;
+            pos.y = 0;
+            avatar.mtxLocal.translation = pos;
+        }
+        let speed = xSpeedDefault;
+        if (leftDirection)
+            speed = -xSpeedDefault;
+        if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SHIFT_LEFT, ƒ.KEYBOARD_CODE.SHIFT_RIGHT])) {
+            speed = xSpeedSprint;
+            if (leftDirection)
+                speed = -xSpeedSprint;
+        }
+        // Calculate (walk) speed
+        const moveDistance = speed * ƒ.Loop.timeFrameGame / 1000;
+        // Check for key presses
+        if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.A, ƒ.KEYBOARD_CODE.ARROW_LEFT])) {
+            avatar.mtxLocal.translateX(-moveDistance);
+            leftDirection = true;
+            if (speed < -1) {
+                if (!prevSprint) {
+                    prevSprint = true;
+                    avatar.setAnimation(animSprint);
+                }
+            }
+            else {
+                prevSprint = false;
+            }
+        }
+        else if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.D, ƒ.KEYBOARD_CODE.ARROW_RIGHT])) {
+            avatar.mtxLocal.translateX(moveDistance);
+            leftDirection = false;
+            if (speed > 1) {
+                if (!prevSprint) {
+                    prevSprint = true;
+                    avatar.setAnimation(animSprint);
+                }
+            }
+            else {
+                prevSprint = false;
+            }
+        }
+        else if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.W, ƒ.KEYBOARD_CODE.ARROW_UP])) {
+            avatar.setAnimation(animLook);
+            avatar.showFrame(1);
+        }
+        else if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.S, ƒ.KEYBOARD_CODE.ARROW_DOWN])) {
+            avatar.setAnimation(animLook);
+            avatar.showFrame(0);
+        }
+        else {
+            avatar.setAnimation(animWalk);
+            avatar.showFrame(0);
+        }
+        if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SPACE]) && ySpeed === 0) {
+            avatar.mtxLocal.translation = new ƒ.Vector3(pos.x, 0, 0.001);
+            ySpeed = jumpForce;
+        }
+        if (ySpeed > 0) {
+            avatar.setAnimation(animJump);
+            avatar.showFrame(0);
+        }
+        else if (ySpeed < 0) {
+            avatar.setAnimation(animJump);
+            avatar.showFrame(1);
+        }
+        // Rotate based on direction
+        avatar.mtxLocal.rotation = ƒ.Vector3.Y(leftDirection ? 180 : 0);
         viewport.draw();
-        ƒ.AudioManager.default.update();
+        //ƒ.AudioManager.default.update();
     }
 })(Script || (Script = {}));
 //# sourceMappingURL=Script.js.map
