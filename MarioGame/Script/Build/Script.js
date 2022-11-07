@@ -42,6 +42,7 @@ var Script;
     var ƒAid = FudgeAid;
     // Initialize Viewport
     let viewport;
+    let graph;
     document.addEventListener("interactiveViewportStarted", start);
     function start(_event) {
         viewport = _event.detail;
@@ -64,16 +65,16 @@ var Script;
         animDeath = new ƒAid.SpriteSheetAnimation("Death", coat);
         animDeath.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 16, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(17));
     }
-    //Initialize Sound 
-    //let audioJump: ƒ.Audio;
-    // let audioDeath: ƒ.Audio;
+    //Initialize Sound
+    let audioJump;
+    let audioDeath;
     function initializeSound() {
-        //audioJump = new ƒ.Audio("./MarioGame/Sound/jump.wav");
-        //audioDeath = new ƒ.Audio("./MarioGame/Sound/death.wav");
+        audioJump = new ƒ.Audio("./Sound/jump.wav");
+        audioDeath = new ƒ.Audio("./Sound/death.wav");
     }
     // Load Sprite and Sound
     let avatar;
-    //let audio: ƒ.ComponentAudio;
+    let audio;
     async function hndLoad(_event) {
         let imgSpriteSheet = new ƒ.TextureImage();
         await imgSpriteSheet.load("./Images/CharacterSheet/mario_walk.png");
@@ -88,11 +89,11 @@ var Script;
         avatar.mtxLocal.translateY(0);
         avatar.mtxLocal.translateX(-1);
         avatar.mtxLocal.translateZ(0.001);
-        let branch = viewport.getBranch();
-        branch.addChild(avatar);
-        //audio = branch.getComponent(ƒ.ComponentAudio);
-        //audio.connect(true);
-        //audio.volume = 1;
+        graph = viewport.getBranch();
+        graph.addChild(avatar);
+        audio = graph.getComponent(ƒ.ComponentAudio);
+        audio.connect(true);
+        audio.volume = 1;
         ƒ.Loop.addEventListener("loopFrame" /* ƒ.EVENT.LOOP_FRAME */, update);
         ƒ.Loop.start(ƒ.LOOP_MODE.FRAME_REQUEST, 30);
     }
@@ -101,6 +102,7 @@ var Script;
     const jumpForce = 0.05;
     let ySpeed = 0;
     let gravity = 0.1;
+    let dead = false;
     let leftDirection = false;
     let prevSprint = false;
     function update(_event) {
@@ -108,6 +110,25 @@ var Script;
         ySpeed -= gravity * deltaTime;
         avatar.mtxLocal.translateY(ySpeed);
         let pos = avatar.mtxLocal.translation;
+        //Check for death
+        if (pos.y < -1 && !dead) {
+            dead = true;
+            audio.setAudio(audioDeath);
+            audio.play(true);
+            ySpeed = jumpForce * 0.8;
+            viewport.draw();
+            return;
+        }
+        //Reload when dead
+        if (dead) {
+            audio.volume = 10;
+            pos.y = -1;
+            ƒ.Time.game.setTimer(3000, 1, () => window.location.reload());
+            viewport.draw();
+            return;
+        }
+        //Collison with box under Avatar
+        checkCollision();
         if (pos.y + ySpeed > 0)
             avatar.mtxLocal.translateY(ySpeed);
         else {
@@ -124,11 +145,14 @@ var Script;
                 speed = -xSpeedSprint;
         }
         // Calculate (walk) speed
-        const moveDistance = speed * ƒ.Loop.timeFrameGame / 1000;
+        const moveDistance = (speed * ƒ.Loop.timeFrameGame) / 1000;
         checkInput(moveDistance, speed);
         if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SPACE]) && ySpeed === 0) {
             avatar.mtxLocal.translation = new ƒ.Vector3(pos.x, 0, 0.001);
             ySpeed = jumpForce;
+            audio.volume = 6;
+            audio.setAudio(audioJump);
+            audio.play(true);
         }
         if (ySpeed > 0) {
             avatar.setAnimation(animJump);
@@ -139,7 +163,7 @@ var Script;
             avatar.showFrame(1);
         }
         viewport.draw();
-        //ƒ.AudioManager.default.update();
+        ƒ.AudioManager.default.update();
     }
     function checkInput(moveDistance, speed) {
         // Check for key presses
@@ -183,6 +207,20 @@ var Script;
         }
         // Rotate based on direction
         avatar.mtxLocal.rotation = ƒ.Vector3.Y(leftDirection ? 180 : 0);
+    }
+    function checkCollision() {
+        let blocks = graph.getChildrenByName("Floor")[0];
+        let pos = avatar.mtxLocal.translation;
+        for (let block of blocks.getChildren()) {
+            let posBlock = block.mtxLocal.translation;
+            if (Math.abs(pos.x - posBlock.x) < 0.5) {
+                if (pos.y < posBlock.y + 0.5) {
+                    pos.y = posBlock.y + 0.5;
+                    avatar.mtxLocal.translation = pos;
+                    ySpeed = 0;
+                }
+            }
+        }
     }
 })(Script || (Script = {}));
 //# sourceMappingURL=Script.js.map
