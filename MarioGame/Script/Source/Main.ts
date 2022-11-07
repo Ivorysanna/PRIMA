@@ -35,17 +35,17 @@ namespace Script {
   }
 
   //Initialize Sound 
-  let audioJump: ƒ.Audio;
-  let audioDeath: ƒ.Audio;
+  //let audioJump: ƒ.Audio;
+ // let audioDeath: ƒ.Audio;
 
   function initializeSound(): void{
-    audioJump = new ƒ.Audio("./MarioGame/Sound/jump.wav");
-    audioDeath = new ƒ.Audio("./MarioGame/Sound/death.wav");
+    //audioJump = new ƒ.Audio("./MarioGame/Sound/jump.wav");
+    //audioDeath = new ƒ.Audio("./MarioGame/Sound/death.wav");
   }
 
   // Load Sprite and Sound
   let avatar: ƒAid.NodeSprite;
-  let audio: ƒ.ComponentAudio;
+  //let audio: ƒ.ComponentAudio;
 
   async function hndLoad(_event: Event): Promise<void> {
     let imgSpriteSheet: ƒ.TextureImage = new ƒ.TextureImage();
@@ -68,19 +68,19 @@ namespace Script {
     let branch: ƒ.Node = viewport.getBranch();
     branch.addChild(avatar);
 
-    audio = branch.getComponent(ƒ.ComponentAudio);
-    audio.connect(true);
-    audio.volume = 1;
+    //audio = branch.getComponent(ƒ.ComponentAudio);
+    //audio.connect(true);
+    //audio.volume = 1;
 
     ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, update);
     ƒ.Loop.start(ƒ.LOOP_MODE.FRAME_REQUEST, 30);
   }
 
-  const xSpeedDefault: number = 2;
+  const xSpeedDefault: number = 2.5;
   const xSpeedSprint: number = 5;
   const jumpForce: number = 0.05;
   let ySpeed: number = 0;
-  let gravity: number = 0.3;
+  let gravity: number = 0.1;
 
   let leftDirection: boolean = false;
   let prevSprint: boolean = false;
@@ -111,6 +111,26 @@ namespace Script {
 
     // Calculate (walk) speed
     const moveDistance: number = speed * ƒ.Loop.timeFrameGame / 1000;
+    checkInput(moveDistance, speed);
+
+    if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SPACE]) && ySpeed === 0) {
+      avatar.mtxLocal.translation = new ƒ.Vector3(pos.x, 0, 0.001);
+      ySpeed = jumpForce;
+    }
+  
+    if (ySpeed > 0) {
+      avatar.setAnimation(animJump);
+      avatar.showFrame(0);
+    } else if (ySpeed < 0) {
+      avatar.setAnimation(animJump);
+      avatar.showFrame(1);
+    }
+    
+    viewport.draw();
+    //ƒ.AudioManager.default.update();
+  }
+
+  function checkInput(moveDistance: number, speed: number): void {
 
     // Check for key presses
     if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.A, ƒ.KEYBOARD_CODE.ARROW_LEFT])) {
@@ -145,24 +165,10 @@ namespace Script {
       avatar.setAnimation(animWalk);
       avatar.showFrame(0);
     }
-
-    if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SPACE]) && ySpeed === 0) {
-      avatar.mtxLocal.translation = new ƒ.Vector3(pos.x, 0, 0.001);
-      ySpeed = jumpForce;
-    }
-
-    if (ySpeed > 0) {
-      avatar.setAnimation(animJump);
-      avatar.showFrame(0);
-    } else if (ySpeed < 0) {
-      avatar.setAnimation(animJump);
-      avatar.showFrame(1);
-    }
-
+  
+    
+  
     // Rotate based on direction
     avatar.mtxLocal.rotation = ƒ.Vector3.Y(leftDirection ? 180 : 0);
-
-    viewport.draw();
-    //ƒ.AudioManager.default.update();
   }
 }

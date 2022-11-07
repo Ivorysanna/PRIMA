@@ -64,13 +64,22 @@ var Script;
         animDeath = new ƒAid.SpriteSheetAnimation("Death", coat);
         animDeath.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 16, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(17));
     }
-    // Load Sprite
+    //Initialize Sound 
+    //let audioJump: ƒ.Audio;
+    // let audioDeath: ƒ.Audio;
+    function initializeSound() {
+        //audioJump = new ƒ.Audio("./MarioGame/Sound/jump.wav");
+        //audioDeath = new ƒ.Audio("./MarioGame/Sound/death.wav");
+    }
+    // Load Sprite and Sound
     let avatar;
+    //let audio: ƒ.ComponentAudio;
     async function hndLoad(_event) {
         let imgSpriteSheet = new ƒ.TextureImage();
         await imgSpriteSheet.load("./Images/CharacterSheet/mario_walk.png");
         let coat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
         initializeAnimations(coat);
+        initializeSound();
         avatar = new ƒAid.NodeSprite("Avatar");
         avatar.addComponent(new ƒ.ComponentTransform(new ƒ.Matrix4x4()));
         avatar.setAnimation(animWalk);
@@ -81,10 +90,13 @@ var Script;
         avatar.mtxLocal.translateZ(0.001);
         let branch = viewport.getBranch();
         branch.addChild(avatar);
+        //audio = branch.getComponent(ƒ.ComponentAudio);
+        //audio.connect(true);
+        //audio.volume = 1;
         ƒ.Loop.addEventListener("loopFrame" /* ƒ.EVENT.LOOP_FRAME */, update);
         ƒ.Loop.start(ƒ.LOOP_MODE.FRAME_REQUEST, 30);
     }
-    const xSpeedDefault = 2;
+    const xSpeedDefault = 2.5;
     const xSpeedSprint = 5;
     const jumpForce = 0.05;
     let ySpeed = 0;
@@ -113,6 +125,23 @@ var Script;
         }
         // Calculate (walk) speed
         const moveDistance = speed * ƒ.Loop.timeFrameGame / 1000;
+        checkInput(moveDistance, speed);
+        if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SPACE]) && ySpeed === 0) {
+            avatar.mtxLocal.translation = new ƒ.Vector3(pos.x, 0, 0.001);
+            ySpeed = jumpForce;
+        }
+        if (ySpeed > 0) {
+            avatar.setAnimation(animJump);
+            avatar.showFrame(0);
+        }
+        else if (ySpeed < 0) {
+            avatar.setAnimation(animJump);
+            avatar.showFrame(1);
+        }
+        viewport.draw();
+        //ƒ.AudioManager.default.update();
+    }
+    function checkInput(moveDistance, speed) {
         // Check for key presses
         if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.A, ƒ.KEYBOARD_CODE.ARROW_LEFT])) {
             avatar.mtxLocal.translateX(-moveDistance);
@@ -152,22 +181,8 @@ var Script;
             avatar.setAnimation(animWalk);
             avatar.showFrame(0);
         }
-        if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.SPACE]) && ySpeed === 0) {
-            avatar.mtxLocal.translation = new ƒ.Vector3(pos.x, 0, 0.001);
-            ySpeed = jumpForce;
-        }
-        if (ySpeed > 0) {
-            avatar.setAnimation(animJump);
-            avatar.showFrame(0);
-        }
-        else if (ySpeed < 0) {
-            avatar.setAnimation(animJump);
-            avatar.showFrame(1);
-        }
         // Rotate based on direction
         avatar.mtxLocal.rotation = ƒ.Vector3.Y(leftDirection ? 180 : 0);
-        viewport.draw();
-        //ƒ.AudioManager.default.update();
     }
 })(Script || (Script = {}));
 //# sourceMappingURL=Script.js.map
