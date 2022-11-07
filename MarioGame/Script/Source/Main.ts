@@ -34,14 +34,26 @@ namespace Script {
     animDeath.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 16, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(17));
   }
 
-  // Load Sprite
+  //Initialize Sound 
+  let audioJump: ƒ.Audio;
+  let audioDeath: ƒ.Audio;
+
+  function initializeSound(): void{
+    audioJump = new ƒ.Audio("./MarioGame/Sound/jump.wav");
+    audioDeath = new ƒ.Audio("./MarioGame/Sound/death.wav");
+  }
+
+  // Load Sprite and Sound
   let avatar: ƒAid.NodeSprite;
+  let audio: ƒ.ComponentAudio;
+
   async function hndLoad(_event: Event): Promise<void> {
     let imgSpriteSheet: ƒ.TextureImage = new ƒ.TextureImage();
     await imgSpriteSheet.load("./Images/CharacterSheet/mario_walk.png");
     let coat: ƒ.CoatTextured = new ƒ.CoatTextured(undefined, imgSpriteSheet);
 
     initializeAnimations(coat);
+    initializeSound();
 
     avatar = new ƒAid.NodeSprite("Avatar");
     avatar.addComponent(new ƒ.ComponentTransform(new ƒ.Matrix4x4()));
@@ -56,6 +68,10 @@ namespace Script {
     let branch: ƒ.Node = viewport.getBranch();
     branch.addChild(avatar);
 
+    audio = branch.getComponent(ƒ.ComponentAudio);
+    audio.connect(true);
+    audio.volume = 1;
+
     ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, update);
     ƒ.Loop.start(ƒ.LOOP_MODE.FRAME_REQUEST, 30);
   }
@@ -64,7 +80,7 @@ namespace Script {
   const xSpeedSprint: number = 5;
   const jumpForce: number = 0.05;
   let ySpeed: number = 0;
-  let gravity: number = 0.1;
+  let gravity: number = 0.3;
 
   let leftDirection: boolean = false;
   let prevSprint: boolean = false;
