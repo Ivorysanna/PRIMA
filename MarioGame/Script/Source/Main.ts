@@ -3,7 +3,7 @@ namespace Script {
     import ƒAid = FudgeAid;
 
     // Initialize Viewport
-    let viewport: ƒ.Viewport;
+    export let viewport: ƒ.Viewport;
     let graph: ƒ.Node;
     document.addEventListener("interactiveViewportStarted", <EventListener>start);
 
@@ -50,7 +50,6 @@ namespace Script {
 
     async function hndLoad(_event: Event): Promise<void> {
         let imgSpriteSheet: ƒ.TextureImage = new ƒ.TextureImage();
-        await imgSpriteSheet.load("./Images/CharacterSheet/mario_walk.png");
         let coat: ƒ.CoatTextured = new ƒ.CoatTextured(undefined, imgSpriteSheet);
 
         initializeAnimations(coat);
@@ -69,6 +68,9 @@ namespace Script {
         graph = viewport.getBranch();
         graph.addChild(avatar);
 
+        let avatarInstance: Avatar = new Avatar(); 
+        avatarInstance.initializeAnimations();
+        
         audio = graph.getComponent(ƒ.ComponentAudio);
         audio.connect(true);
         audio.volume = 1;
@@ -77,11 +79,11 @@ namespace Script {
         ƒ.Loop.start(ƒ.LOOP_MODE.FRAME_REQUEST, 30);
     }
 
-    const xSpeedDefault: number = 2.5;
-    const xSpeedSprint: number = 5;
-    const jumpForce: number = 0.05;
-    let ySpeed: number = 0;
-    let gravity: number = 0.1;
+    // const xSpeedDefault: number = 2.5;
+    // const xSpeedSprint: number = 5;
+    // const jumpForce: number = 0.05;
+    // let ySpeed: number = 0;
+    export let gravity: number = 0.1;
 
     let dead: boolean = false;
 

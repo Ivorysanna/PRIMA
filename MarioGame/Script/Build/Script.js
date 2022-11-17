@@ -2,6 +2,41 @@
 var Script;
 (function (Script) {
     var ƒ = FudgeCore;
+    var ƒAid = FudgeAid;
+    class Avatar extends ƒAid.NodeSprite {
+        animWalk;
+        animSprint;
+        animJump;
+        animLook;
+        animDeath;
+        constructor() {
+            super("Avatar");
+            this.initializeAnimations();
+            this.addComponent(new ƒ.ComponentTransform());
+            this.setAnimation(this.animWalk);
+            this.framerate = 20;
+        }
+        async initializeAnimations() {
+            let imgSpriteSheet = new ƒ.TextureImage();
+            await imgSpriteSheet.load("./Images/CharacterSheet/mario_walk.png");
+            let coat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
+            this.animWalk = new ƒAid.SpriteSheetAnimation("Walk", coat);
+            this.animWalk.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 16, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(17));
+            this.animSprint = new ƒAid.SpriteSheetAnimation("Sprint", coat);
+            this.animSprint.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 16, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(17));
+            this.animJump = new ƒAid.SpriteSheetAnimation("Jump", coat);
+            this.animJump.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 16, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(17));
+            this.animLook = new ƒAid.SpriteSheetAnimation("Look", coat);
+            this.animLook.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 16, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(17));
+            this.animDeath = new ƒAid.SpriteSheetAnimation("Death", coat);
+            this.animDeath.generateByGrid(ƒ.Rectangle.GET(0, 16, 16, 16), 3, 16, ƒ.ORIGIN2D.BOTTOMCENTER, ƒ.Vector2.X(17));
+        }
+    }
+    Script.Avatar = Avatar;
+})(Script || (Script = {}));
+var Script;
+(function (Script) {
+    var ƒ = FudgeCore;
     ƒ.Project.registerScriptNamespace(Script); // Register the namespace to FUDGE for serialization
     class CustomComponentScript extends ƒ.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
@@ -77,7 +112,6 @@ var Script;
     let audio;
     async function hndLoad(_event) {
         let imgSpriteSheet = new ƒ.TextureImage();
-        await imgSpriteSheet.load("./Images/CharacterSheet/mario_walk.png");
         let coat = new ƒ.CoatTextured(undefined, imgSpriteSheet);
         initializeAnimations(coat);
         initializeSound();
@@ -91,6 +125,8 @@ var Script;
         avatar.mtxLocal.translateZ(0.001);
         graph = viewport.getBranch();
         graph.addChild(avatar);
+        let avatarInstance = new Script.Avatar();
+        avatarInstance.initializeAnimations();
         audio = graph.getComponent(ƒ.ComponentAudio);
         audio.connect(true);
         audio.volume = 1;

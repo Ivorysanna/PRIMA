@@ -1,0 +1,93 @@
+{
+  "MeshObj|2022-11-15T21:47:57.200Z|10822": {
+    "ƒ.MeshObj": {
+      "idResource": "MeshObj|2022-11-15T21:47:57.200Z|10822",
+      "name": "Assets\\rocket.obj",
+      "type": "MeshObj",
+      "url": "Assets\\rocket.obj"
+    }
+  },
+  "Material|2022-11-17T13:12:04.830Z|93939": {
+    "ƒ.Material": {
+      "name": "ShaderLitTextured",
+      "idResource": "Material|2022-11-17T13:12:04.830Z|93939",
+      "shader": "ShaderLitTextured",
+      "coat": {
+        "ƒ.CoatTextured": {
+          "color": "[1, 1, 1, 1]"
+        }
+      }
+    }
+  },
+  "Graph|2022-11-17T13:06:59.637Z|35109": {
+    "ƒ.Graph": {
+      "name": "World",
+      "active": true,
+      "components": {},
+      "children": [
+        {
+          "ƒ.Node": {
+            "name": "Rocket",
+            "active": true,
+            "components": {
+              "ComponentMesh": [
+                {
+                  "ƒ.ComponentMesh": {
+                    "idMesh": "MeshObj|2022-11-15T21:47:57.200Z|10822",
+                    "pivot": {
+                      "translation": "[0, 0, 0]",
+                      "rotation": "[0, 0, 0]",
+                      "scaling": "[1, 1, 1]"
+                    },
+                    "Component": {
+                      "active": true
+                    }
+                  }
+                }
+              ],
+              "ComponentMaterial": [
+                {
+                  "ƒ.ComponentMaterial": {
+                    "sortForAlpha": false,
+                    "clrPrimary": "[1, 1, 1, 1]",
+                    "clrSecondary": "[1, 1, 1, 1]",
+                    "pivot": {
+                      "translation": "[0, 0]",
+                      "rotation": 0,
+                      "scaling": "[1, 1]"
+                    },
+                    "Component": {
+                      "active": true
+                    },
+                    "idMaterial": "Material|2022-11-17T13:12:04.830Z|93939"
+                  }
+                }
+              ]
+            },
+            "children": [
+              {
+                "ƒ.Node": {
+                  "name": "Rocket Position",
+                  "active": true,
+                  "components": {},
+                  "children": [
+                    {
+                      "ƒ.Node": {
+                        "name": "Camera Position",
+                        "active": true,
+                        "components": {},
+                        "children": []
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "idResource": "Graph|2022-11-17T13:06:59.637Z|35109",
+      "type": "Graph"
+    }
+  }
+}
