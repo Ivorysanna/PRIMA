@@ -1,20 +1,25 @@
 namespace Script {
-  import ƒ = FudgeCore;
-  ƒ.Debug.info("Main Program Template running!");
+  import f = FudgeCore;
+ // import fAid = FudgeAid;
 
-  let viewport: ƒ.Viewport;
+  f.Debug.info("Main Program Template running!");
+
+  let viewport: f.Viewport;
   document.addEventListener("interactiveViewportStarted", <EventListener>start);
 
   function start(_event: CustomEvent): void {
     viewport = _event.detail;
 
-    ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, update);
-    // ƒ.Loop.start();  // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
+    f.Loop.addEventListener(f.EVENT.LOOP_FRAME, update);
+     f.Loop.start();  // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
   }
 
   function update(_event: Event): void {
-    // ƒ.Physics.simulate();  // if physics is included and used
+    f.Physics.simulate();  // if physics is included and used
     viewport.draw();
-    ƒ.AudioManager.default.update();
+    f.AudioManager.default.update();
   }
+
+
+
 }

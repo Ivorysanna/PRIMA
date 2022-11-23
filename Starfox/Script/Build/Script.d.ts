@@ -8,4 +8,13 @@ declare namespace Script {
     }
 }
 declare namespace Script {
+    import f = FudgeCore;
+    class EngineScript extends f.ComponentScript {
+        static readonly iSubclass: number;
+        constructor();
+        hndEvent: (_event: Event) => void;
+        update: (_event: Event) => void;
+    }
+}
+declare namespace Script {
 }
