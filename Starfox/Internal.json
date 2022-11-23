@@ -1,12 +1,4 @@
 {
-  "MeshObj|2022-11-15T21:47:57.200Z|10822": {
-    "ƒ.MeshObj": {
-      "idResource": "MeshObj|2022-11-15T21:47:57.200Z|10822",
-      "name": "Assets\\rocket.obj",
-      "type": "MeshObj",
-      "url": "Assets\\rocket.obj"
-    }
-  },
   "Material|2022-11-17T13:12:04.830Z|93939": {
     "ƒ.Material": {
       "name": "ShaderLitTextured",
@@ -69,14 +61,6 @@
       "resolution": "[100, 100]"
     }
   },
-  "MeshObj|2022-11-22T20:05:28.226Z|62020": {
-    "ƒ.MeshObj": {
-      "idResource": "MeshObj|2022-11-22T20:05:28.226Z|62020",
-      "name": "Assets\\untitled.obj",
-      "type": "MeshObj",
-      "url": "Assets\\untitled.obj"
-    }
-  },
   "Graph|2022-11-17T13:06:59.637Z|35109": {
     "ƒ.Graph": {
       "name": "World",
@@ -128,7 +112,7 @@
               "ComponentMesh": [
                 {
                   "ƒ.ComponentMesh": {
-                    "idMesh": "MeshObj|2022-11-22T20:05:28.226Z|62020",
+                    "idMesh": "MeshObj|2022-11-23T23:10:56.416Z|14384",
                     "pivot": {
                       "translation": "[0, 0, 0]",
                       "rotation": "[0, 0, 0]",
@@ -260,6 +244,14 @@
       "idResource": "MeshCube|2022-11-17T14:16:50.741Z|52106",
       "name": "MeshCube",
       "type": "MeshCube"
+    }
+  },
+  "MeshObj|2022-11-23T23:10:56.416Z|14384": {
+    "ƒ.MeshObj": {
+      "idResource": "MeshObj|2022-11-23T23:10:56.416Z|14384",
+      "name": "Assets\\StarfoxShip.obj",
+      "type": "MeshObj",
+      "url": "Assets\\StarfoxShip.obj"
     }
   }
 }
