@@ -5,7 +5,7 @@ namespace Script {
     f.Debug.info("Main Program Template running!");
 
     let viewport: f.Viewport;
-    let cmpCamera: f.ComponentCamera;
+    let cmpEngine: EngineScript;
 
     document.addEventListener("interactiveViewportStarted", <EventListener>start);
 
@@ -13,14 +13,15 @@ namespace Script {
 
     function start(_event: CustomEvent): void {
         viewport = _event.detail;
-        let branch: f.Node = viewport.getBranch();
-        branch.getChildrenByName("Rocket")[0].getComponent(f.ComponentRigidbody);
+        viewport.physicsDebugMode = ƒ.PHYSICS_DEBUGMODE.COLLIDERS;
+        ƒ.Physics.settings.solverIterations = 300;
+        let ship: ƒ.Node = viewport.getBranch().getChildrenByName("Rocket")[0];
+        cmpEngine = ship.getComponent(EngineScript);
+        let cmpCamera = ship.getComponent(ƒ.ComponentCamera);
+        viewport.camera = cmpCamera;
 
-        cmpCamera = viewport.camera;
-        branch.getChildrenByName("Rocket")[0].getComponent(f.ComponentCamera);
-
-        f.Loop.addEventListener(f.EVENT.LOOP_FRAME, update);
-        f.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
+        ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, update);
+        ƒ.Loop.start();
     }
 
     function update(_event: Event): void {

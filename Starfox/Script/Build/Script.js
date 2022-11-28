@@ -94,17 +94,19 @@ var Script;
     // import fAid = FudgeAid;
     f.Debug.info("Main Program Template running!");
     let viewport;
-    let cmpCamera;
+    let cmpEngine;
     document.addEventListener("interactiveViewportStarted", start);
     //let rigidbodyShip: f.ComponentRigidbody;
     function start(_event) {
         viewport = _event.detail;
-        let branch = viewport.getBranch();
-        branch.getChildrenByName("Rocket")[0].getComponent(f.ComponentRigidbody);
-        cmpCamera = viewport.camera;
-        branch.getChildrenByName("Rocket")[0].getComponent(f.ComponentCamera);
-        f.Loop.addEventListener("loopFrame" /* f.EVENT.LOOP_FRAME */, update);
-        f.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
+        viewport.physicsDebugMode = ƒ.PHYSICS_DEBUGMODE.COLLIDERS;
+        ƒ.Physics.settings.solverIterations = 300;
+        let ship = viewport.getBranch().getChildrenByName("Rocket")[0];
+        cmpEngine = ship.getComponent(Script.EngineScript);
+        let cmpCamera = ship.getComponent(ƒ.ComponentCamera);
+        viewport.camera = cmpCamera;
+        ƒ.Loop.addEventListener("loopFrame" /* ƒ.EVENT.LOOP_FRAME */, update);
+        ƒ.Loop.start();
     }
     function update(_event) {
         f.Physics.simulate(); // if physics is included and used
