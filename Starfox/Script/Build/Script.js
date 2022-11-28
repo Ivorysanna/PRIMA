@@ -38,66 +38,71 @@ var Script;
 })(Script || (Script = {}));
 var Script;
 (function (Script) {
-    var f = FudgeCore;
-    f.Project.registerScriptNamespace(Script); // Register the namespace to FUDGE for serialization
-    class EngineScript extends f.ComponentScript {
+    var ƒ = FudgeCore;
+    ƒ.Project.registerScriptNamespace(Script); // Register the namespace to FUDGE for serialization
+    class EngineScript extends ƒ.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
-        static iSubclass = f.Component.registerSubclass(EngineScript);
+        static iSubclass = ƒ.Component.registerSubclass(EngineScript);
         // Properties may be mutated by users in the editor via the automatically created user interface
-        // public message: string = "CustomComponentScript added to ";
+        rigidbody;
+        power = 15000;
         constructor() {
             super();
             // Don't start when running in editor
-            if (f.Project.mode == f.MODE.EDITOR)
+            if (ƒ.Project.mode == ƒ.MODE.EDITOR)
                 return;
             // Listen to this component being added to or removed from a node
-            this.addEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
-            this.addEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
-            this.addEventListener("nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */, this.hndEvent);
+            this.addEventListener("componentAdd" /* ƒ.EVENT.COMPONENT_ADD */, this.hndEvent);
+            this.addEventListener("componentRemove" /* ƒ.EVENT.COMPONENT_REMOVE */, this.hndEvent);
+            this.addEventListener("nodeDeserialized" /* ƒ.EVENT.NODE_DESERIALIZED */, this.hndEvent);
         }
         // Activate the functions of this component as response to events
         hndEvent = (_event) => {
             switch (_event.type) {
-                case "componentAdd" /* f.EVENT.COMPONENT_ADD */:
+                case "componentAdd" /* ƒ.EVENT.COMPONENT_ADD */:
                     // ƒ.Debug.log(this.message, this.node);
-                    this.node.addEventListener("renderPrepare" /* f.EVENT.RENDER_PREPARE */, this.update);
+                    this.node.addEventListener("renderPrepare" /* ƒ.EVENT.RENDER_PREPARE */, this.update);
                     break;
-                case "componentRemove" /* f.EVENT.COMPONENT_REMOVE */:
-                    this.removeEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
-                    this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
+                case "componentRemove" /* ƒ.EVENT.COMPONENT_REMOVE */:
+                    this.removeEventListener("componentAdd" /* ƒ.EVENT.COMPONENT_ADD */, this.hndEvent);
+                    this.removeEventListener("componentRemove" /* ƒ.EVENT.COMPONENT_REMOVE */, this.hndEvent);
                     break;
-                case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
+                case "nodeDeserialized" /* ƒ.EVENT.NODE_DESERIALIZED */:
+                    this.rigidbody = this.node.getComponent(ƒ.ComponentRigidbody);
                     // if deserialized the node is now fully reconstructed and access to all its components and children is possible
                     break;
             }
         };
         update = (_event) => {
-            let rigidbody = this.node.getComponent(f.ComponentRigidbody);
-            //rigidbody.applyTorque(f.Vector3.Y(1));
-            let forceMovementSpeed = 20;
-            let torqueForce = 1;
-            // Check for key presses
-            if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.A, ƒ.KEYBOARD_CODE.ARROW_LEFT]))
-                rigidbody.applyTorque(f.Vector3.Y(torqueForce));
-            if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.D, ƒ.KEYBOARD_CODE.ARROW_RIGHT]))
-                rigidbody.applyTorque(f.Vector3.Y(-torqueForce));
-            if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.W, ƒ.KEYBOARD_CODE.ARROW_UP]))
-                rigidbody.applyForce(f.Vector3.Z(forceMovementSpeed));
-            if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.S, ƒ.KEYBOARD_CODE.ARROW_DOWN]))
-                rigidbody.applyForce(f.Vector3.Z(-forceMovementSpeed));
+            // rigidbody.applyTorque(ƒ.Vector3.Y(1));
         };
+        yaw(_value) {
+            this.rigidbody.applyTorque(new ƒ.Vector3(0, _value * -10, 0));
+        }
+        pitch(_value) {
+            this.rigidbody.applyTorque(ƒ.Vector3.SCALE(this.node.mtxWorld.getX(), _value * 7.5));
+        }
+        roll(_value) {
+            this.rigidbody.applyTorque(ƒ.Vector3.SCALE(this.node.mtxWorld.getZ(), _value));
+        }
+        backwards() {
+            this.rigidbody.applyForce(ƒ.Vector3.SCALE(this.node.mtxWorld.getZ(), -this.power));
+        }
+        thrust() {
+            this.rigidbody.applyForce(ƒ.Vector3.SCALE(this.node.mtxWorld.getZ(), this.power));
+        }
     }
     Script.EngineScript = EngineScript;
 })(Script || (Script = {}));
 var Script;
 (function (Script) {
-    var f = FudgeCore;
-    // import fAid = FudgeAid;
-    f.Debug.info("Main Program Template running!");
+    var ƒ = FudgeCore;
+    ƒ.Debug.info("Main Program Template running!");
     let viewport;
     let cmpEngine;
+    let vctMouse = ƒ.Vector2.ZERO();
     document.addEventListener("interactiveViewportStarted", start);
-    //let rigidbodyShip: f.ComponentRigidbody;
+    window.addEventListener("mousemove", hndMouse);
     function start(_event) {
         viewport = _event.detail;
         viewport.physicsDebugMode = ƒ.PHYSICS_DEBUGMODE.COLLIDERS;
@@ -107,15 +112,33 @@ var Script;
         let cmpCamera = ship.getComponent(ƒ.ComponentCamera);
         viewport.camera = cmpCamera;
         ƒ.Loop.addEventListener("loopFrame" /* ƒ.EVENT.LOOP_FRAME */, update);
-        ƒ.Loop.start();
+        ƒ.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
     }
     function update(_event) {
-        f.Physics.simulate(); // if physics is included and used
+        control();
+        ƒ.Physics.simulate(); // if physics is included and used
         viewport.draw();
-        f.AudioManager.default.update();
+        ƒ.AudioManager.default.update();
     }
-    // function control(): void {
-    //   console.log("LEER");
-    // }
+    function hndMouse(e) {
+        vctMouse.x = 2 * (e.clientX / window.innerWidth) - 1;
+        vctMouse.y = 2 * (e.clientY / window.innerHeight) - 1;
+    }
+    function control() {
+        if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.W])) {
+            cmpEngine.thrust();
+        }
+        if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.S])) {
+            cmpEngine.backwards();
+        }
+        if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.A])) {
+            cmpEngine.roll(-5);
+        }
+        if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.D])) {
+            cmpEngine.roll(5);
+        }
+        cmpEngine.pitch(vctMouse.y);
+        cmpEngine.yaw(vctMouse.x);
+    }
 })(Script || (Script = {}));
 //# sourceMappingURL=Script.js.map
