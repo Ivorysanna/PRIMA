@@ -61,6 +61,14 @@
       "resolution": "[100, 100]"
     }
   },
+  "MeshObj|2022-11-23T23:10:56.416Z|14384": {
+    "ƒ.MeshObj": {
+      "idResource": "MeshObj|2022-11-23T23:10:56.416Z|14384",
+      "name": "Assets\\StarfoxShip.obj",
+      "type": "MeshObj",
+      "url": "Assets\\StarfoxShip.obj"
+    }
+  },
   "Graph|2022-11-17T13:06:59.637Z|35109": {
     "ƒ.Graph": {
       "name": "World",
@@ -167,13 +175,13 @@
                     "dampRotation": 0.1,
                     "effectGravity": 0,
                     "typeBody": "DYNAMIC",
-                    "typeCollider": "CUBE",
+                    "typeCollider": "PYRAMID",
                     "isTrigger": false,
                     "id": 0,
                     "pivot": {
-                      "translation": "[0, 0, 0]",
-                      "rotation": "[0, 0, 0]",
-                      "scaling": "[1, 1, 1]"
+                      "translation": "[0, 0, -1.3000001907348633]",
+                      "rotation": "[90, 0, 0]",
+                      "scaling": "[4.199999809265137, 2.8000001907348633, 0.8999999761581421]"
                     },
                     "Component": {
                       "active": true
@@ -185,6 +193,31 @@
                 {
                   "Script.EngineScript": {
                     "active": true
+                  }
+                }
+              ],
+              "ComponentCamera": [
+                {
+                  "ƒ.ComponentCamera": {
+                    "backgroundColor": {
+                      "r": 0,
+                      "g": 0,
+                      "b": 0,
+                      "a": 1
+                    },
+                    "backgroundEnabled": true,
+                    "projection": "central",
+                    "fieldOfView": 45,
+                    "direction": "diagonal",
+                    "aspect": 1.3333333333333333,
+                    "pivot": {
+                      "translation": "[0, 3.0999999046325684, -10.30000114440918]",
+                      "rotation": "[7.19999885559082, 0, 0]",
+                      "scaling": "[1, 1, 1]"
+                    },
+                    "Component": {
+                      "active": true
+                    }
                   }
                 }
               ]
@@ -244,14 +277,6 @@
       "idResource": "MeshCube|2022-11-17T14:16:50.741Z|52106",
       "name": "MeshCube",
       "type": "MeshCube"
-    }
-  },
-  "MeshObj|2022-11-23T23:10:56.416Z|14384": {
-    "ƒ.MeshObj": {
-      "idResource": "MeshObj|2022-11-23T23:10:56.416Z|14384",
-      "name": "Assets\\StarfoxShip.obj",
-      "type": "MeshObj",
-      "url": "Assets\\StarfoxShip.obj"
     }
   }
 }

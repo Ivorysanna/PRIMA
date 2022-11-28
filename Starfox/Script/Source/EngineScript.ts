@@ -44,7 +44,6 @@ namespace Script {
 
             // Check for key presses
             if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.A, ƒ.KEYBOARD_CODE.ARROW_LEFT]))
-                //rigidbody.mtxLocal.rotation = ƒ.Vector3.Y(180);
                 rigidbody.applyForce(f.Vector3.X(forceMovementSpeed));
             if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.D, ƒ.KEYBOARD_CODE.ARROW_RIGHT])) rigidbody.applyForce(f.Vector3.X(-forceMovementSpeed));
             if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.W, ƒ.KEYBOARD_CODE.ARROW_UP])) rigidbody.applyForce(f.Vector3.Z(forceMovementSpeed));

@@ -77,7 +77,6 @@ var Script;
             let forceMovementSpeed = 20;
             // Check for key presses
             if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.A, ƒ.KEYBOARD_CODE.ARROW_LEFT]))
-                //rigidbody.mtxLocal.rotation = ƒ.Vector3.Y(180);
                 rigidbody.applyForce(f.Vector3.X(forceMovementSpeed));
             if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.D, ƒ.KEYBOARD_CODE.ARROW_RIGHT]))
                 rigidbody.applyForce(f.Vector3.X(-forceMovementSpeed));
@@ -95,9 +94,15 @@ var Script;
     // import fAid = FudgeAid;
     f.Debug.info("Main Program Template running!");
     let viewport;
+    let cmpCamera;
     document.addEventListener("interactiveViewportStarted", start);
+    //let rigidbodyShip: f.ComponentRigidbody;
     function start(_event) {
         viewport = _event.detail;
+        let branch = viewport.getBranch();
+        branch.getChildrenByName("Rocket")[0].getComponent(f.ComponentRigidbody);
+        cmpCamera = viewport.camera;
+        branch.getChildrenByName("Rocket")[0].getComponent(f.ComponentCamera);
         f.Loop.addEventListener("loopFrame" /* f.EVENT.LOOP_FRAME */, update);
         f.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
     }
@@ -106,5 +111,8 @@ var Script;
         viewport.draw();
         f.AudioManager.default.update();
     }
+    // function control(): void {
+    //   console.log("LEER");
+    // }
 })(Script || (Script = {}));
 //# sourceMappingURL=Script.js.map
