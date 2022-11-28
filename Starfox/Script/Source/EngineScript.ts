@@ -41,11 +41,12 @@ namespace Script {
             let rigidbody: f.ComponentRigidbody = this.node.getComponent(f.ComponentRigidbody);
             //rigidbody.applyTorque(f.Vector3.Y(1));
             let forceMovementSpeed: number = 20;
+            let torqueForce: number = 1;
 
             // Check for key presses
             if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.A, ƒ.KEYBOARD_CODE.ARROW_LEFT]))
-                rigidbody.applyForce(f.Vector3.X(forceMovementSpeed));
-            if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.D, ƒ.KEYBOARD_CODE.ARROW_RIGHT])) rigidbody.applyForce(f.Vector3.X(-forceMovementSpeed));
+                rigidbody.applyTorque(f.Vector3.Y(torqueForce));
+            if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.D, ƒ.KEYBOARD_CODE.ARROW_RIGHT])) rigidbody.applyTorque(f.Vector3.Y(-torqueForce));
             if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.W, ƒ.KEYBOARD_CODE.ARROW_UP])) rigidbody.applyForce(f.Vector3.Z(forceMovementSpeed));
             if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.S, ƒ.KEYBOARD_CODE.ARROW_DOWN])) rigidbody.applyForce(f.Vector3.Z(-forceMovementSpeed));
         };
