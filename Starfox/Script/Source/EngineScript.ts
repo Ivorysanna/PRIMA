@@ -9,7 +9,7 @@ namespace Script {
       private rigidbody: f.ComponentRigidbody;
       public power: number = 15000;
       public audioCrashSound: f.ComponentAudio;
-  
+      
   
       constructor() {
         super();
@@ -45,7 +45,6 @@ namespace Script {
   
       public update = (_event: Event): void => {
         // rigidbody.applyTorque(ƒ.Vector3.Y(1));
-        
       }
 
       private hndCol = (_event: Event): void => {

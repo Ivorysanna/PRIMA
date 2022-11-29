@@ -79,12 +79,10 @@ var Script;
             // rigidbody.applyTorque(ƒ.Vector3.Y(1));
         };
         hndCol = (_event) => {
-            console.log("BUMM");
             let audioCrashSound = new f.Audio("Sounds/death.wav");
             this.audioCrashSound = new f.ComponentAudio(audioCrashSound, false, true);
             this.audioCrashSound.connect(true);
             this.audioCrashSound.volume = 1;
-            console.log("Sound?");
         };
         yaw(_value) {
             this.rigidbody.applyTorque(new f.Vector3(0, _value * -10, 0));
@@ -111,13 +109,14 @@ var Script;
     let viewport;
     let cmpEngine;
     let vctMouse = f.Vector2.ZERO();
+    let ship;
     document.addEventListener("interactiveViewportStarted", start);
     window.addEventListener("mousemove", hndMouse);
     function start(_event) {
         viewport = _event.detail;
         viewport.physicsDebugMode = f.PHYSICS_DEBUGMODE.COLLIDERS;
         f.Physics.settings.solverIterations = 550;
-        let ship = viewport.getBranch().getChildrenByName("Rocket")[0];
+        ship = viewport.getBranch().getChildrenByName("Rocket")[0];
         // let terrain = viewport.getBranch().getChildrenByName("Terrain")[0].getComponent(f.ComponentMesh);;
         // //let componentMeshTerrain = terrain.getComponent(f.ComponentMesh);
         // //Versicherung, dass das der Typ ist den wir brauchen "as"
@@ -125,8 +124,6 @@ var Script;
         cmpEngine = ship.getComponent(Script.EngineScript);
         let cmpCamera = ship.getComponent(f.ComponentCamera);
         viewport.camera = cmpCamera;
-        let t = new f.MeshTerrain();
-        //t.getTerrainInfo();
         f.Loop.addEventListener("loopFrame" /* f.EVENT.LOOP_FRAME */, update);
         f.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
     }
@@ -137,8 +134,11 @@ var Script;
         f.AudioManager.default.update();
         let terrain = viewport.getBranch().getChildrenByName("Terrain")[0].getComponent(f.ComponentMesh);
         ;
-        let terrainInfo = terrain.mesh.getTerrainInfo(f.Vector3.ZERO());
-        console.log(terrainInfo);
+        if (!terrain)
+            return;
+        let mesh = terrain.mesh;
+        let terrainInfo = mesh.getTerrainInfo(ship.mtxLocal.translation, terrain.mtxWorld);
+        console.log(terrainInfo.distance);
     }
     function hndMouse(e) {
         vctMouse.x = 2 * (e.clientX / window.innerWidth) - 1;

@@ -5,6 +5,7 @@ namespace Script {
     let viewport: f.Viewport;
     let cmpEngine: EngineScript;
     let vctMouse: f.Vector2 = f.Vector2.ZERO();
+    let ship: f.Node;
 
     document.addEventListener("interactiveViewportStarted", <EventListener>start);
     window.addEventListener("mousemove", hndMouse);
@@ -13,7 +14,7 @@ namespace Script {
       viewport = _event.detail;
       viewport.physicsDebugMode = f.PHYSICS_DEBUGMODE.COLLIDERS;
       f.Physics.settings.solverIterations = 550;
-      let ship: f.Node = viewport.getBranch().getChildrenByName("Rocket")[0];
+      ship = viewport.getBranch().getChildrenByName("Rocket")[0];
       // let terrain = viewport.getBranch().getChildrenByName("Terrain")[0].getComponent(f.ComponentMesh);;
       // //let componentMeshTerrain = terrain.getComponent(f.ComponentMesh);
       // //Versicherung, dass das der Typ ist den wir brauchen "as"
@@ -22,8 +23,6 @@ namespace Script {
       cmpEngine = ship.getComponent(EngineScript);
       let cmpCamera = ship.getComponent(f.ComponentCamera);
       viewport.camera = cmpCamera;
-      let t: f.MeshTerrain = new f.MeshTerrain();
-      //t.getTerrainInfo();
   
       f.Loop.addEventListener(f.EVENT.LOOP_FRAME, update);
       f.Loop.start();  // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
@@ -36,8 +35,13 @@ namespace Script {
       f.AudioManager.default.update();
 
       let terrain = viewport.getBranch().getChildrenByName("Terrain")[0].getComponent(f.ComponentMesh);;
-      let terrainInfo = (terrain.mesh as f.MeshTerrain).getTerrainInfo(f.Vector3.ZERO());
-      console.log(terrainInfo);
+
+      if(!terrain)
+        return;
+
+      let mesh: f.MeshTerrain = (terrain.mesh as f.MeshTerrain);
+      let terrainInfo = mesh.getTerrainInfo(ship.mtxLocal.translation, terrain.mtxWorld);
+      console.log(terrainInfo.distance);
     }
 
     function hndMouse(e: MouseEvent): void {
