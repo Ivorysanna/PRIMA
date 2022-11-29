@@ -1,41 +1,43 @@
 namespace Script {
-    import ƒ = FudgeCore;
-    ƒ.Project.registerScriptNamespace(Script);  // Register the namespace to FUDGE for serialization
+    import f = FudgeCore;
+    f.Project.registerScriptNamespace(Script);  // Register the namespace to FUDGE for serialization
   
-    export class EngineScript extends ƒ.ComponentScript {
+    export class EngineScript extends f.ComponentScript {
       // Register the script as component for use in the editor via drag&drop
-      public static readonly iSubclass: number = ƒ.Component.registerSubclass(EngineScript);
+      public static readonly iSubclass: number = f.Component.registerSubclass(EngineScript);
       // Properties may be mutated by users in the editor via the automatically created user interface
-      private rigidbody: ƒ.ComponentRigidbody;
+      private rigidbody: f.ComponentRigidbody;
       public power: number = 15000;
+      public audioCrashSound: f.ComponentAudio;
   
   
       constructor() {
         super();
   
         // Don't start when running in editor
-        if (ƒ.Project.mode == ƒ.MODE.EDITOR)
+        if (f.Project.mode == f.MODE.EDITOR)
           return;
   
         // Listen to this component being added to or removed from a node
-        this.addEventListener(ƒ.EVENT.COMPONENT_ADD, this.hndEvent);
-        this.addEventListener(ƒ.EVENT.COMPONENT_REMOVE, this.hndEvent);
-        this.addEventListener(ƒ.EVENT.NODE_DESERIALIZED, this.hndEvent);
+        this.addEventListener(f.EVENT.COMPONENT_ADD, this.hndEvent);
+        this.addEventListener(f.EVENT.COMPONENT_REMOVE, this.hndEvent);
+        this.addEventListener(f.EVENT.NODE_DESERIALIZED, this.hndEvent);
       }
   
       // Activate the functions of this component as response to events
       public hndEvent = (_event: Event): void => {
         switch (_event.type) {
-          case ƒ.EVENT.COMPONENT_ADD:
+          case f.EVENT.COMPONENT_ADD:
             // ƒ.Debug.log(this.message, this.node);
-            this.node.addEventListener(ƒ.EVENT.RENDER_PREPARE, this.update)
+            this.node.addEventListener(f.EVENT.RENDER_PREPARE, this.update)
             break;
-          case ƒ.EVENT.COMPONENT_REMOVE:
-            this.removeEventListener(ƒ.EVENT.COMPONENT_ADD, this.hndEvent);
-            this.removeEventListener(ƒ.EVENT.COMPONENT_REMOVE, this.hndEvent);
+          case f.EVENT.COMPONENT_REMOVE:
+            this.removeEventListener(f.EVENT.COMPONENT_ADD, this.hndEvent);
+            this.removeEventListener(f.EVENT.COMPONENT_REMOVE, this.hndEvent);
             break;
-          case ƒ.EVENT.NODE_DESERIALIZED:
-            this.rigidbody = this.node.getComponent(ƒ.ComponentRigidbody);
+          case f.EVENT.NODE_DESERIALIZED:
+            this.rigidbody = this.node.getComponent(f.ComponentRigidbody);
+            this.rigidbody.addEventListener(f.EVENT_PHYSICS.COLLISION_ENTER, this.hndCol);
             // if deserialized the node is now fully reconstructed and access to all its components and children is possible
             break;
         }
@@ -43,22 +45,30 @@ namespace Script {
   
       public update = (_event: Event): void => {
         // rigidbody.applyTorque(ƒ.Vector3.Y(1));
+        
+      }
+
+      private hndCol = (_event: Event): void => {
+        let audioCrashSound: f.Audio = new f.Audio("Sounds/death.wav");
+        this.audioCrashSound = new f.ComponentAudio(audioCrashSound, false, true);
+        this.audioCrashSound.connect(true);
+        this.audioCrashSound.volume = 1;
       }
   
       public yaw(_value: number) {
-        this.rigidbody.applyTorque(new ƒ.Vector3(0, _value * -10, 0));
+        this.rigidbody.applyTorque(new f.Vector3(0, _value * -10, 0));
       }
       public pitch(_value: number) {
-        this.rigidbody.applyTorque(ƒ.Vector3.SCALE(this.node.mtxWorld.getX(), _value * 7.5));
+        this.rigidbody.applyTorque(f.Vector3.SCALE(this.node.mtxWorld.getX(), _value * 7.5));
       }
       public roll(_value: number) {
-        this.rigidbody.applyTorque(ƒ.Vector3.SCALE(this.node.mtxWorld.getZ(), _value));
+        this.rigidbody.applyTorque(f.Vector3.SCALE(this.node.mtxWorld.getZ(), _value));
       }
       public backwards() {
-        this.rigidbody.applyForce(ƒ.Vector3.SCALE(this.node.mtxWorld.getZ(), -this.power));
+        this.rigidbody.applyForce(f.Vector3.SCALE(this.node.mtxWorld.getZ(), -this.power));
       }
       public thrust() {
-        this.rigidbody.applyForce(ƒ.Vector3.SCALE(this.node.mtxWorld.getZ(), this.power));
+        this.rigidbody.applyForce(f.Vector3.SCALE(this.node.mtxWorld.getZ(), this.power));
       }
   
       // protected reduceMutator(_mutator: ƒ.Mutator): void {

@@ -8,14 +8,16 @@ declare namespace Script {
     }
 }
 declare namespace Script {
-    import ƒ = FudgeCore;
-    class EngineScript extends ƒ.ComponentScript {
+    import f = FudgeCore;
+    class EngineScript extends f.ComponentScript {
         static readonly iSubclass: number;
         private rigidbody;
         power: number;
+        audioCrashSound: f.ComponentAudio;
         constructor();
         hndEvent: (_event: Event) => void;
         update: (_event: Event) => void;
+        private hndCol;
         yaw(_value: number): void;
         pitch(_value: number): void;
         roll(_value: number): void;

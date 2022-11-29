@@ -1,52 +1,64 @@
 namespace Script {
-    import ƒ = FudgeCore;
-    ƒ.Debug.info("Main Program Template running!");
+    import f = FudgeCore;
+    f.Debug.info("Main Program Template running!");
   
-    let viewport: ƒ.Viewport;
+    let viewport: f.Viewport;
     let cmpEngine: EngineScript;
-    let vctMouse: ƒ.Vector2 = ƒ.Vector2.ZERO();
+    let vctMouse: f.Vector2 = f.Vector2.ZERO();
+
     document.addEventListener("interactiveViewportStarted", <EventListener>start);
     window.addEventListener("mousemove", hndMouse);
   
     function start(_event: CustomEvent): void {
       viewport = _event.detail;
-      viewport.physicsDebugMode = ƒ.PHYSICS_DEBUGMODE.COLLIDERS;
-      ƒ.Physics.settings.solverIterations = 300;
-      let ship: ƒ.Node = viewport.getBranch().getChildrenByName("Rocket")[0];
+      viewport.physicsDebugMode = f.PHYSICS_DEBUGMODE.COLLIDERS;
+      f.Physics.settings.solverIterations = 550;
+      let ship: f.Node = viewport.getBranch().getChildrenByName("Rocket")[0];
+      // let terrain = viewport.getBranch().getChildrenByName("Terrain")[0].getComponent(f.ComponentMesh);;
+      // //let componentMeshTerrain = terrain.getComponent(f.ComponentMesh);
+      // //Versicherung, dass das der Typ ist den wir brauchen "as"
+      // let terrainInfo = (terrain.mesh as f.MeshTerrain).getTerrainInfo(f.Vector3.ZERO());
+      
       cmpEngine = ship.getComponent(EngineScript);
-      let cmpCamera = ship.getComponent(ƒ.ComponentCamera);
+      let cmpCamera = ship.getComponent(f.ComponentCamera);
       viewport.camera = cmpCamera;
+      let t: f.MeshTerrain = new f.MeshTerrain();
+      //t.getTerrainInfo();
   
-      ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, update);
-      ƒ.Loop.start();  // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
+      f.Loop.addEventListener(f.EVENT.LOOP_FRAME, update);
+      f.Loop.start();  // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
     }
   
     function update(_event: Event): void {
       control();
-      ƒ.Physics.simulate();  // if physics is included and used
+      f.Physics.simulate();  // if physics is included and used
       viewport.draw();
-      ƒ.AudioManager.default.update();
+      f.AudioManager.default.update();
+
+      let terrain = viewport.getBranch().getChildrenByName("Terrain")[0].getComponent(f.ComponentMesh);;
+      let terrainInfo = (terrain.mesh as f.MeshTerrain).getTerrainInfo(f.Vector3.ZERO());
+      console.log(terrainInfo);
     }
-  
+
     function hndMouse(e: MouseEvent): void {
       vctMouse.x = 2 * (e.clientX / window.innerWidth) - 1;
       vctMouse.y = 2 * (e.clientY / window.innerHeight) - 1;
     }
   
     function control() {
-      if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.W])) {
+      if (f.Keyboard.isPressedOne([f.KEYBOARD_CODE.W])) {
         cmpEngine.thrust();
       }
   
-      if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.S])) {
+      if (f.Keyboard.isPressedOne([f.KEYBOARD_CODE.S])) {
         cmpEngine.backwards();
       }
   
-      if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.A])) {
+      if (f.Keyboard.isPressedOne([f.KEYBOARD_CODE.A])) {
         cmpEngine.roll(-5);
       }
   
-      if (ƒ.Keyboard.isPressedOne([ƒ.KEYBOARD_CODE.D])) {
+      if (f.Keyboard.isPressedOne([f.KEYBOARD_CODE.D])) {
         cmpEngine.roll(5);
       }
   

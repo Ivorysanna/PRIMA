@@ -69,6 +69,13 @@
       "url": "Assets\\StarfoxShip.obj"
     }
   },
+  "MeshCube|2022-11-17T14:16:50.741Z|52106": {
+    "ƒ.MeshCube": {
+      "idResource": "MeshCube|2022-11-17T14:16:50.741Z|52106",
+      "name": "MeshCube",
+      "type": "MeshCube"
+    }
+  },
   "Graph|2022-11-17T13:06:59.637Z|35109": {
     "ƒ.Graph": {
       "name": "World",
@@ -326,7 +333,7 @@
                     "initialization": "TO_MESH",
                     "friction": 0.2,
                     "restitution": 0.2,
-                    "mass": 1,
+                    "mass": 500,
                     "dampTranslation": 0.1,
                     "dampRotation": 0.1,
                     "effectGravity": 1,
@@ -344,6 +351,17 @@
                     }
                   }
                 }
+              ],
+              "ComponentAudio": [
+                {
+                  "ƒ.ComponentAudio": {
+                    "active": true,
+                    "idResource": "Audio|2022-11-29T15:01:32.414Z|13763",
+                    "playing": false,
+                    "loop": false,
+                    "volume": 1
+                  }
+                }
               ]
             },
             "children": []
@@ -354,11 +372,12 @@
       "type": "Graph"
     }
   },
-  "MeshCube|2022-11-17T14:16:50.741Z|52106": {
-    "ƒ.MeshCube": {
-      "idResource": "MeshCube|2022-11-17T14:16:50.741Z|52106",
-      "name": "MeshCube",
-      "type": "MeshCube"
+  "Audio|2022-11-29T15:01:32.414Z|13763": {
+    "ƒ.Audio": {
+      "url": "Sounds\\death.wav",
+      "idResource": "Audio|2022-11-29T15:01:32.414Z|13763",
+      "name": "Sounds\\death.wav",
+      "type": "Audio"
     }
   }
 }
