@@ -26,7 +26,19 @@ declare namespace Script {
 }
 declare namespace Script {
     import f = FudgeCore;
+    class GameState extends f.Mutable {
+        protected reduceMutator(_mutator: f.Mutator): void;
+        height: number;
+        velocity: number;
+        fuel: number;
+        private controller;
+        constructor();
+    }
+}
+declare namespace Script {
+    import f = FudgeCore;
     let cmpTerrain: f.ComponentMesh;
+    let gameState: GameState;
 }
 declare namespace Script {
     import f = FudgeCore;

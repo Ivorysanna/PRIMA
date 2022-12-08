@@ -70,16 +70,23 @@ var Script;
                     this.rigidbody = this.node.getComponent(f.ComponentRigidbody);
                     this.rigidbody.addEventListener("ColliderEnteredCollision" /* f.EVENT_PHYSICS.COLLISION_ENTER */, this.hndCollision);
                     this.node.addEventListener("renderPrepare" /* f.EVENT.RENDER_PREPARE */, this.update);
+                    //this.node.addEventListener("SensorHit", this.hndCollision);
+                    this.node.addEventListener("renderPrepare" /* f.EVENT.RENDER_PREPARE */, this.update);
                     // if deserialized the node is now fully reconstructed and access to all its components and children is possible
                     break;
             }
         };
         update = (_event) => {
-            if (!Script.cmpTerrain)
+            if (!Script.gameState) {
                 return;
-            let mesh = Script.cmpTerrain.mesh;
-            let info = mesh.getTerrainInfo(this.node.mtxLocal.translation, Script.cmpTerrain.mtxWorld);
-            console.log(info.distance);
+            }
+            Script.gameState.height = this.node.mtxWorld.translation.y;
+            Script.gameState.velocity = this.rigidbody.getVelocity().magnitude;
+            // if (!cmpTerrain)
+            //   return;
+            // let mesh: f.MeshTerrain = (<f.MeshTerrain>cmpTerrain.mesh);
+            // let info: f.TerrainInfo = mesh.getTerrainInfo(this.node.mtxLocal.translation, cmpTerrain.mtxWorld);
+            //console.log(info.distance);
         };
         hndCollision = (_event) => {
             console.log("Bumm");
@@ -105,6 +112,26 @@ var Script;
 var Script;
 (function (Script) {
     var f = FudgeCore;
+    var fui = FudgeUserInterface;
+    class GameState extends f.Mutable {
+        reduceMutator(_mutator) {
+            /**/
+        }
+        height;
+        velocity;
+        fuel = 20;
+        controller;
+        constructor() {
+            super();
+            this.controller = new fui.Controller(this, document.querySelector("#vui"));
+            console.log(this.controller);
+        }
+    }
+    Script.GameState = GameState;
+})(Script || (Script = {}));
+var Script;
+(function (Script) {
+    var f = FudgeCore;
     f.Debug.info("Main Program Template running!");
     let viewport;
     let cmpEngine;
@@ -112,6 +139,7 @@ var Script;
     document.addEventListener("interactiveViewportStarted", start);
     window.addEventListener("mousemove", hndMouse);
     function start(_event) {
+        Script.gameState = new Script.GameState();
         viewport = _event.detail;
         viewport.physicsDebugMode = f.PHYSICS_DEBUGMODE.COLLIDERS;
         f.Physics.settings.solverIterations = 300;
@@ -194,7 +222,7 @@ var Script;
             let mesh = Script.cmpTerrain.mesh;
             let parent = this.node.getParent();
             let info = mesh.getTerrainInfo(parent.mtxWorld.translation, Script.cmpTerrain.mtxWorld);
-            console.log(info.distance);
+            //console.log(info.distance);
             if (info.distance < 0) {
                 this.node.dispatchEvent(new Event("SensorHit", { bubbles: true }));
             }

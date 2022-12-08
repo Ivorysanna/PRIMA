@@ -48,7 +48,7 @@ namespace Script {
       let mesh: f.MeshTerrain = (<f.MeshTerrain>cmpTerrain.mesh);
       let parent: f.Node = this.node.getParent();
       let info: f.TerrainInfo = mesh.getTerrainInfo(parent.mtxWorld.translation, cmpTerrain.mtxWorld);
-      console.log(info.distance);
+      //console.log(info.distance);
 
       if(info.distance < 0){
         this.node.dispatchEvent(new Event("SensorHit", {bubbles: true}));

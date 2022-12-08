@@ -6,10 +6,13 @@ namespace Script {
   let cmpEngine: EngineScript;
   let vctMouse: f.Vector2 = f.Vector2.ZERO();
   export let cmpTerrain: f.ComponentMesh;
+  export let gameState: GameState;
+
   document.addEventListener("interactiveViewportStarted", <EventListener>start);
   window.addEventListener("mousemove", hndMouse);
 
   function start(_event: CustomEvent): void {
+    gameState = new GameState();
     viewport = _event.detail;
     viewport.physicsDebugMode = f.PHYSICS_DEBUGMODE.COLLIDERS;
     f.Physics.settings.solverIterations = 300;

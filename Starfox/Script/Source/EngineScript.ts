@@ -36,18 +36,27 @@ namespace Script {
         case f.EVENT.NODE_DESERIALIZED:
           this.rigidbody = this.node.getComponent(f.ComponentRigidbody);
           this.rigidbody.addEventListener(f.EVENT_PHYSICS.COLLISION_ENTER, this.hndCollision);
-          this.node.addEventListener(f.EVENT.RENDER_PREPARE, this.update)
+          this.node.addEventListener(f.EVENT.RENDER_PREPARE, this.update);
+          //this.node.addEventListener("SensorHit", this.hndCollision);
+          this.node.addEventListener(f.EVENT.RENDER_PREPARE, this.update);
           // if deserialized the node is now fully reconstructed and access to all its components and children is possible
           break;
       }
     }
 
     private update = (_event: Event): void => {
-      if (!cmpTerrain)
+      if(!gameState){
         return;
-      let mesh: f.MeshTerrain = (<f.MeshTerrain>cmpTerrain.mesh);
-      let info: f.TerrainInfo = mesh.getTerrainInfo(this.node.mtxLocal.translation, cmpTerrain.mtxWorld);
-      console.log(info.distance);
+      }
+      gameState.height = this.node.mtxWorld.translation.y;
+      gameState.velocity = (this.rigidbody.getVelocity().magnitude.toFixed(3));
+
+      
+      // if (!cmpTerrain)
+      //   return;
+      // let mesh: f.MeshTerrain = (<f.MeshTerrain>cmpTerrain.mesh);
+      // let info: f.TerrainInfo = mesh.getTerrainInfo(this.node.mtxLocal.translation, cmpTerrain.mtxWorld);
+      //console.log(info.distance);
     }
     
     private hndCollision = (_event: Event): void => {
