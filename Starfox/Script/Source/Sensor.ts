@@ -2,11 +2,11 @@ namespace Script {
   import f = FudgeCore;
   f.Project.registerScriptNamespace(Script);  // Register the namespace to FUDGE for serialization
 
-  export class EngineScript extends f.ComponentScript {
+  export class Sensor extends f.ComponentScript {
     // Register the script as component for use in the editor via drag&drop
-    public static readonly iSubclass: number = f.Component.registerSubclass(EngineScript);
+    public static readonly iSubclass: number = f.Component.registerSubclass(Sensor);
     // Properties may be mutated by users in the editor via the automatically created user interface
-    private rigidbody: f.ComponentRigidbody;
+    //private rigidbody: f.ComponentRigidbody;
     public power: number = 15000;
 
 
@@ -34,8 +34,8 @@ namespace Script {
           this.removeEventListener(f.EVENT.COMPONENT_REMOVE, this.hndEvent);
           break;
         case f.EVENT.NODE_DESERIALIZED:
-          this.rigidbody = this.node.getComponent(f.ComponentRigidbody);
-          this.rigidbody.addEventListener(f.EVENT_PHYSICS.COLLISION_ENTER, this.hndCollision);
+          //this.rigidbody = this.node.getComponent(f.ComponentRigidbody);
+          //this.rigidbody.addEventListener(ƒ.EVENT_PHYSICS.COLLISION_ENTER, this.hndCollision);
           this.node.addEventListener(f.EVENT.RENDER_PREPARE, this.update)
           // if deserialized the node is now fully reconstructed and access to all its components and children is possible
           break;
@@ -46,28 +46,13 @@ namespace Script {
       if (!cmpTerrain)
         return;
       let mesh: f.MeshTerrain = (<f.MeshTerrain>cmpTerrain.mesh);
-      let info: f.TerrainInfo = mesh.getTerrainInfo(this.node.mtxLocal.translation, cmpTerrain.mtxWorld);
+      let parent: f.Node = this.node.getParent();
+      let info: f.TerrainInfo = mesh.getTerrainInfo(parent.mtxWorld.translation, cmpTerrain.mtxWorld);
       console.log(info.distance);
-    }
-    
-    private hndCollision = (_event: Event): void => {
-      console.log("Bumm");
-    }
 
-    public yaw(_value: number) {
-      this.rigidbody.applyTorque(new f.Vector3(0, _value * -10, 0));
-    }
-    public pitch(_value: number) {
-      this.rigidbody.applyTorque(f.Vector3.SCALE(this.node.mtxWorld.getX(), _value * 7.5));
-    }
-    public roll(_value: number) {
-      this.rigidbody.applyTorque(f.Vector3.SCALE(this.node.mtxWorld.getZ(), _value));
-    }
-    public backwards() {
-      this.rigidbody.applyForce(f.Vector3.SCALE(this.node.mtxWorld.getZ(), -this.power));
-    }
-    public thrust() {
-      this.rigidbody.applyForce(f.Vector3.SCALE(this.node.mtxWorld.getZ(), this.power));
+      if(info.distance < 0){
+        this.node.dispatchEvent(new Event("SensorHit", {bubbles: true}));
+      }
     }
 
     // protected reduceMutator(_mutator: ƒ.Mutator): void {

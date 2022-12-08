@@ -13,11 +13,10 @@ declare namespace Script {
         static readonly iSubclass: number;
         private rigidbody;
         power: number;
-        audioCrashSound: f.ComponentAudio;
         constructor();
         hndEvent: (_event: Event) => void;
-        update: (_event: Event) => void;
-        private hndCol;
+        private update;
+        private hndCollision;
         yaw(_value: number): void;
         pitch(_value: number): void;
         roll(_value: number): void;
@@ -26,4 +25,16 @@ declare namespace Script {
     }
 }
 declare namespace Script {
+    import f = FudgeCore;
+    let cmpTerrain: f.ComponentMesh;
+}
+declare namespace Script {
+    import f = FudgeCore;
+    class Sensor extends f.ComponentScript {
+        static readonly iSubclass: number;
+        power: number;
+        constructor();
+        hndEvent: (_event: Event) => void;
+        private update;
+    }
 }

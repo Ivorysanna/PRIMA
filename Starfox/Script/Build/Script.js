@@ -46,7 +46,6 @@ var Script;
         // Properties may be mutated by users in the editor via the automatically created user interface
         rigidbody;
         power = 15000;
-        audioCrashSound;
         constructor() {
             super();
             // Don't start when running in editor
@@ -62,7 +61,6 @@ var Script;
             switch (_event.type) {
                 case "componentAdd" /* f.EVENT.COMPONENT_ADD */:
                     // ƒ.Debug.log(this.message, this.node);
-                    this.node.addEventListener("renderPrepare" /* f.EVENT.RENDER_PREPARE */, this.update);
                     break;
                 case "componentRemove" /* f.EVENT.COMPONENT_REMOVE */:
                     this.removeEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
@@ -70,19 +68,21 @@ var Script;
                     break;
                 case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
                     this.rigidbody = this.node.getComponent(f.ComponentRigidbody);
-                    this.rigidbody.addEventListener("ColliderEnteredCollision" /* f.EVENT_PHYSICS.COLLISION_ENTER */, this.hndCol);
+                    this.rigidbody.addEventListener("ColliderEnteredCollision" /* f.EVENT_PHYSICS.COLLISION_ENTER */, this.hndCollision);
+                    this.node.addEventListener("renderPrepare" /* f.EVENT.RENDER_PREPARE */, this.update);
                     // if deserialized the node is now fully reconstructed and access to all its components and children is possible
                     break;
             }
         };
         update = (_event) => {
-            // rigidbody.applyTorque(ƒ.Vector3.Y(1));
+            if (!Script.cmpTerrain)
+                return;
+            let mesh = Script.cmpTerrain.mesh;
+            let info = mesh.getTerrainInfo(this.node.mtxLocal.translation, Script.cmpTerrain.mtxWorld);
+            console.log(info.distance);
         };
-        hndCol = (_event) => {
-            let audioCrashSound = new f.Audio("Sounds/death.wav");
-            this.audioCrashSound = new f.ComponentAudio(audioCrashSound, false, true);
-            this.audioCrashSound.connect(true);
-            this.audioCrashSound.volume = 1;
+        hndCollision = (_event) => {
+            console.log("Bumm");
         };
         yaw(_value) {
             this.rigidbody.applyTorque(new f.Vector3(0, _value * -10, 0));
@@ -109,21 +109,17 @@ var Script;
     let viewport;
     let cmpEngine;
     let vctMouse = f.Vector2.ZERO();
-    let ship;
     document.addEventListener("interactiveViewportStarted", start);
     window.addEventListener("mousemove", hndMouse);
     function start(_event) {
         viewport = _event.detail;
         viewport.physicsDebugMode = f.PHYSICS_DEBUGMODE.COLLIDERS;
-        f.Physics.settings.solverIterations = 550;
-        ship = viewport.getBranch().getChildrenByName("Rocket")[0];
-        // let terrain = viewport.getBranch().getChildrenByName("Terrain")[0].getComponent(f.ComponentMesh);;
-        // //let componentMeshTerrain = terrain.getComponent(f.ComponentMesh);
-        // //Versicherung, dass das der Typ ist den wir brauchen "as"
-        // let terrainInfo = (terrain.mesh as f.MeshTerrain).getTerrainInfo(f.Vector3.ZERO());
+        f.Physics.settings.solverIterations = 300;
+        let ship = viewport.getBranch().getChildrenByName("Rocket")[0];
         cmpEngine = ship.getComponent(Script.EngineScript);
         let cmpCamera = ship.getComponent(f.ComponentCamera);
         viewport.camera = cmpCamera;
+        Script.cmpTerrain = viewport.getBranch().getChildrenByName("Terrain")[0].getComponent(f.ComponentMesh);
         f.Loop.addEventListener("loopFrame" /* f.EVENT.LOOP_FRAME */, update);
         f.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
     }
@@ -132,13 +128,6 @@ var Script;
         f.Physics.simulate(); // if physics is included and used
         viewport.draw();
         f.AudioManager.default.update();
-        let terrain = viewport.getBranch().getChildrenByName("Terrain")[0].getComponent(f.ComponentMesh);
-        ;
-        if (!terrain)
-            return;
-        let mesh = terrain.mesh;
-        let terrainInfo = mesh.getTerrainInfo(ship.mtxLocal.translation, terrain.mtxWorld);
-        console.log(terrainInfo.distance);
     }
     function hndMouse(e) {
         vctMouse.x = 2 * (e.clientX / window.innerWidth) - 1;
@@ -160,5 +149,57 @@ var Script;
         cmpEngine.pitch(vctMouse.y);
         cmpEngine.yaw(vctMouse.x);
     }
+})(Script || (Script = {}));
+var Script;
+(function (Script) {
+    var f = FudgeCore;
+    f.Project.registerScriptNamespace(Script); // Register the namespace to FUDGE for serialization
+    class Sensor extends f.ComponentScript {
+        // Register the script as component for use in the editor via drag&drop
+        static iSubclass = f.Component.registerSubclass(Sensor);
+        // Properties may be mutated by users in the editor via the automatically created user interface
+        //private rigidbody: f.ComponentRigidbody;
+        power = 15000;
+        constructor() {
+            super();
+            // Don't start when running in editor
+            if (f.Project.mode == f.MODE.EDITOR)
+                return;
+            // Listen to this component being added to or removed from a node
+            this.addEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
+            this.addEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
+            this.addEventListener("nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */, this.hndEvent);
+        }
+        // Activate the functions of this component as response to events
+        hndEvent = (_event) => {
+            switch (_event.type) {
+                case "componentAdd" /* f.EVENT.COMPONENT_ADD */:
+                    // ƒ.Debug.log(this.message, this.node);
+                    break;
+                case "componentRemove" /* f.EVENT.COMPONENT_REMOVE */:
+                    this.removeEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
+                    this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
+                    break;
+                case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
+                    //this.rigidbody = this.node.getComponent(f.ComponentRigidbody);
+                    //this.rigidbody.addEventListener(ƒ.EVENT_PHYSICS.COLLISION_ENTER, this.hndCollision);
+                    this.node.addEventListener("renderPrepare" /* f.EVENT.RENDER_PREPARE */, this.update);
+                    // if deserialized the node is now fully reconstructed and access to all its components and children is possible
+                    break;
+            }
+        };
+        update = (_event) => {
+            if (!Script.cmpTerrain)
+                return;
+            let mesh = Script.cmpTerrain.mesh;
+            let parent = this.node.getParent();
+            let info = mesh.getTerrainInfo(parent.mtxWorld.translation, Script.cmpTerrain.mtxWorld);
+            console.log(info.distance);
+            if (info.distance < 0) {
+                this.node.dispatchEvent(new Event("SensorHit", { bubbles: true }));
+            }
+        };
+    }
+    Script.Sensor = Sensor;
 })(Script || (Script = {}));
 //# sourceMappingURL=Script.js.map
