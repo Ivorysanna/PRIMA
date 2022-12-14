@@ -49,7 +49,7 @@ namespace Script {
         return;
       }
       gameState.height = this.node.mtxWorld.translation.y;
-      gameState.velocity = (this.rigidbody.getVelocity().magnitude.toFixed(3));
+      //gameState.velocity = (this.rigidbody.getVelocity().magnitude.toFixed(3));
 
       
       // if (!cmpTerrain)

@@ -37,6 +37,7 @@ declare namespace Script {
 }
 declare namespace Script {
     import f = FudgeCore;
+    let viewport: f.Viewport;
     let cmpTerrain: f.ComponentMesh;
     let gameState: GameState;
 }

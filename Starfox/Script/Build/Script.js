@@ -81,7 +81,7 @@ var Script;
                 return;
             }
             Script.gameState.height = this.node.mtxWorld.translation.y;
-            Script.gameState.velocity = this.rigidbody.getVelocity().magnitude;
+            //gameState.velocity = (this.rigidbody.getVelocity().magnitude.toFixed(3));
             // if (!cmpTerrain)
             //   return;
             // let mesh: f.MeshTerrain = (<f.MeshTerrain>cmpTerrain.mesh);
@@ -133,28 +133,31 @@ var Script;
 (function (Script) {
     var f = FudgeCore;
     f.Debug.info("Main Program Template running!");
-    let viewport;
     let cmpEngine;
     let vctMouse = f.Vector2.ZERO();
     document.addEventListener("interactiveViewportStarted", start);
     window.addEventListener("mousemove", hndMouse);
-    function start(_event) {
+    async function start(_event) {
+        let response = await fetch("config.json");
+        let config = await response.json();
+        console.log(config.fuel);
         Script.gameState = new Script.GameState();
-        viewport = _event.detail;
-        viewport.physicsDebugMode = f.PHYSICS_DEBUGMODE.COLLIDERS;
+        Script.viewport = _event.detail;
+        Script.viewport.physicsDebugMode = f.PHYSICS_DEBUGMODE.COLLIDERS;
         f.Physics.settings.solverIterations = 300;
-        let ship = viewport.getBranch().getChildrenByName("Rocket")[0];
+        let ship = Script.viewport.getBranch().getChildrenByName("Rocket")[0];
         cmpEngine = ship.getComponent(Script.EngineScript);
         let cmpCamera = ship.getComponent(f.ComponentCamera);
-        viewport.camera = cmpCamera;
-        Script.cmpTerrain = viewport.getBranch().getChildrenByName("Terrain")[0].getComponent(f.ComponentMesh);
+        Script.viewport.camera = cmpCamera;
+        Script.cmpTerrain = Script.viewport.getBranch().getChildrenByName("Terrain")[0].getComponent(f.ComponentMesh);
+        initAnim();
         f.Loop.addEventListener("loopFrame" /* f.EVENT.LOOP_FRAME */, update);
         f.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
     }
     function update(_event) {
         control();
         f.Physics.simulate(); // if physics is included and used
-        viewport.draw();
+        Script.viewport.draw();
         f.AudioManager.default.update();
     }
     function hndMouse(e) {
@@ -176,6 +179,44 @@ var Script;
         }
         cmpEngine.pitch(vctMouse.y);
         cmpEngine.yaw(vctMouse.x);
+    }
+    function initAnim() {
+        let time0 = 0;
+        let time1 = 2000;
+        let value0 = 0;
+        let value1 = 90;
+        let fps = 30;
+        let cube = Script.viewport.getBranch().getChildrenByName("Cube")[0];
+        let animseq = new f.AnimationSequence();
+        animseq.addKey(new f.AnimationKey(time0, value0));
+        animseq.addKey(new f.AnimationKey(time1, value1));
+        let animStructure = {
+            components: {
+                ComponentTransform: [
+                    {
+                        "ƒ.ComponentTransform": {
+                            mtxLocal: {
+                                translation: {
+                                    x: animseq,
+                                    //y: animseq
+                                },
+                            },
+                        },
+                    },
+                ],
+            },
+        };
+        let animation = new f.Animation("testAnimation", animStructure, fps);
+        animation.setEvent("event", 300);
+        let cmpAnimator = new ƒ.ComponentAnimator(animation, ƒ.ANIMATION_PLAYMODE.LOOP, ƒ.ANIMATION_PLAYBACK.TIMEBASED_CONTINOUS);
+        cmpAnimator.scale = 1;
+        cmpAnimator.addEventListener("event", (_event) => {
+            // let time: number = (<ƒ.ComponentAnimator>_event.target).time;
+            // console.log(`Event fired at ${time}`, _event);
+            console.log("Event reached");
+        });
+        cube.addComponent(cmpAnimator);
+        cmpAnimator.activate(true);
     }
 })(Script || (Script = {}));
 var Script;
