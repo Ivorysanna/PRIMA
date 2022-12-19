@@ -138,9 +138,8 @@ var Script;
     document.addEventListener("interactiveViewportStarted", start);
     window.addEventListener("mousemove", hndMouse);
     async function start(_event) {
-        let response = await fetch("config.json");
-        let config = await response.json();
-        console.log(config.fuel);
+        //let response : Response = await fetch("config.json");
+        //console.log(config.fuel);
         Script.gameState = new Script.GameState();
         Script.viewport = _event.detail;
         Script.viewport.physicsDebugMode = f.PHYSICS_DEBUGMODE.COLLIDERS;
@@ -270,5 +269,47 @@ var Script;
         };
     }
     Script.Sensor = Sensor;
+})(Script || (Script = {}));
+var Script;
+(function (Script) {
+    var f = FudgeCore;
+    var fAid = FudgeAid;
+    f.Project.registerScriptNamespace(Script);
+    let JOB;
+    (function (JOB) {
+        JOB[JOB["IDLE"] = 0] = "IDLE";
+        JOB[JOB["ATTACK"] = 1] = "ATTACK";
+    })(JOB || (JOB = {}));
+    class StateMachine extends fAid.ComponentStateMachine {
+        static iSubclass = f.Component.registerSubclass(StateMachine);
+        static instructions = StateMachine.get();
+        rotationIdle = 3;
+        cmpBody;
+        // private cmpMaterial: f.ComponentMaterial;
+        constructor() {
+            super();
+            this.instructions = StateMachine.instructions; // setup instructions with the static set
+            // Don't start when running in editor
+            if (ƒ.Project.mode == ƒ.MODE.EDITOR)
+                return;
+            // Listen to this component being added to or removed from a node
+            this.addEventListener("componentAdd" /* ƒ.EVENT.COMPONENT_ADD */, this.hndEvent);
+            this.addEventListener("componentRemove" /* ƒ.EVENT.COMPONENT_REMOVE */, this.hndEvent);
+            this.addEventListener("nodeDeserialized" /* ƒ.EVENT.NODE_DESERIALIZED */, this.hndEvent);
+        }
+        static get() {
+            let setup = new fAid.StateMachineInstructions();
+            setup.setAction(JOB.IDLE, this.actIdle);
+            return setup;
+        }
+        static async actIdle(_machine) {
+            console.log("Acting IDLE");
+            _machine.cmpBody.applyTorque(f.Vector3.Y(_machine.rotationIdle));
+        }
+        hndEvent = (_event) => {
+            console.log("Implement");
+        };
+    }
+    Script.StateMachine = StateMachine;
 })(Script || (Script = {}));
 //# sourceMappingURL=Script.js.map

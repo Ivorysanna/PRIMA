@@ -8,13 +8,12 @@ namespace Script {
     export let cmpTerrain: f.ComponentMesh;
     export let gameState: GameState;
 
-    document.addEventListener("interactiveViewportStarted", <EventListener>start);
+    document.addEventListener("interactiveViewportStarted", <EventListener><unknown>start);
     window.addEventListener("mousemove", hndMouse);
 
     async function start(_event: CustomEvent): Promise <void> {
-        let response : Response = await fetch("config.json");
-        let config: {[key: string]: number} = await response.json()
-        console.log(config.fuel);
+        //let response : Response = await fetch("config.json");
+        //console.log(config.fuel);
 
         gameState = new GameState();
         viewport = _event.detail;
