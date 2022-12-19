@@ -37,6 +37,7 @@ declare namespace Script {
 }
 declare namespace Script {
     import f = FudgeCore;
+    let viewport: f.Viewport;
     let cmpTerrain: f.ComponentMesh;
     let gameState: GameState;
 }
@@ -49,4 +50,22 @@ declare namespace Script {
         hndEvent: (_event: Event) => void;
         private update;
     }
+}
+declare namespace Script {
+    import fAid = FudgeAid;
+    enum JOB {
+        IDLE = 0,
+        ATTACK = 1
+    }
+    export class StateMachine extends fAid.ComponentStateMachine<JOB> {
+        static readonly iSubclass: number;
+        private static instructions;
+        rotationIdle: number;
+        private cmpBody;
+        constructor();
+        static get(): fAid.StateMachineInstructions<JOB>;
+        private static actIdle;
+        private hndEvent;
+    }
+    export {};
 }
