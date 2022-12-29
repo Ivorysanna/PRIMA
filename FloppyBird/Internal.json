@@ -6,17 +6,37 @@
       "type": "MeshCube"
     }
   },
-  "Material|2022-12-19T10:42:21.056Z|87613": {
+  "MeshObj|2022-12-29T15:40:52.355Z|10101": {
+    "ƒ.MeshObj": {
+      "idResource": "MeshObj|2022-12-29T15:40:52.355Z|10101",
+      "name": "Assets\\floppy.obj",
+      "type": "MeshObj",
+      "url": "Assets\\floppy.obj"
+    }
+  },
+  "Material|2022-12-29T15:41:05.200Z|41811": {
     "ƒ.Material": {
       "name": "ShaderFlatTextured",
-      "idResource": "Material|2022-12-19T10:42:21.056Z|87613",
+      "idResource": "Material|2022-12-29T15:41:05.200Z|41811",
       "shader": "ShaderFlatTextured",
       "coat": {
         "ƒ.CoatRemissiveTextured": {
           "color": "[1, 1, 1, 1]",
+          "idTexture": "TextureImage|2022-12-29T16:08:51.418Z|79425",
           "diffuse": 1,
           "specular": 0
         }
+      }
+    }
+  },
+  "TextureImage|2022-12-29T16:08:51.418Z|79425": {
+    "ƒ.TextureImage": {
+      "url": "Assets\\brushed-metal_albedo.jpg",
+      "type": "TextureImage",
+      "Texture": {
+        "idResource": "TextureImage|2022-12-29T16:08:51.418Z|79425",
+        "name": "Assets\\brushed-metal_albedo.jpg",
+        "mipmap": "CRISP"
       }
     }
   },
@@ -48,13 +68,21 @@
       "children": [
         {
           "ƒ.Node": {
-            "name": "FloppyBird",
+            "name": "Tubes",
+            "active": true,
+            "components": {},
+            "children": []
+          }
+        },
+        {
+          "ƒ.Node": {
+            "name": "FloppyBirdBody",
             "active": true,
             "components": {
               "ComponentMesh": [
                 {
                   "ƒ.ComponentMesh": {
-                    "idMesh": "MeshCube|2022-12-19T10:41:56.048Z|86712",
+                    "idMesh": "MeshObj|2022-12-29T15:40:52.355Z|10101",
                     "pivot": {
                       "translation": "[0, 0, 0]",
                       "rotation": "[0, 0, 0]",
@@ -80,12 +108,100 @@
                     "Component": {
                       "active": true
                     },
-                    "idMaterial": "Material|2022-12-19T10:42:21.056Z|87613"
+                    "idMaterial": "Material|2022-12-29T15:41:05.200Z|41811"
                   }
                 }
               ],
-              "ComponentCamera": []
+              "ComponentTransform": [
+                {
+                  "ƒ.ComponentTransform": {
+                    "local": {
+                      "translation": "[0, 0, 0]",
+                      "rotation": "[0, 0, 0]",
+                      "scaling": "[1, 1, 1]"
+                    },
+                    "Component": {
+                      "active": true
+                    }
+                  }
+                }
+              ],
+              "ComponentRigidbody": [
+                {
+                  "ƒ.ComponentRigidbody": {
+                    "initialization": "TO_PIVOT",
+                    "friction": 0.2,
+                    "restitution": 0.2,
+                    "mass": 1,
+                    "dampTranslation": 0.1,
+                    "dampRotation": 0.1,
+                    "effectGravity": 1,
+                    "typeBody": "DYNAMIC",
+                    "typeCollider": "CUBE",
+                    "isTrigger": false,
+                    "id": 0,
+                    "pivot": {
+                      "translation": "[0, 0, 0]",
+                      "rotation": "[0, 0, 0]",
+                      "scaling": "[1, 1, 1]"
+                    },
+                    "Component": {
+                      "active": true
+                    }
+                  }
+                }
+              ]
             },
+            "children": [
+              {
+                "ƒ.Node": {
+                  "name": "FloppyBirdWingRight",
+                  "active": true,
+                  "components": {},
+                  "children": []
+                }
+              },
+              {
+                "ƒ.Node": {
+                  "name": "FloppyBirdWingLeft",
+                  "active": true,
+                  "components": {},
+                  "children": []
+                }
+              }
+            ]
+          }
+        },
+        {
+          "ƒ.Node": {
+            "name": "CollisionBorder",
+            "active": true,
+            "components": {},
+            "children": [
+              {
+                "ƒ.Node": {
+                  "name": "BoderLeft",
+                  "active": true,
+                  "components": {},
+                  "children": []
+                }
+              },
+              {
+                "ƒ.Node": {
+                  "name": "BorderBottom",
+                  "active": true,
+                  "components": {},
+                  "children": []
+                }
+              }
+            ]
+          }
+        },
+        {
+          "ƒ.Node": {
+            "name": "Background",
+            "active": true,
+            "components": {},
             "children": []
           }
         }
