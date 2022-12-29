@@ -6,8 +6,12 @@ namespace Script {
     let viewport: f.Viewport;
     export let floppyBird: f.Node;
     export let gravity: f.Vector3 = new f.Vector3(0, -1, 0);
+    let rigidbodyFloppyBird: f.ComponentRigidbody;
+    let jumpForce: f.Vector3 = new f.Vector3(0, 1, 0);
     f.Physics.setGravity(gravity);
     document.addEventListener("interactiveViewportStarted", <EventListener>start);
+
+    let isSpaceAlreadyPressed: boolean = false;
 
     function start(_event: CustomEvent): void {
         viewport = _event.detail;
@@ -18,10 +22,18 @@ namespace Script {
     }
 
     function update(_event: Event): void {
-        ƒ.Physics.simulate(); // if physics is included and used
+        ƒ.Physics.simulate();
         // let deltaTime: number = f.Loop.timeFrameGame / 1000;
-        //let rigidBodyComponent: f.ComponentRigidbody = floppyBird.getComponent(f.ComponentRigidbody);
-
+        rigidbodyFloppyBird = floppyBird.getComponent(f.ComponentRigidbody);
+        //Controls
+        if (f.Keyboard.isPressedOne([f.KEYBOARD_CODE.SPACE])) {
+            if (!isSpaceAlreadyPressed) {
+                rigidbodyFloppyBird.applyLinearImpulse(jumpForce);
+                isSpaceAlreadyPressed = true;
+            }
+        } else {
+            isSpaceAlreadyPressed = false;
+        }
         viewport.draw();
         f.AudioManager.default.update();
     }

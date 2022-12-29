@@ -1,6 +1,15 @@
 "use strict";
 var Script;
 (function (Script) {
+    var f = FudgeCore;
+    f.Project.registerScriptNamespace(Script);
+    class Avatar extends f.ComponentScript {
+        static iSubclass = f.Component.registerSubclass(Avatar);
+    }
+    Script.Avatar = Avatar;
+})(Script || (Script = {}));
+var Script;
+(function (Script) {
     var ƒ = FudgeCore;
     ƒ.Project.registerScriptNamespace(Script); // Register the namespace to FUDGE for serialization
     class CustomComponentScript extends ƒ.ComponentScript {
@@ -43,8 +52,11 @@ var Script;
     // Initialize Viewport
     let viewport;
     Script.gravity = new f.Vector3(0, -1, 0);
+    let rigidbodyFloppyBird;
+    let jumpForce = new f.Vector3(0, 1, 0);
     f.Physics.setGravity(Script.gravity);
     document.addEventListener("interactiveViewportStarted", start);
+    let isSpaceAlreadyPressed = false;
     function start(_event) {
         viewport = _event.detail;
         Script.floppyBird = viewport.getBranch().getChildrenByName("FloppyBirdBody")[0];
@@ -52,9 +64,19 @@ var Script;
         ƒ.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
     }
     function update(_event) {
-        ƒ.Physics.simulate(); // if physics is included and used
+        ƒ.Physics.simulate();
         // let deltaTime: number = f.Loop.timeFrameGame / 1000;
-        //let rigidBodyComponent: f.ComponentRigidbody = floppyBird.getComponent(f.ComponentRigidbody);
+        rigidbodyFloppyBird = Script.floppyBird.getComponent(f.ComponentRigidbody);
+        //Controls
+        if (f.Keyboard.isPressedOne([f.KEYBOARD_CODE.SPACE])) {
+            if (!isSpaceAlreadyPressed) {
+                rigidbodyFloppyBird.applyLinearImpulse(jumpForce);
+                isSpaceAlreadyPressed = true;
+            }
+        }
+        else {
+            isSpaceAlreadyPressed = false;
+        }
         viewport.draw();
         f.AudioManager.default.update();
     }
