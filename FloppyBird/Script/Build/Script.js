@@ -38,19 +38,25 @@ var Script;
 })(Script || (Script = {}));
 var Script;
 (function (Script) {
-    var ƒ = FudgeCore;
-    ƒ.Debug.info("Main Program Template running!");
+    var f = FudgeCore;
+    f.Debug.info("Main Program Template running!");
+    // Initialize Viewport
     let viewport;
+    Script.gravity = new f.Vector3(0, -1, 0);
+    f.Physics.setGravity(Script.gravity);
     document.addEventListener("interactiveViewportStarted", start);
     function start(_event) {
         viewport = _event.detail;
-        ƒ.Loop.addEventListener("loopFrame" /* ƒ.EVENT.LOOP_FRAME */, update);
-        // ƒ.Loop.start();  // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
+        Script.floppyBird = viewport.getBranch().getChildrenByName("FloppyBirdBody")[0];
+        f.Loop.addEventListener("loopFrame" /* f.EVENT.LOOP_FRAME */, update);
+        ƒ.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
     }
     function update(_event) {
-        // ƒ.Physics.simulate();  // if physics is included and used
+        ƒ.Physics.simulate(); // if physics is included and used
+        // let deltaTime: number = f.Loop.timeFrameGame / 1000;
+        //let rigidBodyComponent: f.ComponentRigidbody = floppyBird.getComponent(f.ComponentRigidbody);
         viewport.draw();
-        ƒ.AudioManager.default.update();
+        f.AudioManager.default.update();
     }
 })(Script || (Script = {}));
 //# sourceMappingURL=Script.js.map

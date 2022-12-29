@@ -8,4 +8,7 @@ declare namespace Script {
     }
 }
 declare namespace Script {
+    import f = FudgeCore;
+    let floppyBird: f.Node;
+    let gravity: f.Vector3;
 }
