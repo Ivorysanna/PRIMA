@@ -5,7 +5,7 @@ namespace Script {
     // Initialize Viewport
     let viewport: f.Viewport;
     export let floppyBird: f.Node;
-    export let gravity: f.Vector3 = new f.Vector3(0, -1, 0);
+    export let gravity: f.Vector3 = new f.Vector3(0, -.8, 0);
     let rigidbodyFloppyBird: f.ComponentRigidbody;
     let jumpForce: f.Vector3 = new f.Vector3(0, 1, 0);
     f.Physics.setGravity(gravity);

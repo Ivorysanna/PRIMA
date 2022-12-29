@@ -51,7 +51,7 @@ var Script;
     f.Debug.info("Main Program Template running!");
     // Initialize Viewport
     let viewport;
-    Script.gravity = new f.Vector3(0, -1, 0);
+    Script.gravity = new f.Vector3(0, -.8, 0);
     let rigidbodyFloppyBird;
     let jumpForce = new f.Vector3(0, 1, 0);
     f.Physics.setGravity(Script.gravity);
