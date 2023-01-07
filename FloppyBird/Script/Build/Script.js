@@ -1,73 +1,85 @@
 "use strict";
-var Script;
-(function (Script) {
+var FloppyBird;
+(function (FloppyBird) {
     var f = FudgeCore;
-    f.Project.registerScriptNamespace(Script);
+    f.Project.registerScriptNamespace(FloppyBird);
     class Avatar extends f.ComponentScript {
         static iSubclass = f.Component.registerSubclass(Avatar);
     }
-    Script.Avatar = Avatar;
-})(Script || (Script = {}));
-var Script;
-(function (Script) {
-    var ƒ = FudgeCore;
-    ƒ.Project.registerScriptNamespace(Script); // Register the namespace to FUDGE for serialization
-    class CustomComponentScript extends ƒ.ComponentScript {
+    FloppyBird.Avatar = Avatar;
+})(FloppyBird || (FloppyBird = {}));
+var FloppyBird;
+(function (FloppyBird) {
+    var f = FudgeCore;
+    f.Project.registerScriptNamespace(FloppyBird); // Register the namespace to FUDGE for serialization
+    class CustomComponentScript extends f.ComponentScript {
         // Register the script as component for use in the editor via drag&drop
-        static iSubclass = ƒ.Component.registerSubclass(CustomComponentScript);
+        static iSubclass = f.Component.registerSubclass(CustomComponentScript);
         // Properties may be mutated by users in the editor via the automatically created user interface
         message = "CustomComponentScript added to ";
         constructor() {
             super();
             // Don't start when running in editor
-            if (ƒ.Project.mode == ƒ.MODE.EDITOR)
+            if (f.Project.mode == f.MODE.EDITOR)
                 return;
             // Listen to this component being added to or removed from a node
-            this.addEventListener("componentAdd" /* ƒ.EVENT.COMPONENT_ADD */, this.hndEvent);
-            this.addEventListener("componentRemove" /* ƒ.EVENT.COMPONENT_REMOVE */, this.hndEvent);
-            this.addEventListener("nodeDeserialized" /* ƒ.EVENT.NODE_DESERIALIZED */, this.hndEvent);
+            this.addEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
+            this.addEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
+            this.addEventListener("nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */, this.hndEvent);
         }
         // Activate the functions of this component as response to events
         hndEvent = (_event) => {
             switch (_event.type) {
-                case "componentAdd" /* ƒ.EVENT.COMPONENT_ADD */:
-                    ƒ.Debug.log(this.message, this.node);
+                case "componentAdd" /* f.EVENT.COMPONENT_ADD */:
+                    f.Debug.log(this.message, this.node);
                     break;
-                case "componentRemove" /* ƒ.EVENT.COMPONENT_REMOVE */:
-                    this.removeEventListener("componentAdd" /* ƒ.EVENT.COMPONENT_ADD */, this.hndEvent);
-                    this.removeEventListener("componentRemove" /* ƒ.EVENT.COMPONENT_REMOVE */, this.hndEvent);
+                case "componentRemove" /* f.EVENT.COMPONENT_REMOVE */:
+                    this.removeEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
+                    this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
                     break;
-                case "nodeDeserialized" /* ƒ.EVENT.NODE_DESERIALIZED */:
+                case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
                     // if deserialized the node is now fully reconstructed and access to all its components and children is possible
                     break;
             }
         };
     }
-    Script.CustomComponentScript = CustomComponentScript;
-})(Script || (Script = {}));
-var Script;
-(function (Script) {
+    FloppyBird.CustomComponentScript = CustomComponentScript;
+})(FloppyBird || (FloppyBird = {}));
+var FloppyBird;
+(function (FloppyBird) {
     var f = FudgeCore;
     f.Debug.info("Main Program Template running!");
-    // Initialize Viewport
-    let viewport;
-    Script.gravity = new f.Vector3(0, -.8, 0);
+    // Global components
+    let viewportRef;
     let rigidbodyFloppyBird;
+    // Physics Settings
+    FloppyBird.gravity = new f.Vector3(0, -0.8, 0);
     let jumpForce = new f.Vector3(0, 1, 0);
-    f.Physics.setGravity(Script.gravity);
+    f.Physics.setGravity(FloppyBird.gravity);
+    // Add EventListener
     document.addEventListener("interactiveViewportStarted", start);
+    // Controls
     let isSpaceAlreadyPressed = false;
+    // Tubes stuff
+    let tubesCollection;
+    let tubesTimer = 0;
+    const tubesIntervalSeconds = 1;
+    const tubeSpeed = 1;
     function start(_event) {
-        viewport = _event.detail;
-        Script.floppyBird = viewport.getBranch().getChildrenByName("FloppyBirdBody")[0];
+        // Get viewport and floppybird reference
+        viewportRef = _event.detail;
+        FloppyBird.floppyBird = viewportRef.getBranch().getChildrenByName("FloppyBirdBody")[0];
+        // Get tubes collection
+        tubesCollection = viewportRef.getBranch().getChildrenByName("Tubes")[0];
+        // Start frame loop
         f.Loop.addEventListener("loopFrame" /* f.EVENT.LOOP_FRAME */, update);
-        ƒ.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
+        f.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
     }
     function update(_event) {
-        ƒ.Physics.simulate();
-        // let deltaTime: number = f.Loop.timeFrameGame / 1000;
-        rigidbodyFloppyBird = Script.floppyBird.getComponent(f.ComponentRigidbody);
+        f.Physics.simulate();
+        const deltaTime = f.Loop.timeFrameGame / 1000;
         //Controls
+        rigidbodyFloppyBird = FloppyBird.floppyBird.getComponent(f.ComponentRigidbody);
         if (f.Keyboard.isPressedOne([f.KEYBOARD_CODE.SPACE])) {
             if (!isSpaceAlreadyPressed) {
                 rigidbodyFloppyBird.applyLinearImpulse(jumpForce);
@@ -77,8 +89,37 @@ var Script;
         else {
             isSpaceAlreadyPressed = false;
         }
-        viewport.draw();
+        // Move Tubes to the left
+        tubesCollection.getChildren().forEach((eachTubeNode) => {
+            eachTubeNode.mtxLocal.translateX(-tubeSpeed * deltaTime);
+        });
+        // Increase timer and spawn new tube
+        tubesTimer += deltaTime;
+        if (tubesTimer > tubesIntervalSeconds) {
+            // Spawn and add new tube
+            let tube = new FloppyBird.Tube();
+            tubesCollection.addChild(tube);
+            // Reset timer
+            tubesTimer = 0;
+        }
+        // Draw viewport
+        viewportRef.draw();
         f.AudioManager.default.update();
     }
-})(Script || (Script = {}));
+})(FloppyBird || (FloppyBird = {}));
+var FloppyBird;
+(function (FloppyBird) {
+    var f = FudgeCore;
+    class Tube extends f.Node {
+        mesh = new f.MeshObj("TubeMesh", "Assets/tube.obj");
+        mat = new f.Material("Tubes", f.ShaderFlat);
+        constructor() {
+            super("Tube");
+            this.addComponent(new f.ComponentMesh(this.mesh));
+            this.addComponent(new f.ComponentMaterial(this.mat));
+            this.addComponent(new f.ComponentTransform());
+        }
+    }
+    FloppyBird.Tube = Tube;
+})(FloppyBird || (FloppyBird = {}));
 //# sourceMappingURL=Script.js.map

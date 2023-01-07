@@ -1,6 +1,6 @@
 /// <reference path="../../Core/Build/FudgeCore.d.ts" />
 /// <reference types="../../core/build/fudgecore" />
-import ƒ = FudgeCore;
+import f = FudgeCore;
 import ƒAid = FudgeAid;
 declare namespace FudgeAid {
 }
@@ -145,7 +145,7 @@ declare namespace FudgeAid {
     /**
      * Handles the animation cycle of a sprite on a [[Node]]
      */
-    class NodeSprite extends ƒ.Node {
+    class NodeSprite extends f.Node {
         private static mesh;
         framerate: number;
         private cmpMesh;
@@ -168,7 +168,7 @@ declare namespace FudgeAid {
         /**
          * Show the next frame of the sequence or start anew when the end or the start was reached, according to the direction of playing
          */
-        showFrameNext: (_event: ƒ.EventTimer) => void;
+        showFrameNext: (_event: f.EventTimer) => void;
         /**
          * Sets the direction for animation playback, negativ numbers make it play backwards.
          */
@@ -280,7 +280,7 @@ declare namespace FudgeAid {
 }
 declare namespace FudgeAid {
     class Viewport {
-        static create(_branch: ƒ.Node): ƒ.Viewport;
-        static expandCameraToInteractiveOrbit(_viewport: ƒ.Viewport, _showFocus?: boolean, _speedCameraRotation?: number, _speedCameraTranslation?: number, _speedCameraDistance?: number): CameraOrbit;
+        static create(_branch: f.Node): f.Viewport;
+        static expandCameraToInteractiveOrbit(_viewport: f.Viewport, _showFocus?: boolean, _speedCameraRotation?: number, _speedCameraTranslation?: number, _speedCameraDistance?: number): CameraOrbit;
     }
 }
