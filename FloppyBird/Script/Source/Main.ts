@@ -2,6 +2,8 @@ namespace FloppyBird {
     import f = FudgeCore;
     f.Debug.info("Main Program Template running!");
 
+    let elapsedGameTime: number = 0;
+
     // Global components
     let viewportRef: f.Viewport;
     export let floppyBird: f.Node;
@@ -44,8 +46,25 @@ namespace FloppyBird {
     function update(_event: Event): void {
         f.Physics.simulate();
         const deltaTime: number = f.Loop.timeFrameGame / 1000;
+        elapsedGameTime += deltaTime;
+        
+        // Wiggle FloppyBird with sine function
+        // floppyBird.mtxLocal.rotateZ(180 * Math.sin(elapsedGameTime * 2));
+        // floppyBird.mtxLocal.rotateX(180 * Math.sin(elapsedGameTime * 1.5));
 
         //Controls
+        updateControls();
+
+        // Update tubes
+        updateTubes(deltaTime);
+
+        // Draw viewport
+        viewportRef.draw();
+        f.AudioManager.default.update();
+    }
+
+    // Update controls
+    function updateControls(): void {
         rigidbodyFloppyBird = floppyBird.getComponent(f.ComponentRigidbody);
         if (f.Keyboard.isPressedOne([f.KEYBOARD_CODE.SPACE])) {
             if (!isSpaceKeyAlreadyPressed) {
@@ -55,7 +74,10 @@ namespace FloppyBird {
         } else {
             isSpaceKeyAlreadyPressed = false;
         }
+    }
 
+    // Update the tubes
+    function updateTubes(deltaTime: number): void {
         // Move Tubes to the left
         tubesCollection.getChildren().forEach((eachTubeNode) => {
             eachTubeNode.mtxLocal.translateX(-Tube.tubeSpeed * deltaTime);
@@ -76,9 +98,5 @@ namespace FloppyBird {
             // Reset timer
             tubesTimer = 0;
         }
-
-        // Draw viewport
-        viewportRef.draw();
-        f.AudioManager.default.update();
     }
 }

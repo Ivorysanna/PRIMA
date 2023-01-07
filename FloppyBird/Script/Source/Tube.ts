@@ -1,15 +1,13 @@
 namespace FloppyBird {
     import f = FudgeCore;
 
-    // interface Values {
-    //     tubeSpeed: number;
-    // }
-
     export class Tube extends f.Node {
-        public static readonly tubesIntervalSeconds: number = 1;
-        public static readonly tubeSpeed = 0.8;
+        // Constants
+        public static readonly tubesIntervalSeconds: number = 2;
+        public static readonly tubeSpeed = 0.5;
         public static readonly tubeYDeviation = 0.7;
 
+        // Mesh and material
         private readonly tubeMesh = new f.MeshObj("TubeMesh", "Assets/tube.obj");
         private readonly tubeMaterial = new f.Material("Tubes", f.ShaderFlat);
 
@@ -22,6 +20,11 @@ namespace FloppyBird {
 
             // Set pivot point
             this.getComponent(f.ComponentMesh).mtxPivot.translateY(-2.25);
+
+            // Add Collider
+            const rigidbody: f.ComponentRigidbody = new f.ComponentRigidbody(0, f.BODY_TYPE.KINEMATIC, f.COLLIDER_TYPE.CYLINDER);
+            rigidbody.setScaling(new f.Vector3(0.2, 0.23, 0.1));
+            this.addComponent(rigidbody);
 
             // TODO add collider component
 
@@ -42,7 +45,7 @@ namespace FloppyBird {
             tubes.push(tubeLower);
 
             // Randomize gap size
-            const randomGapSize: number = Math.random() * 0.15 + 0.18;
+            const randomGapSize: number = Math.random() * 0.05 + 0.4;
 
             const tubeUpper = new Tube(true);
             tubeUpper.mtxLocal.translateY(randomSpawnPosition - randomGapSize);
@@ -51,7 +54,7 @@ namespace FloppyBird {
 
             // Move tubes to their starting position (offscreen)
             tubes.forEach((tube) => {
-                tube.mtxLocal.translateX(2);
+                tube.mtxLocal.translateX(1.8);
             });
 
             return tubes;

@@ -49,6 +49,7 @@ var FloppyBird;
 (function (FloppyBird) {
     var f = FudgeCore;
     f.Debug.info("Main Program Template running!");
+    let elapsedGameTime = 0;
     // Global components
     let viewportRef;
     let rigidbodyFloppyBird;
@@ -81,7 +82,20 @@ var FloppyBird;
     function update(_event) {
         f.Physics.simulate();
         const deltaTime = f.Loop.timeFrameGame / 1000;
+        elapsedGameTime += deltaTime;
+        // Wiggle FloppyBird with sine function
+        // floppyBird.mtxLocal.rotateZ(180 * Math.sin(elapsedGameTime * 2));
+        // floppyBird.mtxLocal.rotateX(180 * Math.sin(elapsedGameTime * 1.5));
         //Controls
+        updateControls();
+        // Update tubes
+        updateTubes(deltaTime);
+        // Draw viewport
+        viewportRef.draw();
+        f.AudioManager.default.update();
+    }
+    // Update controls
+    function updateControls() {
         rigidbodyFloppyBird = FloppyBird.floppyBird.getComponent(f.ComponentRigidbody);
         if (f.Keyboard.isPressedOne([f.KEYBOARD_CODE.SPACE])) {
             if (!isSpaceKeyAlreadyPressed) {
@@ -92,6 +106,9 @@ var FloppyBird;
         else {
             isSpaceKeyAlreadyPressed = false;
         }
+    }
+    // Update the tubes
+    function updateTubes(deltaTime) {
         // Move Tubes to the left
         tubesCollection.getChildren().forEach((eachTubeNode) => {
             eachTubeNode.mtxLocal.translateX(-FloppyBird.Tube.tubeSpeed * deltaTime);
@@ -109,21 +126,17 @@ var FloppyBird;
             // Reset timer
             tubesTimer = 0;
         }
-        // Draw viewport
-        viewportRef.draw();
-        f.AudioManager.default.update();
     }
 })(FloppyBird || (FloppyBird = {}));
 var FloppyBird;
 (function (FloppyBird) {
     var f = FudgeCore;
-    // interface Values {
-    //     tubeSpeed: number;
-    // }
     class Tube extends f.Node {
-        static tubesIntervalSeconds = 1;
-        static tubeSpeed = 0.8;
+        // Constants
+        static tubesIntervalSeconds = 2;
+        static tubeSpeed = 0.5;
         static tubeYDeviation = 0.7;
+        // Mesh and material
         tubeMesh = new f.MeshObj("TubeMesh", "Assets/tube.obj");
         tubeMaterial = new f.Material("Tubes", f.ShaderFlat);
         constructor(isRotatedDownward = false) {
@@ -133,6 +146,10 @@ var FloppyBird;
             this.addComponent(new f.ComponentTransform());
             // Set pivot point
             this.getComponent(f.ComponentMesh).mtxPivot.translateY(-2.25);
+            // Add Collider
+            const rigidbody = new f.ComponentRigidbody(0, f.BODY_TYPE.KINEMATIC, f.COLLIDER_TYPE.CYLINDER);
+            rigidbody.setScaling(new f.Vector3(0.2, 0.23, 0.1));
+            this.addComponent(rigidbody);
             // TODO add collider component
             if (isRotatedDownward) {
                 this.mtxLocal.rotateX(180);
@@ -147,13 +164,13 @@ var FloppyBird;
             tubeLower.mtxLocal.translateY(-randomSpawnPosition);
             tubes.push(tubeLower);
             // Randomize gap size
-            const randomGapSize = Math.random() * 0.15 + 0.18;
+            const randomGapSize = Math.random() * 0.05 + 0.4;
             const tubeUpper = new Tube(true);
             tubeUpper.mtxLocal.translateY(randomSpawnPosition - randomGapSize);
             tubes.push(tubeUpper);
             // Move tubes to their starting position (offscreen)
             tubes.forEach((tube) => {
-                tube.mtxLocal.translateX(2);
+                tube.mtxLocal.translateX(1.8);
             });
             return tubes;
         }
