@@ -22,7 +22,8 @@ declare namespace FloppyBird {
     import f = FudgeCore;
     class Tube extends f.Node {
         static readonly tubesIntervalSeconds: number;
-        static readonly tubeSpeed = 1;
+        static readonly tubeSpeed = 0.8;
+        static readonly tubeYDeviation = 0.7;
         private readonly tubeMesh;
         private readonly tubeMaterial;
         constructor(isRotatedDownward?: boolean);

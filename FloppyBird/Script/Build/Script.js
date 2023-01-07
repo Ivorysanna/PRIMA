@@ -122,7 +122,8 @@ var FloppyBird;
     // }
     class Tube extends f.Node {
         static tubesIntervalSeconds = 1;
-        static tubeSpeed = 1;
+        static tubeSpeed = 0.8;
+        static tubeYDeviation = 0.7;
         tubeMesh = new f.MeshObj("TubeMesh", "Assets/tube.obj");
         tubeMaterial = new f.Material("Tubes", f.ShaderFlat);
         constructor(isRotatedDownward = false) {
@@ -130,6 +131,8 @@ var FloppyBird;
             this.addComponent(new f.ComponentMesh(this.tubeMesh));
             this.addComponent(new f.ComponentMaterial(this.tubeMaterial));
             this.addComponent(new f.ComponentTransform());
+            // Set pivot point
+            this.getComponent(f.ComponentMesh).mtxPivot.translateY(-2.25);
             // TODO add collider component
             if (isRotatedDownward) {
                 this.mtxLocal.rotateX(180);
@@ -138,19 +141,17 @@ var FloppyBird;
         static createTubes() {
             const tubes = [];
             // Randomize spawn position
-            // let randomSpawnPosition: number = Math.random() * 2 - 1;
-            let randomSpawnPosition = 0;
+            const randomSpawnPosition = Math.random() * 2 * this.tubeYDeviation - this.tubeYDeviation;
             // Spawn and add two new tubes
-            let tubeLower = new Tube();
-            tubeLower.mtxLocal.translateY(randomSpawnPosition);
+            const tubeLower = new Tube();
+            tubeLower.mtxLocal.translateY(-randomSpawnPosition);
             tubes.push(tubeLower);
             // Randomize gap size
-            // let randomGapSize: number = Math.random() * 0.1 + 1.5;
-            let randomGapSize = 0;
-            let tubeUpper = new Tube(true);
-            // TODO: remove magic number
-            tubeUpper.mtxLocal.translateY(-randomSpawnPosition - randomGapSize);
+            const randomGapSize = Math.random() * 0.15 + 0.18;
+            const tubeUpper = new Tube(true);
+            tubeUpper.mtxLocal.translateY(randomSpawnPosition - randomGapSize);
             tubes.push(tubeUpper);
+            // Move tubes to their starting position (offscreen)
             tubes.forEach((tube) => {
                 tube.mtxLocal.translateX(2);
             });
