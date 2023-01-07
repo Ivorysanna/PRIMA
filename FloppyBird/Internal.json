@@ -63,6 +63,31 @@
               }
             }
           }
+        ],
+        "ComponentCamera": [
+          {
+            "ƒ.ComponentCamera": {
+              "backgroundColor": {
+                "r": 0,
+                "g": 0,
+                "b": 0,
+                "a": 1
+              },
+              "backgroundEnabled": true,
+              "projection": "central",
+              "fieldOfView": 45,
+              "direction": "diagonal",
+              "aspect": 1,
+              "pivot": {
+                "translation": "[3, 1, 0]",
+                "rotation": "[0, 0, 0]",
+                "scaling": "[0, 1, 1]"
+              },
+              "Component": {
+                "active": true
+              }
+            }
+          }
         ]
       },
       "children": [

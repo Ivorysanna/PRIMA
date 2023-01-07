@@ -27,6 +27,12 @@ namespace FloppyBird {
         viewportRef = _event.detail;
         floppyBird = viewportRef.getBranch().getChildrenByName("FloppyBirdBody")[0];
 
+        //Initialize Camera
+        let cmpCamera: f.ComponentCamera = new f.ComponentCamera();
+        cmpCamera.mtxPivot.translateZ(3);
+        cmpCamera.mtxPivot.rotateY(180);
+        viewportRef.camera = cmpCamera;
+
         // Get tubes collection
         tubesCollection = viewportRef.getBranch().getChildrenByName("Tubes")[0];
 
@@ -55,7 +61,7 @@ namespace FloppyBird {
             eachTubeNode.mtxLocal.translateX(-Tube.tubeSpeed * deltaTime);
 
             // Remove tube if it's out of the viewport
-            if (eachTubeNode.mtxLocal.translation.x < -10) {
+            if (eachTubeNode.mtxLocal.translation.x < -3) {
                 eachTubeNode.getParent().removeChild(eachTubeNode);
             }
         });

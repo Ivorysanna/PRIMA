@@ -67,6 +67,11 @@ var FloppyBird;
         // Get viewport and floppybird reference
         viewportRef = _event.detail;
         FloppyBird.floppyBird = viewportRef.getBranch().getChildrenByName("FloppyBirdBody")[0];
+        //Initialize Camera
+        let cmpCamera = new f.ComponentCamera();
+        cmpCamera.mtxPivot.translateZ(3);
+        cmpCamera.mtxPivot.rotateY(180);
+        viewportRef.camera = cmpCamera;
         // Get tubes collection
         tubesCollection = viewportRef.getBranch().getChildrenByName("Tubes")[0];
         // Start frame loop
@@ -91,7 +96,7 @@ var FloppyBird;
         tubesCollection.getChildren().forEach((eachTubeNode) => {
             eachTubeNode.mtxLocal.translateX(-FloppyBird.Tube.tubeSpeed * deltaTime);
             // Remove tube if it's out of the viewport
-            if (eachTubeNode.mtxLocal.translation.x < -10) {
+            if (eachTubeNode.mtxLocal.translation.x < -3) {
                 eachTubeNode.getParent().removeChild(eachTubeNode);
             }
         });
@@ -133,19 +138,21 @@ var FloppyBird;
         static createTubes() {
             const tubes = [];
             // Randomize spawn position
-            let randomSpawnPosition = Math.random() * 2 - 1;
+            // let randomSpawnPosition: number = Math.random() * 2 - 1;
+            let randomSpawnPosition = 0;
             // Spawn and add two new tubes
             let tubeLower = new Tube();
             tubeLower.mtxLocal.translateY(randomSpawnPosition);
             tubes.push(tubeLower);
             // Randomize gap size
-            let randomGapSize = Math.random() * 0.1 + 1.5;
+            // let randomGapSize: number = Math.random() * 0.1 + 1.5;
+            let randomGapSize = 0;
             let tubeUpper = new Tube(true);
             // TODO: remove magic number
             tubeUpper.mtxLocal.translateY(-randomSpawnPosition - randomGapSize);
             tubes.push(tubeUpper);
             tubes.forEach((tube) => {
-                tube.mtxLocal.translateX(5);
+                tube.mtxLocal.translateX(2);
             });
             return tubes;
         }

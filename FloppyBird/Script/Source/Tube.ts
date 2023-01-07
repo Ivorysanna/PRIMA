@@ -30,7 +30,8 @@ namespace FloppyBird {
             const tubes: Tube[] = [];
 
             // Randomize spawn position
-            let randomSpawnPosition: number = Math.random() * 2 - 1;
+            // let randomSpawnPosition: number = Math.random() * 2 - 1;
+            let randomSpawnPosition: number = 0;
 
             // Spawn and add two new tubes
             let tubeLower = new Tube();
@@ -38,7 +39,8 @@ namespace FloppyBird {
             tubes.push(tubeLower);
 
             // Randomize gap size
-            let randomGapSize: number = Math.random() * 0.1 + 1.5;
+            // let randomGapSize: number = Math.random() * 0.1 + 1.5;
+            let randomGapSize: number = 0;
 
             let tubeUpper = new Tube(true);
             // TODO: remove magic number
@@ -46,7 +48,7 @@ namespace FloppyBird {
             tubes.push(tubeUpper);
 
             tubes.forEach((tube) => {
-                tube.mtxLocal.translateX(5);
+                tube.mtxLocal.translateX(2);
             });
 
             return tubes;
