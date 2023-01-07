@@ -59,12 +59,10 @@ var FloppyBird;
     // Add EventListener
     document.addEventListener("interactiveViewportStarted", start);
     // Controls
-    let isSpaceAlreadyPressed = false;
+    let isSpaceKeyAlreadyPressed = false;
     // Tubes stuff
     let tubesCollection;
     let tubesTimer = 0;
-    const tubesIntervalSeconds = 1;
-    const tubeSpeed = 1;
     function start(_event) {
         // Get viewport and floppybird reference
         viewportRef = _event.detail;
@@ -81,24 +79,28 @@ var FloppyBird;
         //Controls
         rigidbodyFloppyBird = FloppyBird.floppyBird.getComponent(f.ComponentRigidbody);
         if (f.Keyboard.isPressedOne([f.KEYBOARD_CODE.SPACE])) {
-            if (!isSpaceAlreadyPressed) {
+            if (!isSpaceKeyAlreadyPressed) {
                 rigidbodyFloppyBird.applyLinearImpulse(jumpForce);
-                isSpaceAlreadyPressed = true;
+                isSpaceKeyAlreadyPressed = true;
             }
         }
         else {
-            isSpaceAlreadyPressed = false;
+            isSpaceKeyAlreadyPressed = false;
         }
         // Move Tubes to the left
         tubesCollection.getChildren().forEach((eachTubeNode) => {
-            eachTubeNode.mtxLocal.translateX(-tubeSpeed * deltaTime);
+            eachTubeNode.mtxLocal.translateX(-FloppyBird.Tube.tubeSpeed * deltaTime);
+            // Remove tube if it's out of the viewport
+            if (eachTubeNode.mtxLocal.translation.x < -10) {
+                eachTubeNode.getParent().removeChild(eachTubeNode);
+            }
         });
         // Increase timer and spawn new tube
         tubesTimer += deltaTime;
-        if (tubesTimer > tubesIntervalSeconds) {
-            // Spawn and add new tube
-            let tube = new FloppyBird.Tube();
-            tubesCollection.addChild(tube);
+        if (tubesTimer > FloppyBird.Tube.tubesIntervalSeconds) {
+            FloppyBird.Tube.createTubes().forEach((eachNewTube) => {
+                tubesCollection.addChild(eachNewTube);
+            });
             // Reset timer
             tubesTimer = 0;
         }
@@ -110,14 +112,42 @@ var FloppyBird;
 var FloppyBird;
 (function (FloppyBird) {
     var f = FudgeCore;
+    // interface Values {
+    //     tubeSpeed: number;
+    // }
     class Tube extends f.Node {
-        mesh = new f.MeshObj("TubeMesh", "Assets/tube.obj");
-        mat = new f.Material("Tubes", f.ShaderFlat);
-        constructor() {
+        static tubesIntervalSeconds = 1;
+        static tubeSpeed = 1;
+        tubeMesh = new f.MeshObj("TubeMesh", "Assets/tube.obj");
+        tubeMaterial = new f.Material("Tubes", f.ShaderFlat);
+        constructor(isRotatedDownward = false) {
             super("Tube");
-            this.addComponent(new f.ComponentMesh(this.mesh));
-            this.addComponent(new f.ComponentMaterial(this.mat));
+            this.addComponent(new f.ComponentMesh(this.tubeMesh));
+            this.addComponent(new f.ComponentMaterial(this.tubeMaterial));
             this.addComponent(new f.ComponentTransform());
+            // TODO add collider component
+            if (isRotatedDownward) {
+                this.mtxLocal.rotateX(180);
+            }
+        }
+        static createTubes() {
+            const tubes = [];
+            // Randomize spawn position
+            let randomSpawnPosition = Math.random() * 2 - 1;
+            // Spawn and add two new tubes
+            let tubeLower = new Tube();
+            tubeLower.mtxLocal.translateY(randomSpawnPosition);
+            tubes.push(tubeLower);
+            // Randomize gap size
+            let randomGapSize = Math.random() * 0.1 + 1.5;
+            let tubeUpper = new Tube(true);
+            // TODO: remove magic number
+            tubeUpper.mtxLocal.translateY(-randomSpawnPosition - randomGapSize);
+            tubes.push(tubeUpper);
+            tubes.forEach((tube) => {
+                tube.mtxLocal.translateX(5);
+            });
+            return tubes;
         }
     }
     FloppyBird.Tube = Tube;

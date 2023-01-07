@@ -16,13 +16,11 @@ namespace FloppyBird {
     document.addEventListener("interactiveViewportStarted", <EventListener>start);
 
     // Controls
-    let isSpaceAlreadyPressed: boolean = false;
+    let isSpaceKeyAlreadyPressed: boolean = false;
 
     // Tubes stuff
     let tubesCollection: f.Node;
     let tubesTimer: number = 0;
-    const tubesIntervalSeconds: number = 1;
-    const tubeSpeed = 1;
 
     function start(_event: CustomEvent): void {
         // Get viewport and floppybird reference
@@ -44,25 +42,30 @@ namespace FloppyBird {
         //Controls
         rigidbodyFloppyBird = floppyBird.getComponent(f.ComponentRigidbody);
         if (f.Keyboard.isPressedOne([f.KEYBOARD_CODE.SPACE])) {
-            if (!isSpaceAlreadyPressed) {
+            if (!isSpaceKeyAlreadyPressed) {
                 rigidbodyFloppyBird.applyLinearImpulse(jumpForce);
-                isSpaceAlreadyPressed = true;
+                isSpaceKeyAlreadyPressed = true;
             }
         } else {
-            isSpaceAlreadyPressed = false;
+            isSpaceKeyAlreadyPressed = false;
         }
 
         // Move Tubes to the left
         tubesCollection.getChildren().forEach((eachTubeNode) => {
-            eachTubeNode.mtxLocal.translateX(-tubeSpeed * deltaTime);
+            eachTubeNode.mtxLocal.translateX(-Tube.tubeSpeed * deltaTime);
+
+            // Remove tube if it's out of the viewport
+            if (eachTubeNode.mtxLocal.translation.x < -10) {
+                eachTubeNode.getParent().removeChild(eachTubeNode);
+            }
         });
 
         // Increase timer and spawn new tube
         tubesTimer += deltaTime;
-        if (tubesTimer > tubesIntervalSeconds) {
-            // Spawn and add new tube
-            let tube: f.Node = new Tube();
-            tubesCollection.addChild(tube);
+        if (tubesTimer > Tube.tubesIntervalSeconds) {
+            Tube.createTubes().forEach((eachNewTube) => {
+                tubesCollection.addChild(eachNewTube);
+            });
 
             // Reset timer
             tubesTimer = 0;
