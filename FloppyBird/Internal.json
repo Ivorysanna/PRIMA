@@ -95,7 +95,12 @@
           "ƒ.Node": {
             "name": "Tubes",
             "active": true,
-            "components": {},
+            "components": {
+              "ComponentMesh": [],
+              "ComponentMaterial": [],
+              "ComponentTransform": [],
+              "ComponentRigidbody": []
+            },
             "children": []
           }
         },
@@ -233,6 +238,14 @@
       ],
       "idResource": "Graph|2022-12-19T10:41:32.893Z|77657",
       "type": "Graph"
+    }
+  },
+  "MeshObj|2023-01-07T20:32:28.744Z|58192": {
+    "ƒ.MeshObj": {
+      "idResource": "MeshObj|2023-01-07T20:32:28.744Z|58192",
+      "name": "Assets\\tube.obj",
+      "type": "MeshObj",
+      "url": "Assets\\tube.obj"
     }
   }
 }

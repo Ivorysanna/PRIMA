@@ -149,6 +149,7 @@ var FloppyBird;
             // Add Collider
             const rigidbody = new f.ComponentRigidbody(0, f.BODY_TYPE.KINEMATIC, f.COLLIDER_TYPE.CYLINDER);
             rigidbody.setScaling(new f.Vector3(0.2, 0.23, 0.1));
+            rigidbody.setPosition(new f.Vector3(0, 0.9, 0));
             this.addComponent(rigidbody);
             // TODO add collider component
             if (isRotatedDownward) {
