@@ -28,5 +28,6 @@ declare namespace FloppyBird {
         private readonly tubeMaterial;
         constructor(isRotatedDownward?: boolean);
         static createTubes(): Tube[];
+        static createTube(): void;
     }
 }

@@ -17,16 +17,17 @@ namespace FloppyBird {
             this.addComponent(new f.ComponentMesh(this.tubeMesh));
             this.addComponent(new f.ComponentMaterial(this.tubeMaterial));
             this.addComponent(new f.ComponentTransform());
-
+            
             // Set pivot point
             this.getComponent(f.ComponentMesh).mtxPivot.translateY(-2.25);
-
+            
             // Add Collider
-            const rigidbody: f.ComponentRigidbody = new f.ComponentRigidbody(0, f.BODY_TYPE.KINEMATIC, f.COLLIDER_TYPE.CYLINDER);
-            let oldCollider: OIMO.Shape = rigidbody.getShapeList();
-            rigidbody.setScaling(new f.Vector3(1, 2, 2));
-            rigidbody.setPosition(new f.Vector3(0, 0, 0));
+            let rigidbody: f.ComponentRigidbody = new f.ComponentRigidbody(0, f.BODY_TYPE.KINEMATIC, f.COLLIDER_TYPE.CYLINDER, f.COLLISION_GROUP.DEFAULT, new f.Matrix4x4());
+            // let oldCollider: OIMO.Shape = rigidbody.getShapeList();
+            rigidbody.mtxPivot.scale(new f.Vector3(0.22, 2.234, 1));
+            rigidbody.mtxPivot.translate(new f.Vector3(0.01, -0.53, 0));
             this.addComponent(rigidbody);
+            
 
             // TODO add collider component
 
@@ -60,6 +61,10 @@ namespace FloppyBird {
             });
 
             return tubes;
+        }
+
+        public static createTube(): void {
+            let tubeGraph: f.Graph = <f.Graph>f.Project.resources["Graph|2023-02-12T12:53:21.592Z|23010"];
         }
     }
 }
