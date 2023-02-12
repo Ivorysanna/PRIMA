@@ -27,6 +27,7 @@ namespace FloppyBird {
     function start(_event: CustomEvent): void {
         // Get viewport and floppybird reference
         viewportRef = _event.detail;
+        viewportRef.physicsDebugMode = f.PHYSICS_DEBUGMODE.COLLIDERS;
         floppyBird = viewportRef.getBranch().getChildrenByName("FloppyBirdBody")[0];
 
         //Initialize Camera

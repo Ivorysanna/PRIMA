@@ -67,6 +67,7 @@ var FloppyBird;
     function start(_event) {
         // Get viewport and floppybird reference
         viewportRef = _event.detail;
+        viewportRef.physicsDebugMode = f.PHYSICS_DEBUGMODE.COLLIDERS;
         FloppyBird.floppyBird = viewportRef.getBranch().getChildrenByName("FloppyBirdBody")[0];
         //Initialize Camera
         let cmpCamera = new f.ComponentCamera();
@@ -148,8 +149,9 @@ var FloppyBird;
             this.getComponent(f.ComponentMesh).mtxPivot.translateY(-2.25);
             // Add Collider
             const rigidbody = new f.ComponentRigidbody(0, f.BODY_TYPE.KINEMATIC, f.COLLIDER_TYPE.CYLINDER);
-            rigidbody.setScaling(new f.Vector3(0.2, 0.23, 0.1));
-            rigidbody.setPosition(new f.Vector3(0, 0.9, 0));
+            let oldCollider = rigidbody.getShapeList();
+            rigidbody.setScaling(new f.Vector3(1, 2, 2));
+            rigidbody.setPosition(new f.Vector3(0, 0, 0));
             this.addComponent(rigidbody);
             // TODO add collider component
             if (isRotatedDownward) {
