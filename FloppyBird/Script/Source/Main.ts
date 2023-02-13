@@ -29,6 +29,7 @@ namespace FloppyBird {
         viewportRef = _event.detail;
         viewportRef.physicsDebugMode = f.PHYSICS_DEBUGMODE.COLLIDERS;
         floppyBird = viewportRef.getBranch().getChildrenByName("FloppyBirdBody")[0];
+        rigidbodyFloppyBird = floppyBird.getComponent(f.ComponentRigidbody);
 
         //Initialize Camera
         let cmpCamera: f.ComponentCamera = new f.ComponentCamera();
@@ -55,6 +56,7 @@ namespace FloppyBird {
 
         //Controls
         updateControls();
+        checkFloppyBirdCollision();
 
         // Update tubes
         updateTubes(deltaTime);
@@ -66,7 +68,6 @@ namespace FloppyBird {
 
     // Update controls
     function updateControls(): void {
-        rigidbodyFloppyBird = floppyBird.getComponent(f.ComponentRigidbody);
         if (f.Keyboard.isPressedOne([f.KEYBOARD_CODE.SPACE])) {
             if (!isSpaceKeyAlreadyPressed) {
                 rigidbodyFloppyBird.applyLinearImpulse(jumpForce);
@@ -75,6 +76,14 @@ namespace FloppyBird {
         } else {
             isSpaceKeyAlreadyPressed = false;
         }
+    }
+
+    function checkFloppyBirdCollision(): void {
+        rigidbodyFloppyBird.collisions.forEach((eachCollision) => {
+            if(eachCollision.node.name == "Tube"){
+                console.log(eachCollision);
+              }
+        });
     }
 
     // Update the tubes

@@ -69,6 +69,7 @@ var FloppyBird;
         viewportRef = _event.detail;
         viewportRef.physicsDebugMode = f.PHYSICS_DEBUGMODE.COLLIDERS;
         FloppyBird.floppyBird = viewportRef.getBranch().getChildrenByName("FloppyBirdBody")[0];
+        rigidbodyFloppyBird = FloppyBird.floppyBird.getComponent(f.ComponentRigidbody);
         //Initialize Camera
         let cmpCamera = new f.ComponentCamera();
         cmpCamera.mtxPivot.translateZ(3);
@@ -89,6 +90,7 @@ var FloppyBird;
         // floppyBird.mtxLocal.rotateX(180 * Math.sin(elapsedGameTime * 1.5));
         //Controls
         updateControls();
+        checkFloppyBirdCollision();
         // Update tubes
         updateTubes(deltaTime);
         // Draw viewport
@@ -97,7 +99,6 @@ var FloppyBird;
     }
     // Update controls
     function updateControls() {
-        rigidbodyFloppyBird = FloppyBird.floppyBird.getComponent(f.ComponentRigidbody);
         if (f.Keyboard.isPressedOne([f.KEYBOARD_CODE.SPACE])) {
             if (!isSpaceKeyAlreadyPressed) {
                 rigidbodyFloppyBird.applyLinearImpulse(jumpForce);
@@ -107,6 +108,13 @@ var FloppyBird;
         else {
             isSpaceKeyAlreadyPressed = false;
         }
+    }
+    function checkFloppyBirdCollision() {
+        rigidbodyFloppyBird.collisions.forEach((eachCollision) => {
+            if (eachCollision.node.name == "Tube") {
+                console.log(eachCollision);
+            }
+        });
     }
     // Update the tubes
     function updateTubes(deltaTime) {
