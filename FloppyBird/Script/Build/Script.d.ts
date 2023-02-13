@@ -49,8 +49,8 @@ declare namespace FloppyBird {
     import f = FudgeCore;
     class ScrollingBackground extends f.Node {
         static readonly backgroundVelocity: number;
-        constructor(_y: number);
-        moveBackground(_movement: number): void;
+        constructor(xOffset: number);
+        moveBackground(amountToMove: number): void;
     }
 }
 declare namespace FloppyBird {

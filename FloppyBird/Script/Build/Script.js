@@ -121,7 +121,10 @@ var FloppyBird;
         viewportRef.physicsDebugMode = f.PHYSICS_DEBUGMODE.COLLIDERS;
         FloppyBird.floppyBird = viewportRef.getBranch().getChildrenByName("FloppyBirdBody")[0];
         rigidbodyFloppyBird = FloppyBird.floppyBird.getComponent(f.ComponentRigidbody);
+        viewportRef.getBranch().appendChild(backGroundNode);
         backGroundNode.appendChild(new FloppyBird.ScrollingBackground(0));
+        backGroundNode.appendChild(new FloppyBird.ScrollingBackground(11));
+        backGroundNode.appendChild(new FloppyBird.ScrollingBackground(22));
         //Initialize Camera
         let cmpCamera = new f.ComponentCamera();
         cmpCamera.mtxPivot.translateZ(3);
@@ -204,9 +207,9 @@ var FloppyBird;
         const backgrounds = backGroundNode.getChildren();
         backgrounds.forEach((eachBackground) => {
             eachBackground.moveBackground(-FloppyBird.ScrollingBackground.backgroundVelocity);
-            if (eachBackground.mtxLocal.translation.y <= -22) {
+            if (eachBackground.mtxLocal.translation.x <= -22) {
                 backGroundNode.removeChild(eachBackground);
-                backGroundNode.appendChild(new FloppyBird.ScrollingBackground(0));
+                backGroundNode.appendChild(new FloppyBird.ScrollingBackground(22));
             }
         });
     }
@@ -216,12 +219,12 @@ var FloppyBird;
     var f = FudgeCore;
     class ScrollingBackground extends f.Node {
         static backgroundVelocity = 0.5;
-        constructor(_y) {
+        constructor(xOffset) {
             super("Background");
             this.addComponent(new f.ComponentTransform());
             this.mtxLocal.translateZ(-2);
-            this.mtxLocal.translateX(0);
-            this.mtxLocal.translateY(_y);
+            this.mtxLocal.translateY(0);
+            this.mtxLocal.translateX(xOffset);
             let backgroundMesh = new f.MeshSprite("BackgroundMesh");
             let backgroundMaterial = new f.Material("BackgroundMaterial", f.ShaderLitTextured, new f.CoatTextured(f.Color.CSS("WHITE"), new f.TextureImage("Assets/background.png")));
             let cmpMesh = new f.ComponentMesh(backgroundMesh);
@@ -230,9 +233,9 @@ var FloppyBird;
             this.getComponent(f.ComponentMesh).mtxPivot.scaleX(31);
             this.getComponent(f.ComponentMesh).mtxPivot.scaleY(22);
         }
-        moveBackground(_movement) {
+        moveBackground(amountToMove) {
             let timeSinceLastFrame = f.Loop.timeFrameReal / 1000;
-            this.mtxLocal.translateY(_movement * timeSinceLastFrame);
+            this.mtxLocal.translateX(amountToMove * timeSinceLastFrame);
         }
     }
     FloppyBird.ScrollingBackground = ScrollingBackground;

@@ -35,7 +35,11 @@ namespace FloppyBird {
         floppyBird = viewportRef.getBranch().getChildrenByName("FloppyBirdBody")[0];
         rigidbodyFloppyBird = floppyBird.getComponent(f.ComponentRigidbody);
 
+        viewportRef.getBranch().appendChild(backGroundNode);
+
         backGroundNode.appendChild(new ScrollingBackground(0));
+        backGroundNode.appendChild(new ScrollingBackground(11));
+        backGroundNode.appendChild(new ScrollingBackground(22));
 
         //Initialize Camera
         let cmpCamera: f.ComponentCamera = new f.ComponentCamera();
@@ -136,9 +140,9 @@ namespace FloppyBird {
         backgrounds.forEach((eachBackground) => {
             eachBackground.moveBackground(-ScrollingBackground.backgroundVelocity);
 
-            if (eachBackground.mtxLocal.translation.y <= -22) {
+            if (eachBackground.mtxLocal.translation.x <= -22) {
                 backGroundNode.removeChild(eachBackground);
-                backGroundNode.appendChild(new ScrollingBackground(0));
+                backGroundNode.appendChild(new ScrollingBackground(22));
             }
         });
     }
