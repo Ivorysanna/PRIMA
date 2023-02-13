@@ -3,6 +3,7 @@ namespace FloppyBird {
     f.Debug.info("Main Program Template running!");
 
     let elapsedGameTime: number = 0;
+    let backGroundNode: f.Node = new f.Node("Background");
 
     // Global components
     let viewportRef: f.Viewport;
@@ -24,6 +25,9 @@ namespace FloppyBird {
     let tubesCollection: f.Node;
     let tubesTimer: number = 0;
 
+    // Game flow
+    let isGameOver: boolean = false;
+
     function start(_event: CustomEvent): void {
         // Get viewport and floppybird reference
         viewportRef = _event.detail;
@@ -31,11 +35,16 @@ namespace FloppyBird {
         floppyBird = viewportRef.getBranch().getChildrenByName("FloppyBirdBody")[0];
         rigidbodyFloppyBird = floppyBird.getComponent(f.ComponentRigidbody);
 
+        backGroundNode.appendChild(new ScrollingBackground(0));
+
         //Initialize Camera
         let cmpCamera: f.ComponentCamera = new f.ComponentCamera();
         cmpCamera.mtxPivot.translateZ(3);
         cmpCamera.mtxPivot.rotateY(180);
         viewportRef.camera = cmpCamera;
+
+        // Initialize Audio
+        AudioManager.getInstance().initializeAudio();
 
         // Get tubes collection
         tubesCollection = viewportRef.getBranch().getChildrenByName("Tubes")[0];
@@ -49,17 +58,23 @@ namespace FloppyBird {
         f.Physics.simulate();
         const deltaTime: number = f.Loop.timeFrameGame / 1000;
         elapsedGameTime += deltaTime;
-        
+
         // Wiggle FloppyBird with sine function
-        // floppyBird.mtxLocal.rotateZ(180 * Math.sin(elapsedGameTime * 2));
-        // floppyBird.mtxLocal.rotateX(180 * Math.sin(elapsedGameTime * 1.5));
+        floppyBird.mtxLocal.rotateZ(180 * Math.sin(elapsedGameTime * 2));
+        floppyBird.mtxLocal.rotateX(180 * Math.sin(elapsedGameTime * 1.5));
 
-        //Controls
-        updateControls();
-        checkFloppyBirdCollision();
+        if (!isGameOver) {
+            //Controls
+            updateControls();
 
-        // Update tubes
-        updateTubes(deltaTime);
+            // Update tubes
+            updateTubes(deltaTime);
+
+            checkFloppyBirdCollision();
+
+            // Move the backgrounds
+            moveBackgrounds();
+        }
 
         // Draw viewport
         viewportRef.draw();
@@ -67,10 +82,12 @@ namespace FloppyBird {
     }
 
     // Update controls
+    // TODO: Das hier vllt noch in eine FloppyBird.ts auslagern oder so
     function updateControls(): void {
         if (f.Keyboard.isPressedOne([f.KEYBOARD_CODE.SPACE])) {
             if (!isSpaceKeyAlreadyPressed) {
                 rigidbodyFloppyBird.applyLinearImpulse(jumpForce);
+                AudioManager.getInstance().playFlapSound();
                 isSpaceKeyAlreadyPressed = true;
             }
         } else {
@@ -80,9 +97,13 @@ namespace FloppyBird {
 
     function checkFloppyBirdCollision(): void {
         rigidbodyFloppyBird.collisions.forEach((eachCollision) => {
-            if(eachCollision.node.name == "Tube"){
+            if (eachCollision.node.name == "Tube") {
                 console.log(eachCollision);
-              }
+                AudioManager.getInstance().playCollisionSound();
+                isGameOver = true;
+                alert("GAME OVER");
+                // TODO: Better Game Over Screen maybe?
+            }
         });
     }
 
@@ -98,15 +119,27 @@ namespace FloppyBird {
             }
         });
 
-        // Increase timer and spawn new tube
         tubesTimer += deltaTime;
         if (tubesTimer > Tube.tubesIntervalSeconds) {
-            Tube.createTubes().forEach((eachNewTube) => {
+            Tube.createSetOfTubes().forEach((eachNewTube) => {
                 tubesCollection.addChild(eachNewTube);
             });
 
-            // Reset timer
+            // Reset the tube spawn timer
             tubesTimer = 0;
         }
+    }
+
+    function moveBackgrounds() {
+        // TODO: Move the background images
+        const backgrounds: ScrollingBackground[] = <ScrollingBackground[]>backGroundNode.getChildren();
+        backgrounds.forEach((eachBackground) => {
+            eachBackground.moveBackground(-ScrollingBackground.backgroundVelocity);
+
+            if (eachBackground.mtxLocal.translation.y <= -22) {
+                backGroundNode.removeChild(eachBackground);
+                backGroundNode.appendChild(new ScrollingBackground(0));
+            }
+        });
     }
 }

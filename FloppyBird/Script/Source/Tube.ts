@@ -36,7 +36,7 @@ namespace FloppyBird {
             }
         }
 
-        public static createTubes(): Tube[] {
+        public static createSetOfTubes(): Tube[] {
             const tubes: Tube[] = [];
 
             // Randomize spawn position
@@ -60,11 +60,9 @@ namespace FloppyBird {
                 tube.mtxLocal.translateX(1.8);
             });
 
-            return tubes;
-        }
+            UIManager.getInstance().incrementScore();
 
-        public static createTube(): void {
-            let tubeGraph: f.Graph = <f.Graph>f.Project.resources["Graph|2023-02-12T12:53:21.592Z|23010"];
+            return tubes;
         }
     }
 }

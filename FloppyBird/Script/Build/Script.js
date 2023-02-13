@@ -2,6 +2,54 @@
 var FloppyBird;
 (function (FloppyBird) {
     var f = FudgeCore;
+    // https://refactoring.guru/design-patterns/singleton/typescript/example
+    class AudioManager {
+        static instance;
+        cmpAudio;
+        masterVolume = 1;
+        audioFileFlap;
+        audioFileCollision;
+        cmpAudioFileFlap;
+        cmpAudioFileCollision;
+        /**
+         * The Singleton's constructor should always be private to prevent direct
+         * construction calls with the `new` operator.
+         */
+        constructor() { }
+        /**
+         * The static method that controls the access to the singleton instance.
+         *
+         * This implementation let you subclass the Singleton class while keeping
+         * just one instance of each subclass around.
+         */
+        static getInstance() {
+            if (!AudioManager.instance) {
+                AudioManager.instance = new AudioManager();
+            }
+            return AudioManager.instance;
+        }
+        initializeAudio() {
+            this.audioFileFlap = new f.Audio("Sounds/wing.wav");
+            this.audioFileCollision = new f.Audio("Sounds/collision.wav");
+            this.cmpAudioFileFlap = new f.ComponentAudio(this.audioFileFlap, false, false);
+            this.cmpAudioFileFlap.connect(true);
+            this.cmpAudioFileFlap.volume = 1 * this.masterVolume;
+            this.cmpAudioFileCollision = new f.ComponentAudio(this.audioFileCollision, false, false);
+            this.cmpAudioFileCollision.connect(true);
+            this.cmpAudioFileCollision.volume = 1 * this.masterVolume;
+        }
+        playFlapSound() {
+            this.cmpAudioFileFlap.play(true);
+        }
+        playCollisionSound() {
+            this.cmpAudioFileCollision.play(true);
+        }
+    }
+    FloppyBird.AudioManager = AudioManager;
+})(FloppyBird || (FloppyBird = {}));
+var FloppyBird;
+(function (FloppyBird) {
+    var f = FudgeCore;
     f.Project.registerScriptNamespace(FloppyBird);
     class Avatar extends f.ComponentScript {
         static iSubclass = f.Component.registerSubclass(Avatar);
@@ -50,6 +98,7 @@ var FloppyBird;
     var f = FudgeCore;
     f.Debug.info("Main Program Template running!");
     let elapsedGameTime = 0;
+    let backGroundNode = new f.Node("Background");
     // Global components
     let viewportRef;
     let rigidbodyFloppyBird;
@@ -64,17 +113,22 @@ var FloppyBird;
     // Tubes stuff
     let tubesCollection;
     let tubesTimer = 0;
+    // Game flow
+    let isGameOver = false;
     function start(_event) {
         // Get viewport and floppybird reference
         viewportRef = _event.detail;
         viewportRef.physicsDebugMode = f.PHYSICS_DEBUGMODE.COLLIDERS;
         FloppyBird.floppyBird = viewportRef.getBranch().getChildrenByName("FloppyBirdBody")[0];
         rigidbodyFloppyBird = FloppyBird.floppyBird.getComponent(f.ComponentRigidbody);
+        backGroundNode.appendChild(new FloppyBird.ScrollingBackground(0));
         //Initialize Camera
         let cmpCamera = new f.ComponentCamera();
         cmpCamera.mtxPivot.translateZ(3);
         cmpCamera.mtxPivot.rotateY(180);
         viewportRef.camera = cmpCamera;
+        // Initialize Audio
+        FloppyBird.AudioManager.getInstance().initializeAudio();
         // Get tubes collection
         tubesCollection = viewportRef.getBranch().getChildrenByName("Tubes")[0];
         // Start frame loop
@@ -86,22 +140,28 @@ var FloppyBird;
         const deltaTime = f.Loop.timeFrameGame / 1000;
         elapsedGameTime += deltaTime;
         // Wiggle FloppyBird with sine function
-        // floppyBird.mtxLocal.rotateZ(180 * Math.sin(elapsedGameTime * 2));
-        // floppyBird.mtxLocal.rotateX(180 * Math.sin(elapsedGameTime * 1.5));
-        //Controls
-        updateControls();
-        checkFloppyBirdCollision();
-        // Update tubes
-        updateTubes(deltaTime);
+        FloppyBird.floppyBird.mtxLocal.rotateZ(180 * Math.sin(elapsedGameTime * 2));
+        FloppyBird.floppyBird.mtxLocal.rotateX(180 * Math.sin(elapsedGameTime * 1.5));
+        if (!isGameOver) {
+            //Controls
+            updateControls();
+            // Update tubes
+            updateTubes(deltaTime);
+            checkFloppyBirdCollision();
+            // Move the backgrounds
+            moveBackgrounds();
+        }
         // Draw viewport
         viewportRef.draw();
         f.AudioManager.default.update();
     }
     // Update controls
+    // TODO: Das hier vllt noch in eine FloppyBird.ts auslagern oder so
     function updateControls() {
         if (f.Keyboard.isPressedOne([f.KEYBOARD_CODE.SPACE])) {
             if (!isSpaceKeyAlreadyPressed) {
                 rigidbodyFloppyBird.applyLinearImpulse(jumpForce);
+                FloppyBird.AudioManager.getInstance().playFlapSound();
                 isSpaceKeyAlreadyPressed = true;
             }
         }
@@ -113,6 +173,10 @@ var FloppyBird;
         rigidbodyFloppyBird.collisions.forEach((eachCollision) => {
             if (eachCollision.node.name == "Tube") {
                 console.log(eachCollision);
+                FloppyBird.AudioManager.getInstance().playCollisionSound();
+                isGameOver = true;
+                alert("GAME OVER");
+                // TODO: Better Game Over Screen maybe?
             }
         });
     }
@@ -126,16 +190,52 @@ var FloppyBird;
                 eachTubeNode.getParent().removeChild(eachTubeNode);
             }
         });
-        // Increase timer and spawn new tube
         tubesTimer += deltaTime;
         if (tubesTimer > FloppyBird.Tube.tubesIntervalSeconds) {
-            FloppyBird.Tube.createTubes().forEach((eachNewTube) => {
+            FloppyBird.Tube.createSetOfTubes().forEach((eachNewTube) => {
                 tubesCollection.addChild(eachNewTube);
             });
-            // Reset timer
+            // Reset the tube spawn timer
             tubesTimer = 0;
         }
     }
+    function moveBackgrounds() {
+        // TODO: Move the background images
+        const backgrounds = backGroundNode.getChildren();
+        backgrounds.forEach((eachBackground) => {
+            eachBackground.moveBackground(-FloppyBird.ScrollingBackground.backgroundVelocity);
+            if (eachBackground.mtxLocal.translation.y <= -22) {
+                backGroundNode.removeChild(eachBackground);
+                backGroundNode.appendChild(new FloppyBird.ScrollingBackground(0));
+            }
+        });
+    }
+})(FloppyBird || (FloppyBird = {}));
+var FloppyBird;
+(function (FloppyBird) {
+    var f = FudgeCore;
+    class ScrollingBackground extends f.Node {
+        static backgroundVelocity = 0.5;
+        constructor(_y) {
+            super("Background");
+            this.addComponent(new f.ComponentTransform());
+            this.mtxLocal.translateZ(-2);
+            this.mtxLocal.translateX(0);
+            this.mtxLocal.translateY(_y);
+            let backgroundMesh = new f.MeshSprite("BackgroundMesh");
+            let backgroundMaterial = new f.Material("BackgroundMaterial", f.ShaderLitTextured, new f.CoatTextured(f.Color.CSS("WHITE"), new f.TextureImage("Assets/background.png")));
+            let cmpMesh = new f.ComponentMesh(backgroundMesh);
+            this.addComponent(cmpMesh);
+            this.addComponent(new f.ComponentMaterial(backgroundMaterial));
+            this.getComponent(f.ComponentMesh).mtxPivot.scaleX(31);
+            this.getComponent(f.ComponentMesh).mtxPivot.scaleY(22);
+        }
+        moveBackground(_movement) {
+            let timeSinceLastFrame = f.Loop.timeFrameReal / 1000;
+            this.mtxLocal.translateY(_movement * timeSinceLastFrame);
+        }
+    }
+    FloppyBird.ScrollingBackground = ScrollingBackground;
 })(FloppyBird || (FloppyBird = {}));
 var FloppyBird;
 (function (FloppyBird) {
@@ -166,7 +266,7 @@ var FloppyBird;
                 this.mtxLocal.rotateX(180);
             }
         }
-        static createTubes() {
+        static createSetOfTubes() {
             const tubes = [];
             // Randomize spawn position
             const randomSpawnPosition = Math.random() * 2 * this.tubeYDeviation - this.tubeYDeviation;
@@ -183,12 +283,48 @@ var FloppyBird;
             tubes.forEach((tube) => {
                 tube.mtxLocal.translateX(1.8);
             });
+            FloppyBird.UIManager.getInstance().incrementScore();
             return tubes;
-        }
-        static createTube() {
-            let tubeGraph = f.Project.resources["Graph|2023-02-12T12:53:21.592Z|23010"];
         }
     }
     FloppyBird.Tube = Tube;
+})(FloppyBird || (FloppyBird = {}));
+var FloppyBird;
+(function (FloppyBird) {
+    // https://refactoring.guru/design-patterns/singleton/typescript/example
+    class UIManager {
+        static UI_ID = "UI";
+        static SCORE_ID = "score";
+        static instance;
+        _currentScore = 0;
+        constructor() { }
+        static getInstance() {
+            if (!UIManager.instance) {
+                UIManager.instance = new UIManager();
+            }
+            return UIManager.instance;
+        }
+        // Set only privately
+        set currentScore(score) {
+            this._currentScore = score;
+            document.getElementById(UIManager.SCORE_ID).innerHTML = score.toString();
+        }
+        get currentScore() {
+            return this._currentScore;
+        }
+        incrementScore() {
+            this.currentScore++;
+        }
+        resetScore() {
+            this.currentScore = 0;
+        }
+        hideUI() {
+            document.getElementById(UIManager.UI_ID).style.display = "none";
+        }
+        showUI() {
+            document.getElementById(UIManager.UI_ID).style.display = "block";
+        }
+    }
+    FloppyBird.UIManager = UIManager;
 })(FloppyBird || (FloppyBird = {}));
 //# sourceMappingURL=Script.js.map
