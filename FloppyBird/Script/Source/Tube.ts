@@ -13,8 +13,8 @@ namespace FloppyBird {
 
         // Mesh and material
         private readonly tubeMesh = new f.MeshObj("TubeMesh", "Assets/tube.obj");
-        // private readonly tubeMaterial = new f.Material("Tube", f.ShaderFlatTextured, new f.CoatTextured(f.Color.CSS("White"), Tube.tubeTexture));
-        private readonly tubeMaterial = new f.Material("Tubes", f.ShaderFlat);
+        private readonly tubeMaterial = new f.Material("Tube", f.ShaderFlatTextured, new f.CoatTextured(f.Color.CSS("White"), Tube.tubeTexture));
+        // private readonly tubeMaterial = new f.Material("Tubes", f.ShaderFlat);
         // private readonly tube: fAid.Node = new fAid.Node("Tube", f.Matrix4x4.IDENTITY(), this.tubeMaterial, this.tubeMesh);
 
         constructor(isRotatedDownward = false) {
