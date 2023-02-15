@@ -13,8 +13,8 @@ namespace FloppyBird {
 
         // Mesh and material
         private readonly tubeMesh = new f.MeshObj("TubeMesh", "Assets/tube.obj");
-        private readonly tubeMaterial = new f.Material("Tube", f.ShaderFlatTextured, new f.CoatTextured(f.Color.CSS("White"), Tube.tubeTexture));
-        // private readonly tubeMaterial = new f.Material("Tubes", f.ShaderFlat);
+        // private readonly tubeMaterial = new f.Material("Tube", f.ShaderFlatTextured, new f.CoatTextured(f.Color.CSS("White"), Tube.tubeTexture));
+        private readonly tubeMaterial = new f.Material("Tubes", f.ShaderFlat);
         // private readonly tube: fAid.Node = new fAid.Node("Tube", f.Matrix4x4.IDENTITY(), this.tubeMaterial, this.tubeMesh);
 
         constructor(isRotatedDownward = false) {
@@ -30,13 +30,9 @@ namespace FloppyBird {
 
             // Add Collider
             let rigidbody: f.ComponentRigidbody = new f.ComponentRigidbody(0, f.BODY_TYPE.KINEMATIC, f.COLLIDER_TYPE.CYLINDER, f.COLLISION_GROUP.DEFAULT, new f.Matrix4x4());
-            rigidbody.addEventListener(f.EVENT_PHYSICS.COLLISION_ENTER, this.handleTubeCollision);
-            // let oldCollider: OIMO.Shape = rigidbody.getShapeList();
             rigidbody.mtxPivot.scale(new f.Vector3(0.22, 2.234, 1));
             rigidbody.mtxPivot.translate(new f.Vector3(0.01, -0.53, 0));
             this.addComponent(rigidbody);
-
-            // TODO add collider component
 
             if (isRotatedDownward) {
                 this.mtxLocal.rotateX(180);
@@ -54,10 +50,17 @@ namespace FloppyBird {
             // Randomize spawn position
             const randomSpawnPosition: number = Math.random() * 2 * this.tubeYDeviation - this.tubeYDeviation;
 
-            // Spawn and add two new tubes
             const tubeLower = new Tube();
             tubeLower.mtxLocal.translateY(-randomSpawnPosition);
             tubeContainerNode.addChild(tubeLower);
+
+            // Randomize gap size
+            const randomGapSize: number = Math.random() * 0.05 + (EASY_MODE ? 0.8 : 0.4);
+
+            const tubeUpper = new Tube(true);
+            tubeUpper.mtxLocal.translateY(randomSpawnPosition - randomGapSize);
+
+            tubeContainerNode.addChild(tubeUpper);
 
             //Add Collider for point scoring
             const colliderNode = new f.Node("TubeCollider");
@@ -68,29 +71,10 @@ namespace FloppyBird {
             colliderNode.addComponent(new f.ComponentTransform());
             colliderNode.addComponent(rigidbodyCollider);
 
-            // Randomize gap size
-            const randomGapSize: number = Math.random() * 0.05 + (EASY_MODE ? 1 : 0.4);
-
-            const tubeUpper = new Tube(true);
-            tubeUpper.mtxLocal.translateY(randomSpawnPosition - randomGapSize);
-
-            tubeContainerNode.addChild(tubeUpper);
-
             // Move tubes to their starting position (offscreen)
             tubeContainerNode.mtxLocal.translateX(1.8);
 
             return tubeContainerNode;
-        }
-
-        private handleTubeCollision(_event: f.EventPhysics) {
-            let collider: f.ComponentRigidbody = _event.cmpRigidbody;
-            let colNode: f.Node = collider.node;
-            if (colNode.name == "FloppyBirdBody") {
-                AudioManager.getInstance().playCollisionSound();
-                isGameOver = true;
-                alert("GAME OVER");
-                // TODO: Better Game Over Screen maybe?
-            }
         }
     }
 }

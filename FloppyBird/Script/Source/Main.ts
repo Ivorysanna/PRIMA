@@ -4,27 +4,20 @@ namespace FloppyBird {
 
     export const EASY_MODE = true;
 
-    let elapsedGameTime: number = 0;
-    let backGroundNode: f.Node = new f.Node("Background");
+    let backgroundNode: f.Node = new f.Node("Background");
 
     // Global components
     let viewportRef: f.Viewport;
-    export let floppyBird: f.Node;
-    let rigidbodyFloppyBird: f.ComponentRigidbody;
 
     // Physics Settings
     export let gravity: f.Vector3 = new f.Vector3(0, -0.8, 0);
-    let jumpForce: f.Vector3 = new f.Vector3(0, 1, 0);
     f.Physics.setGravity(gravity);
 
     // Add EventListener
     document.addEventListener("interactiveViewportStarted", <EventListener>start);
 
-    // Controls
-    let isSpaceKeyAlreadyPressed: boolean = false;
-
     // Tubes stuff
-    let tubesCollection: f.Node;
+    export let tubesCollection: f.Node;
     let tubesTimer: number = 0;
 
     // Game flow
@@ -33,15 +26,14 @@ namespace FloppyBird {
     function start(_event: CustomEvent): void {
         // Get viewport and floppybird reference
         viewportRef = _event.detail;
+        //TODO: Remove Debug Collider when done
         viewportRef.physicsDebugMode = f.PHYSICS_DEBUGMODE.COLLIDERS;
-        floppyBird = viewportRef.getBranch().getChildrenByName("FloppyBirdBody")[0];
-        rigidbodyFloppyBird = floppyBird.getComponent(f.ComponentRigidbody);
 
-        viewportRef.getBranch().appendChild(backGroundNode);
+        viewportRef.getBranch().appendChild(backgroundNode);
 
-        backGroundNode.appendChild(new ScrollingBackground(0));
-        backGroundNode.appendChild(new ScrollingBackground(8));
-        backGroundNode.appendChild(new ScrollingBackground(16));
+        backgroundNode.appendChild(new ScrollingBackground(0));
+        backgroundNode.appendChild(new ScrollingBackground(8));
+        backgroundNode.appendChild(new ScrollingBackground(16));
 
         //Initialize Camera
         let cmpCamera: f.ComponentCamera = new f.ComponentCamera();
@@ -50,7 +42,7 @@ namespace FloppyBird {
         viewportRef.camera = cmpCamera;
 
         // Initialize Audio
-        AudioManager.getInstance().initializeAudio();
+        PlaySoundManager.getInstance().initializeAudio();
 
         // Get tubes collection
         tubesCollection = viewportRef.getBranch().getChildrenByName("Tubes")[0];
@@ -62,21 +54,11 @@ namespace FloppyBird {
 
     function update(_event: Event): void {
         f.Physics.simulate();
-        const deltaTime: number = f.Loop.timeFrameGame / 1000;
-        elapsedGameTime += deltaTime;
-
-        // Wiggle FloppyBird with sine function
-        floppyBird.mtxLocal.rotateZ(180 * Math.sin(elapsedGameTime * 2));
-        floppyBird.mtxLocal.rotateX(180 * Math.sin(elapsedGameTime * 1.5));
+        
 
         if (!isGameOver) {
-            //Controls
-            updateControls();
-
             // Update tubes
-            updateTubes(deltaTime);
-
-            checkFloppyBirdCollision();
+            spawnTubes();
 
             // Move the backgrounds
             moveBackgrounds();
@@ -87,38 +69,9 @@ namespace FloppyBird {
         f.AudioManager.default.update();
     }
 
-    // Update controls
-    // TODO: Das hier vllt noch in eine FloppyBird.ts auslagern oder so
-    function updateControls(): void {
-        if (f.Keyboard.isPressedOne([f.KEYBOARD_CODE.SPACE])) {
-            if (!isSpaceKeyAlreadyPressed) {
-                rigidbodyFloppyBird.applyLinearImpulse(jumpForce);
-                AudioManager.getInstance().playFlapSound();
-                isSpaceKeyAlreadyPressed = true;
-            }
-        } else {
-            isSpaceKeyAlreadyPressed = false;
-        }
-    }
-
-    function checkFloppyBirdCollision(): void {
-        rigidbodyFloppyBird.collisions.forEach((eachCollision) => {
-            const collidedNode: f.Node = eachCollision.node;
-            if (!collidedNode) {
-                return null;
-            }
-            switch (collidedNode.name) {
-                case Tube.TUBE_COLLIDER_NODE_NAME:
-                    console.log("Adding point!");
-                    UIManager.getInstance().incrementScore();
-                    collidedNode.removeComponent(collidedNode.getComponent(f.ComponentRigidbody));
-                    break;
-            }
-        });
-    }
-
     // Update the tubes
-    function updateTubes(deltaTime: number): void {
+    function spawnTubes(): void {
+        const deltaTime: number = f.Loop.timeFrameGame / 1000;
         tubesTimer += deltaTime;
         if (tubesTimer > Tube.tubesIntervalSeconds) {
             console.log("Spawning tube!");
@@ -132,13 +85,13 @@ namespace FloppyBird {
     function moveBackgrounds() {
         // TODO das hier als custom component auf die backgrounds selbst
         // TODO: Move the background images
-        const backgrounds: ScrollingBackground[] = <ScrollingBackground[]>backGroundNode.getChildren();
+        const backgrounds: ScrollingBackground[] = <ScrollingBackground[]>backgroundNode.getChildren();
         backgrounds.forEach((eachBackground) => {
             eachBackground.moveBackground(-ScrollingBackground.backgroundVelocity);
 
             if (eachBackground.mtxLocal.translation.x <= -8) {
-                backGroundNode.removeChild(eachBackground);
-                backGroundNode.appendChild(new ScrollingBackground(16));
+                backgroundNode.removeChild(eachBackground);
+                backgroundNode.appendChild(new ScrollingBackground(16));
             }
         });
     }

@@ -183,6 +183,19 @@
                     }
                   }
                 }
+              ],
+              "FloppyBirdPlayer": [
+                {
+                  "FloppyBird.FloppyBirdPlayer": {
+                    "active": true,
+                    "isSpaceKeyAlreadyPressed": false,
+                    "jumpForce": {
+                      "x": 0,
+                      "y": 1,
+                      "z": 0
+                    }
+                  }
+                }
               ]
             },
             "children": [
@@ -228,7 +241,7 @@
                       {
                         "ƒ.ComponentTransform": {
                           "local": {
-                            "translation": "[0, -0.6000000238418579, 0]",
+                            "translation": "[0, -1.1000001430511475, 0]",
                             "rotation": "[0, 0, 0]",
                             "scaling": "[11, 0.09999992698431015, 2]"
                           },

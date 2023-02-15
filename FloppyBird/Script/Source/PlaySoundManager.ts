@@ -1,8 +1,8 @@
 namespace FloppyBird {
     import f = FudgeCore;
     // https://refactoring.guru/design-patterns/singleton/typescript/example
-    export class AudioManager {
-        private static instance: AudioManager;
+    export class PlaySoundManager {
+        private static instance: PlaySoundManager;
         public cmpAudio: f.ComponentAudio;
 
         public masterVolume: number = 1;
@@ -25,11 +25,11 @@ namespace FloppyBird {
          * This implementation let you subclass the Singleton class while keeping
          * just one instance of each subclass around.
          */
-        public static getInstance(): AudioManager {
-            if (!AudioManager.instance) {
-                AudioManager.instance = new AudioManager();
+        public static getInstance(): PlaySoundManager {
+            if (!PlaySoundManager.instance) {
+                PlaySoundManager.instance = new PlaySoundManager();
             }
-            return AudioManager.instance;
+            return PlaySoundManager.instance;
         }
 
         public initializeAudio() {

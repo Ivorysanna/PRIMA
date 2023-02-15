@@ -11,7 +11,6 @@ namespace FloppyBird {
             // Don't start when running in editor
             if (f.Project.mode == f.MODE.EDITOR) return;
 
-            // Listen to this component being added to or removed from a node
             this.addEventListener(f.EVENT.COMPONENT_ADD, this.hndEvent);
             this.addEventListener(f.EVENT.COMPONENT_REMOVE, this.hndEvent);
             this.addEventListener(f.EVENT.NODE_DESERIALIZED, this.hndEvent);
@@ -21,29 +20,81 @@ namespace FloppyBird {
         public hndEvent = (_event: Event): void => {
             switch (_event.type) {
                 case f.EVENT.COMPONENT_ADD:
-                    // f.Debug.log(this.message, this.node);
-                    this.node.addEventListener(f.EVENT.RENDER_PREPARE, this.update);
+                    this.addHnd();
                     break;
                 case f.EVENT.COMPONENT_REMOVE:
                     this.removeEventListener(f.EVENT.COMPONENT_ADD, this.hndEvent);
                     this.removeEventListener(f.EVENT.COMPONENT_REMOVE, this.hndEvent);
                     break;
                 case f.EVENT.NODE_DESERIALIZED:
-                    // if deserialized the node is now fully reconstructed and access to all its components and children is possible
-
-                    this.node.addEventListener(f.EVENT.RENDER_PREPARE, this.update);
+                    this.addHnd();
                     break;
             }
         };
 
+        private addHnd() {
+            this.node.addEventListener(f.EVENT.RENDER_PREPARE, this.update);
+            this.rigidbody = this.node.getComponent(f.ComponentRigidbody);
+
+            this.rigidbody.addEventListener(f.EVENT_PHYSICS.COLLISION_ENTER, this.collisionHandler);
+        }
+
+        private collisionHandler(_event: f.EventPhysics): void {
+            const otherCollider: f.ComponentRigidbody = _event.cmpRigidbody;
+            const collidedNode: f.Node = otherCollider.node;
+            if (!collidedNode) {
+                return null;
+            }
+            switch (collidedNode.name) {
+                case Tube.TUBE_COLLIDER_NODE_NAME:
+                    console.log("Adding point!");
+                    UIManager.getInstance().incrementScore();
+                    collidedNode.removeComponent(collidedNode.getComponent(f.ComponentRigidbody));
+                    break;
+                case "BorderBottom":
+                case Tube.TUBE_NODE_NAME:
+                    PlaySoundManager.getInstance().playCollisionSound();
+                    isGameOver = true;
+                    alert("GAME OVER");
+                    // TODO: Better Game Over Screen maybe?
+                    break;
+                default:
+                    break;
+            }
+        }
+
         private update = (_event: Event): void => {
-            
             // TODO gamestate als singleton, damit man gameover von überall updaten kann
-            
+
+            if (!isGameOver) {
+                //Controls
+                this.updateControls();
+
+                // Wiggle FloppyBird with sine function
+                // this.node.mtxLocal.rotateZ(180 * Math.sin(elapsedGameTime * 2));
+                // this.node.mtxLocal.rotateX(180 * Math.sin(elapsedGameTime * 1.5));
+            }
         };
 
         // TODO checkFloppyBirdCollision hier rein
-        
-        // TODO updatecontrols hier rein
+
+        // Controls
+        private isSpaceKeyAlreadyPressed: boolean = false;
+
+        private rigidbody: f.ComponentRigidbody;
+
+        private jumpForce: f.Vector3 = new f.Vector3(0, 1, 0);
+
+        private updateControls(): void {
+            if (f.Keyboard.isPressedOne([f.KEYBOARD_CODE.SPACE])) {
+                if (!this.isSpaceKeyAlreadyPressed) {
+                    this.rigidbody.applyLinearImpulse(this.jumpForce);
+                    PlaySoundManager.getInstance().playFlapSound();
+                    this.isSpaceKeyAlreadyPressed = true;
+                }
+            } else {
+                this.isSpaceKeyAlreadyPressed = false;
+            }
+        }
     }
 }

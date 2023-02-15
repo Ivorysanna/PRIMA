@@ -4,6 +4,8 @@ namespace FloppyBird {
         constructor() {
             super();
             this.addEventListener(f.EVENT.COMPONENT_ADD, this.hndEvent);
+            this.addEventListener(f.EVENT.COMPONENT_REMOVE, this.hndEvent);
+            this.addEventListener(f.EVENT.NODE_DESERIALIZED, this.hndEvent);
         }
 
         // Activate the functions of this component as response to events
@@ -11,6 +13,14 @@ namespace FloppyBird {
             switch (_event.type) {
                 case f.EVENT.COMPONENT_ADD:
                     this.node.addEventListener(f.EVENT.RENDER_PREPARE, this.update);
+                    break;
+                case f.EVENT.COMPONENT_REMOVE:
+                    this.removeEventListener(f.EVENT.COMPONENT_ADD, this.hndEvent);
+                    this.removeEventListener(f.EVENT.COMPONENT_REMOVE, this.hndEvent);
+                    break;
+                case f.EVENT.NODE_DESERIALIZED:
+                    this.node.addEventListener(f.EVENT.RENDER_PREPARE, this.update);
+
                     break;
             }
         };
@@ -22,7 +32,8 @@ namespace FloppyBird {
 
             // Remove tube if it's out of the viewport
             if (tubeNode.mtxLocal.translation.x < -3) {
-                tubeNode.getParent().removeChild(tubeNode);
+                console.log("Tube removed");
+                tubesCollection.removeChild(tubeNode.getParent());
             }
         };
     }
