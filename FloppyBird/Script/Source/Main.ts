@@ -2,6 +2,8 @@ namespace FloppyBird {
     import f = FudgeCore;
     f.Debug.info("Main Program Template running!");
 
+    export const EASY_MODE = true;
+
     let elapsedGameTime: number = 0;
     let backGroundNode: f.Node = new f.Node("Background");
 
@@ -26,7 +28,7 @@ namespace FloppyBird {
     let tubesTimer: number = 0;
 
     // Game flow
-    let isGameOver: boolean = false;
+    export let isGameOver: boolean = false;
 
     function start(_event: CustomEvent): void {
         // Get viewport and floppybird reference
@@ -101,33 +103,26 @@ namespace FloppyBird {
 
     function checkFloppyBirdCollision(): void {
         rigidbodyFloppyBird.collisions.forEach((eachCollision) => {
-            if (eachCollision.node.name == "Tube") {
-                console.log(eachCollision);
-                AudioManager.getInstance().playCollisionSound();
-                isGameOver = true;
-                alert("GAME OVER");
-                // TODO: Better Game Over Screen maybe?
+            const collidedNode: f.Node = eachCollision.node;
+            if (!collidedNode) {
+                return null;
+            }
+            switch (collidedNode.name) {
+                case Tube.TUBE_COLLIDER_NODE_NAME:
+                    console.log("Adding point!");
+                    UIManager.getInstance().incrementScore();
+                    collidedNode.removeComponent(collidedNode.getComponent(f.ComponentRigidbody));
+                    break;
             }
         });
     }
 
     // Update the tubes
     function updateTubes(deltaTime: number): void {
-        // Move Tubes to the left
-        tubesCollection.getChildren().forEach((eachTubeNode) => {
-            eachTubeNode.mtxLocal.translateX(-Tube.tubeSpeed * deltaTime);
-
-            // Remove tube if it's out of the viewport
-            if (eachTubeNode.mtxLocal.translation.x < -3) {
-                eachTubeNode.getParent().removeChild(eachTubeNode);
-            }
-        });
-
         tubesTimer += deltaTime;
         if (tubesTimer > Tube.tubesIntervalSeconds) {
-            Tube.createSetOfTubes().forEach((eachNewTube) => {
-                tubesCollection.addChild(eachNewTube);
-            });
+            console.log("Spawning tube!");
+            tubesCollection.addChild(Tube.createSetOfTubes());
 
             // Reset the tube spawn timer
             tubesTimer = 0;
@@ -140,9 +135,9 @@ namespace FloppyBird {
         backgrounds.forEach((eachBackground) => {
             eachBackground.moveBackground(-ScrollingBackground.backgroundVelocity);
 
-            if (eachBackground.mtxLocal.translation.x <= -22) {
+            if (eachBackground.mtxLocal.translation.x <= -8) {
                 backGroundNode.removeChild(eachBackground);
-                backGroundNode.appendChild(new ScrollingBackground(22));
+                backGroundNode.appendChild(new ScrollingBackground(16));
             }
         });
     }

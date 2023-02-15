@@ -59,12 +59,37 @@ var FloppyBird;
 var FloppyBird;
 (function (FloppyBird) {
     var f = FudgeCore;
+    class ContinuousTubeMovement extends f.ComponentScript {
+        constructor() {
+            super();
+            this.addEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
+        }
+        // Activate the functions of this component as response to events
+        hndEvent = (_event) => {
+            switch (_event.type) {
+                case "componentAdd" /* f.EVENT.COMPONENT_ADD */:
+                    this.node.addEventListener("renderPrepare" /* f.EVENT.RENDER_PREPARE */, this.update);
+                    break;
+            }
+        };
+        update = (_event) => {
+            const deltaTime = f.Loop.timeFrameGame / 1000;
+            const tubeNode = this.node;
+            tubeNode.mtxLocal.translateX(-FloppyBird.Tube.tubeSpeed * deltaTime);
+            // Remove tube if it's out of the viewport
+            if (tubeNode.mtxLocal.translation.x < -3) {
+                tubeNode.getParent().removeChild(tubeNode);
+            }
+        };
+    }
+    FloppyBird.ContinuousTubeMovement = ContinuousTubeMovement;
+})(FloppyBird || (FloppyBird = {}));
+var FloppyBird;
+(function (FloppyBird) {
+    var f = FudgeCore;
     f.Project.registerScriptNamespace(FloppyBird); // Register the namespace to FUDGE for serialization
-    class CustomComponentScript extends f.ComponentScript {
-        // Register the script as component for use in the editor via drag&drop
-        static iSubclass = f.Component.registerSubclass(CustomComponentScript);
-        // Properties may be mutated by users in the editor via the automatically created user interface
-        message = "CustomComponentScript added to ";
+    class FloppyBirdPlayer extends f.ComponentScript {
+        static iSubclass = f.Component.registerSubclass(FloppyBirdPlayer);
         constructor() {
             super();
             // Don't start when running in editor
@@ -79,7 +104,8 @@ var FloppyBird;
         hndEvent = (_event) => {
             switch (_event.type) {
                 case "componentAdd" /* f.EVENT.COMPONENT_ADD */:
-                    f.Debug.log(this.message, this.node);
+                    // f.Debug.log(this.message, this.node);
+                    this.node.addEventListener("renderPrepare" /* f.EVENT.RENDER_PREPARE */, this.update);
                     break;
                 case "componentRemove" /* f.EVENT.COMPONENT_REMOVE */:
                     this.removeEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
@@ -87,16 +113,19 @@ var FloppyBird;
                     break;
                 case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
                     // if deserialized the node is now fully reconstructed and access to all its components and children is possible
+                    this.node.addEventListener("renderPrepare" /* f.EVENT.RENDER_PREPARE */, this.update);
                     break;
             }
         };
+        update = (_event) => { };
     }
-    FloppyBird.CustomComponentScript = CustomComponentScript;
+    FloppyBird.FloppyBirdPlayer = FloppyBirdPlayer;
 })(FloppyBird || (FloppyBird = {}));
 var FloppyBird;
 (function (FloppyBird) {
     var f = FudgeCore;
     f.Debug.info("Main Program Template running!");
+    FloppyBird.EASY_MODE = true;
     let elapsedGameTime = 0;
     let backGroundNode = new f.Node("Background");
     // Global components
@@ -114,7 +143,7 @@ var FloppyBird;
     let tubesCollection;
     let tubesTimer = 0;
     // Game flow
-    let isGameOver = false;
+    FloppyBird.isGameOver = false;
     function start(_event) {
         // Get viewport and floppybird reference
         viewportRef = _event.detail;
@@ -145,7 +174,7 @@ var FloppyBird;
         // Wiggle FloppyBird with sine function
         FloppyBird.floppyBird.mtxLocal.rotateZ(180 * Math.sin(elapsedGameTime * 2));
         FloppyBird.floppyBird.mtxLocal.rotateX(180 * Math.sin(elapsedGameTime * 1.5));
-        if (!isGameOver) {
+        if (!FloppyBird.isGameOver) {
             //Controls
             updateControls();
             // Update tubes
@@ -174,30 +203,25 @@ var FloppyBird;
     }
     function checkFloppyBirdCollision() {
         rigidbodyFloppyBird.collisions.forEach((eachCollision) => {
-            if (eachCollision.node.name == "Tube") {
-                console.log(eachCollision);
-                FloppyBird.AudioManager.getInstance().playCollisionSound();
-                isGameOver = true;
-                alert("GAME OVER");
-                // TODO: Better Game Over Screen maybe?
+            const collidedNode = eachCollision.node;
+            if (!collidedNode) {
+                return null;
+            }
+            switch (collidedNode.name) {
+                case FloppyBird.Tube.TUBE_COLLIDER_NODE_NAME:
+                    console.log("Adding point!");
+                    FloppyBird.UIManager.getInstance().incrementScore();
+                    collidedNode.removeComponent(collidedNode.getComponent(f.ComponentRigidbody));
+                    break;
             }
         });
     }
     // Update the tubes
     function updateTubes(deltaTime) {
-        // Move Tubes to the left
-        tubesCollection.getChildren().forEach((eachTubeNode) => {
-            eachTubeNode.mtxLocal.translateX(-FloppyBird.Tube.tubeSpeed * deltaTime);
-            // Remove tube if it's out of the viewport
-            if (eachTubeNode.mtxLocal.translation.x < -3) {
-                eachTubeNode.getParent().removeChild(eachTubeNode);
-            }
-        });
         tubesTimer += deltaTime;
         if (tubesTimer > FloppyBird.Tube.tubesIntervalSeconds) {
-            FloppyBird.Tube.createSetOfTubes().forEach((eachNewTube) => {
-                tubesCollection.addChild(eachNewTube);
-            });
+            console.log("Spawning tube!");
+            tubesCollection.addChild(FloppyBird.Tube.createSetOfTubes());
             // Reset the tube spawn timer
             tubesTimer = 0;
         }
@@ -207,9 +231,9 @@ var FloppyBird;
         const backgrounds = backGroundNode.getChildren();
         backgrounds.forEach((eachBackground) => {
             eachBackground.moveBackground(-FloppyBird.ScrollingBackground.backgroundVelocity);
-            if (eachBackground.mtxLocal.translation.x <= -22) {
+            if (eachBackground.mtxLocal.translation.x <= -8) {
                 backGroundNode.removeChild(eachBackground);
-                backGroundNode.appendChild(new FloppyBird.ScrollingBackground(22));
+                backGroundNode.appendChild(new FloppyBird.ScrollingBackground(16));
             }
         });
     }
@@ -243,26 +267,31 @@ var FloppyBird;
 var FloppyBird;
 (function (FloppyBird) {
     var f = FudgeCore;
+    // import fAid = FudgeAid;
     class Tube extends f.Node {
         // Constants
+        static TUBE_COLLIDER_NODE_NAME = "TubeCollider";
+        static TUBE_NODE_NAME = "Tube";
         static tubesIntervalSeconds = 2;
         static tubeSpeed = 0.5;
         static tubeYDeviation = 0.7;
         static tubeTexture = new f.TextureImage("Assets/brushed-metal_albedo.jpg");
         // Mesh and material
         tubeMesh = new f.MeshObj("TubeMesh", "Assets/tube.obj");
-        tubeMaterial = new f.Material("Tube", f.ShaderPickTextured, new f.CoatTextured(f.Color.CSS("White"), Tube.tubeTexture));
-        // private readonly tubeMaterial = new f.Material("Tubes", f.ShaderFlat);
+        // private readonly tubeMaterial = new f.Material("Tube", f.ShaderFlatTextured, new f.CoatTextured(f.Color.CSS("White"), Tube.tubeTexture));
+        tubeMaterial = new f.Material("Tubes", f.ShaderFlat);
         // private readonly tube: fAid.Node = new fAid.Node("Tube", f.Matrix4x4.IDENTITY(), this.tubeMaterial, this.tubeMesh);
         constructor(isRotatedDownward = false) {
-            super("Tube");
+            super(Tube.TUBE_NODE_NAME);
             this.addComponent(new f.ComponentMesh(this.tubeMesh));
             this.addComponent(new f.ComponentMaterial(this.tubeMaterial));
             this.addComponent(new f.ComponentTransform());
+            this.addComponent(new FloppyBird.ContinuousTubeMovement());
             // Set pivot point
             this.getComponent(f.ComponentMesh).mtxPivot.translateY(-2.25);
             // Add Collider
             let rigidbody = new f.ComponentRigidbody(0, f.BODY_TYPE.KINEMATIC, f.COLLIDER_TYPE.CYLINDER, f.COLLISION_GROUP.DEFAULT, new f.Matrix4x4());
+            rigidbody.addEventListener("ColliderEnteredCollision" /* f.EVENT_PHYSICS.COLLISION_ENTER */, this.handleTubeCollision);
             // let oldCollider: OIMO.Shape = rigidbody.getShapeList();
             rigidbody.mtxPivot.scale(new f.Vector3(0.22, 2.234, 1));
             rigidbody.mtxPivot.translate(new f.Vector3(0.01, -0.53, 0));
@@ -272,25 +301,45 @@ var FloppyBird;
                 this.mtxLocal.rotateX(180);
             }
         }
+        /**
+         * Creates a set of tube inside another node that acts as a container.
+         * This container node also contains the trigger collider between the tubes to use for score incrementing.
+         */
         static createSetOfTubes() {
-            const tubes = [];
+            const tubeContainerNode = new f.Node(this.TUBE_COLLIDER_NODE_NAME);
+            tubeContainerNode.addComponent(new f.ComponentTransform());
             // Randomize spawn position
             const randomSpawnPosition = Math.random() * 2 * this.tubeYDeviation - this.tubeYDeviation;
             // Spawn and add two new tubes
             const tubeLower = new Tube();
             tubeLower.mtxLocal.translateY(-randomSpawnPosition);
-            tubes.push(tubeLower);
+            tubeContainerNode.addChild(tubeLower);
+            //Add Collider for point scoring
+            const colliderNode = new f.Node("TubeCollider");
+            tubeContainerNode.addChild(colliderNode);
+            const rigidbodyCollider = new f.ComponentRigidbody(0, f.BODY_TYPE.KINEMATIC, f.COLLIDER_TYPE.CYLINDER, f.COLLISION_GROUP.DEFAULT, new f.Matrix4x4());
+            rigidbodyCollider.mtxPivot.scale(new f.Vector3(0.1, 10, 4));
+            rigidbodyCollider.isTrigger = true;
+            colliderNode.addComponent(new f.ComponentTransform());
+            colliderNode.addComponent(rigidbodyCollider);
             // Randomize gap size
-            const randomGapSize = Math.random() * 0.05 + 0.4;
+            const randomGapSize = Math.random() * 0.05 + (FloppyBird.EASY_MODE ? 1 : 0.4);
             const tubeUpper = new Tube(true);
             tubeUpper.mtxLocal.translateY(randomSpawnPosition - randomGapSize);
-            tubes.push(tubeUpper);
+            tubeContainerNode.addChild(tubeUpper);
             // Move tubes to their starting position (offscreen)
-            tubes.forEach((tube) => {
-                tube.mtxLocal.translateX(1.8);
-            });
-            FloppyBird.UIManager.getInstance().incrementScore();
-            return tubes;
+            tubeContainerNode.mtxLocal.translateX(1.8);
+            return tubeContainerNode;
+        }
+        handleTubeCollision(_event) {
+            let collider = _event.cmpRigidbody;
+            let colNode = collider.node;
+            if (colNode.name == "FloppyBirdBody") {
+                FloppyBird.AudioManager.getInstance().playCollisionSound();
+                FloppyBird.isGameOver = true;
+                alert("GAME OVER");
+                // TODO: Better Game Over Screen maybe?
+            }
         }
     }
     FloppyBird.Tube = Tube;

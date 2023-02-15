@@ -33,17 +33,27 @@ declare namespace FloppyBird {
 }
 declare namespace FloppyBird {
     import f = FudgeCore;
-    class CustomComponentScript extends f.ComponentScript {
-        static readonly iSubclass: number;
-        message: string;
+    class ContinuousTubeMovement extends f.ComponentScript {
         constructor();
         hndEvent: (_event: Event) => void;
+        private update;
     }
 }
 declare namespace FloppyBird {
     import f = FudgeCore;
+    class FloppyBirdPlayer extends f.ComponentScript {
+        static readonly iSubclass: number;
+        constructor();
+        hndEvent: (_event: Event) => void;
+        private update;
+    }
+}
+declare namespace FloppyBird {
+    import f = FudgeCore;
+    const EASY_MODE = true;
     let floppyBird: f.Node;
     let gravity: f.Vector3;
+    let isGameOver: boolean;
 }
 declare namespace FloppyBird {
     import f = FudgeCore;
@@ -56,6 +66,8 @@ declare namespace FloppyBird {
 declare namespace FloppyBird {
     import f = FudgeCore;
     class Tube extends f.Node {
+        static readonly TUBE_COLLIDER_NODE_NAME = "TubeCollider";
+        static readonly TUBE_NODE_NAME = "Tube";
         static readonly tubesIntervalSeconds: number;
         static readonly tubeSpeed = 0.5;
         static readonly tubeYDeviation = 0.7;
@@ -63,7 +75,12 @@ declare namespace FloppyBird {
         private readonly tubeMesh;
         private readonly tubeMaterial;
         constructor(isRotatedDownward?: boolean);
-        static createSetOfTubes(): Tube[];
+        /**
+         * Creates a set of tube inside another node that acts as a container.
+         * This container node also contains the trigger collider between the tubes to use for score incrementing.
+         */
+        static createSetOfTubes(): f.Node;
+        private handleTubeCollision;
     }
 }
 declare namespace FloppyBird {
