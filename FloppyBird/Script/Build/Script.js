@@ -123,8 +123,8 @@ var FloppyBird;
         rigidbodyFloppyBird = FloppyBird.floppyBird.getComponent(f.ComponentRigidbody);
         viewportRef.getBranch().appendChild(backGroundNode);
         backGroundNode.appendChild(new FloppyBird.ScrollingBackground(0));
-        backGroundNode.appendChild(new FloppyBird.ScrollingBackground(11));
-        backGroundNode.appendChild(new FloppyBird.ScrollingBackground(22));
+        backGroundNode.appendChild(new FloppyBird.ScrollingBackground(8));
+        backGroundNode.appendChild(new FloppyBird.ScrollingBackground(16));
         //Initialize Camera
         let cmpCamera = new f.ComponentCamera();
         cmpCamera.mtxPivot.translateZ(3);
@@ -230,8 +230,8 @@ var FloppyBird;
             let cmpMesh = new f.ComponentMesh(backgroundMesh);
             this.addComponent(cmpMesh);
             this.addComponent(new f.ComponentMaterial(backgroundMaterial));
-            this.getComponent(f.ComponentMesh).mtxPivot.scaleX(31);
-            this.getComponent(f.ComponentMesh).mtxPivot.scaleY(22);
+            this.getComponent(f.ComponentMesh).mtxPivot.scaleX(8);
+            this.getComponent(f.ComponentMesh).mtxPivot.scaleY(3);
         }
         moveBackground(amountToMove) {
             let timeSinceLastFrame = f.Loop.timeFrameReal / 1000;

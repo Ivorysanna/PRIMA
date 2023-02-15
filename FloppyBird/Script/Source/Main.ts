@@ -38,8 +38,8 @@ namespace FloppyBird {
         viewportRef.getBranch().appendChild(backGroundNode);
 
         backGroundNode.appendChild(new ScrollingBackground(0));
-        backGroundNode.appendChild(new ScrollingBackground(11));
-        backGroundNode.appendChild(new ScrollingBackground(22));
+        backGroundNode.appendChild(new ScrollingBackground(8));
+        backGroundNode.appendChild(new ScrollingBackground(16));
 
         //Initialize Camera
         let cmpCamera: f.ComponentCamera = new f.ComponentCamera();

@@ -17,8 +17,8 @@ namespace FloppyBird {
 
             this.addComponent(new f.ComponentMaterial(backgroundMaterial));
 
-            this.getComponent(f.ComponentMesh).mtxPivot.scaleX(31);
-            this.getComponent(f.ComponentMesh).mtxPivot.scaleY(22);
+            this.getComponent(f.ComponentMesh).mtxPivot.scaleX(8);
+            this.getComponent(f.ComponentMesh).mtxPivot.scaleY(3);
             
             
         }
