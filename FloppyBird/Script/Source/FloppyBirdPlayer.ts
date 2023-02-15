@@ -36,6 +36,14 @@ namespace FloppyBird {
             }
         };
 
-        private update = (_event: Event): void => {};
+        private update = (_event: Event): void => {
+            
+            // TODO gamestate als singleton, damit man gameover von überall updaten kann
+            
+        };
+
+        // TODO checkFloppyBirdCollision hier rein
+        
+        // TODO updatecontrols hier rein
     }
 }

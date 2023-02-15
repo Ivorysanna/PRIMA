@@ -117,7 +117,9 @@ var FloppyBird;
                     break;
             }
         };
-        update = (_event) => { };
+        update = (_event) => {
+            // TODO gamestate als singleton, damit man gameover von überall updaten kann
+        };
     }
     FloppyBird.FloppyBirdPlayer = FloppyBirdPlayer;
 })(FloppyBird || (FloppyBird = {}));
@@ -227,6 +229,7 @@ var FloppyBird;
         }
     }
     function moveBackgrounds() {
+        // TODO das hier als custom component auf die backgrounds selbst
         // TODO: Move the background images
         const backgrounds = backGroundNode.getChildren();
         backgrounds.forEach((eachBackground) => {

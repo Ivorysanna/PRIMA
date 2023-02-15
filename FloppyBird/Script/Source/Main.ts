@@ -130,6 +130,7 @@ namespace FloppyBird {
     }
 
     function moveBackgrounds() {
+        // TODO das hier als custom component auf die backgrounds selbst
         // TODO: Move the background images
         const backgrounds: ScrollingBackground[] = <ScrollingBackground[]>backGroundNode.getChildren();
         backgrounds.forEach((eachBackground) => {
