@@ -59,6 +59,7 @@ declare namespace FloppyBird {
         static readonly tubesIntervalSeconds: number;
         static readonly tubeSpeed = 0.5;
         static readonly tubeYDeviation = 0.7;
+        static readonly tubeTexture: f.TextureImage;
         private readonly tubeMesh;
         private readonly tubeMaterial;
         constructor(isRotatedDownward?: boolean);

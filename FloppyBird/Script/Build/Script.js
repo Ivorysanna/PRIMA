@@ -248,9 +248,12 @@ var FloppyBird;
         static tubesIntervalSeconds = 2;
         static tubeSpeed = 0.5;
         static tubeYDeviation = 0.7;
+        static tubeTexture = new f.TextureImage("Assets/brushed-metal_albedo.jpg");
         // Mesh and material
         tubeMesh = new f.MeshObj("TubeMesh", "Assets/tube.obj");
-        tubeMaterial = new f.Material("Tubes", f.ShaderFlat);
+        tubeMaterial = new f.Material("Tube", f.ShaderPickTextured, new f.CoatTextured(f.Color.CSS("White"), Tube.tubeTexture));
+        // private readonly tubeMaterial = new f.Material("Tubes", f.ShaderFlat);
+        // private readonly tube: fAid.Node = new fAid.Node("Tube", f.Matrix4x4.IDENTITY(), this.tubeMaterial, this.tubeMesh);
         constructor(isRotatedDownward = false) {
             super("Tube");
             this.addComponent(new f.ComponentMesh(this.tubeMesh));

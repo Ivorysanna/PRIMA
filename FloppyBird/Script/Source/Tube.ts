@@ -1,15 +1,19 @@
 namespace FloppyBird {
     import f = FudgeCore;
+    import fAid = FudgeAid;
 
     export class Tube extends f.Node {
         // Constants
         public static readonly tubesIntervalSeconds: number = 2;
         public static readonly tubeSpeed = 0.5;
         public static readonly tubeYDeviation = 0.7;
+        public static readonly tubeTexture: f.TextureImage = new f.TextureImage("Assets/brushed-metal_albedo.jpg");
 
         // Mesh and material
         private readonly tubeMesh = new f.MeshObj("TubeMesh", "Assets/tube.obj");
-        private readonly tubeMaterial = new f.Material("Tubes", f.ShaderFlat);
+        private readonly tubeMaterial = new f.Material("Tube", f.ShaderPickTextured, new f.CoatTextured(f.Color.CSS("White"), Tube.tubeTexture));
+        // private readonly tubeMaterial = new f.Material("Tubes", f.ShaderFlat);
+        // private readonly tube: fAid.Node = new fAid.Node("Tube", f.Matrix4x4.IDENTITY(), this.tubeMaterial, this.tubeMesh);
 
         constructor(isRotatedDownward = false) {
             super("Tube");
