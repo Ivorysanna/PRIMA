@@ -455,5 +455,19 @@
       "idResource": "Graph|2023-02-12T12:53:21.592Z|23010",
       "type": "Graph"
     }
+  },
+  "Material|2023-02-15T15:54:50.887Z|47181": {
+    "ƒ.Material": {
+      "name": "ShaderFlat",
+      "idResource": "Material|2023-02-15T15:54:50.887Z|47181",
+      "shader": "ShaderFlat",
+      "coat": {
+        "ƒ.CoatRemissive": {
+          "color": "[1, 1, 1, 1]",
+          "diffuse": 1,
+          "specular": 0
+        }
+      }
+    }
   }
 }
