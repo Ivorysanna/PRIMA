@@ -4,6 +4,9 @@ namespace FloppyBird {
 
     export class FloppyBirdPlayer extends f.ComponentScript {
         public static readonly iSubclass: number = f.Component.registerSubclass(FloppyBirdPlayer);
+        private isSpaceKeyAlreadyPressed: boolean = false;
+        private rigidbody: f.ComponentRigidbody;
+        private jumpForce: f.Vector3 = new f.Vector3(0, 1, 0);
 
         constructor() {
             super();
@@ -52,8 +55,9 @@ namespace FloppyBird {
                 case "BorderBottom":
                 case Tube.TUBE_NODE_NAME:
                     PlaySoundManager.getInstance().playCollisionSound();
-                    isGameOver = true;
-                    alert("GAME OVER");
+                    GameStateManager.getInstance().isGameOver = true;
+                    const currentScore: number = UIManager.getInstance().currentScore;
+                    alert(`GAME OVER ${currentScore} Tubes passed`);
                     // TODO: Better Game Over Screen maybe?
                     break;
                 default:
@@ -62,27 +66,13 @@ namespace FloppyBird {
         }
 
         private update = (_event: Event): void => {
-            // TODO gamestate als singleton, damit man gameover von überall updaten kann
-
-            if (!isGameOver) {
+            if (!GameStateManager.getInstance().isGameOver) {
                 //Controls
                 this.updateControls();
-
-                // Wiggle FloppyBird with sine function
-                // this.node.mtxLocal.rotateZ(180 * Math.sin(elapsedGameTime * 2));
-                // this.node.mtxLocal.rotateX(180 * Math.sin(elapsedGameTime * 1.5));
             }
         };
 
-        // TODO checkFloppyBirdCollision hier rein
-
         // Controls
-        private isSpaceKeyAlreadyPressed: boolean = false;
-
-        private rigidbody: f.ComponentRigidbody;
-
-        private jumpForce: f.Vector3 = new f.Vector3(0, 1, 0);
-
         private updateControls(): void {
             if (f.Keyboard.isPressedOne([f.KEYBOARD_CODE.SPACE])) {
                 if (!this.isSpaceKeyAlreadyPressed) {
