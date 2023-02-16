@@ -22,7 +22,7 @@ declare namespace FloppyBird {
     }
 }
 declare namespace FloppyBird {
-    class GameStateManager {
+    class GameStateManager extends f.Mutable {
         private static instance;
         private _isGameOver;
         private readonly EASY_MODE;
@@ -31,6 +31,7 @@ declare namespace FloppyBird {
         set isGameOver(value: boolean);
         get isGameOver(): boolean;
         get isEasyMode(): boolean;
+        protected reduceMutator(_mutator: f.Mutator): void;
     }
 }
 declare namespace FloppyBird {

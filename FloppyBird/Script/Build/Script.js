@@ -120,12 +120,13 @@ var FloppyBird;
 })(FloppyBird || (FloppyBird = {}));
 var FloppyBird;
 (function (FloppyBird) {
-    // https://refactoring.guru/design-patterns/singleton/typescript/example
-    class GameStateManager {
+    class GameStateManager extends f.Mutable {
         static instance;
         _isGameOver = false;
         EASY_MODE = true;
-        constructor() { }
+        constructor() {
+            super();
+        }
         static getInstance() {
             if (!GameStateManager.instance) {
                 GameStateManager.instance = new GameStateManager();
@@ -141,6 +142,7 @@ var FloppyBird;
         get isEasyMode() {
             return this.EASY_MODE;
         }
+        reduceMutator(_mutator) { }
     }
     FloppyBird.GameStateManager = GameStateManager;
 })(FloppyBird || (FloppyBird = {}));
@@ -371,6 +373,7 @@ var FloppyBird;
     }
     FloppyBird.Tube = Tube;
 })(FloppyBird || (FloppyBird = {}));
+nam;
 var FloppyBird;
 (function (FloppyBird) {
     // https://refactoring.guru/design-patterns/singleton/typescript/example

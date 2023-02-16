@@ -1,12 +1,15 @@
 namespace FloppyBird {
     // https://refactoring.guru/design-patterns/singleton/typescript/example
-    export class GameStateManager {
+    import fui = FudgeUserInterface;
+    export class GameStateManager extends f.Mutable{
         private static instance: GameStateManager;
 
         private _isGameOver: boolean = false;
         private readonly EASY_MODE = true;
 
-        private constructor() {}
+        private constructor() {
+            super();
+        }
 
         public static getInstance(): GameStateManager {
             if (!GameStateManager.instance) {
@@ -26,5 +29,7 @@ namespace FloppyBird {
         public get isEasyMode(): boolean {
             return this.EASY_MODE;
         }
+
+        protected reduceMutator(_mutator: f.Mutator): void { /* */ }
     }
 }
