@@ -16,6 +16,7 @@ canvas.fullscreen {
 }
 
 body {
-  background-color: #000000;
-  background-image: ;
+  /* background-color: #000000; */
+  background-image: url("Assets/background.png");
+  background-size: auto 100%;
 }
