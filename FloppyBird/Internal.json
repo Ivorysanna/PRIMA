@@ -48,6 +48,20 @@
       "url": "Assets\\tube.obj"
     }
   },
+  "Material|2023-02-15T15:54:50.887Z|47181": {
+    "ƒ.Material": {
+      "name": "ShaderFlat",
+      "idResource": "Material|2023-02-15T15:54:50.887Z|47181",
+      "shader": "ShaderFlat",
+      "coat": {
+        "ƒ.CoatRemissive": {
+          "color": "[1, 1, 1, 1]",
+          "diffuse": 1,
+          "specular": 0
+        }
+      }
+    }
+  },
   "Graph|2022-12-19T10:41:32.893Z|77657": {
     "ƒ.Graph": {
       "name": "World",
@@ -141,7 +155,7 @@
                     "Component": {
                       "active": true
                     },
-                    "idMaterial": "Material|2022-12-29T15:41:05.200Z|41811"
+                    "idMaterial": "Material|2023-02-15T15:54:50.887Z|47181"
                   }
                 }
               ],
@@ -237,45 +251,8 @@
                   "name": "BorderBottom",
                   "active": true,
                   "components": {
-                    "ComponentTransform": [
-                      {
-                        "ƒ.ComponentTransform": {
-                          "local": {
-                            "translation": "[0, -1.1000001430511475, 0]",
-                            "rotation": "[0, 0, 0]",
-                            "scaling": "[11, 0.09999992698431015, 2]"
-                          },
-                          "Component": {
-                            "active": true
-                          }
-                        }
-                      }
-                    ],
-                    "ComponentRigidbody": [
-                      {
-                        "ƒ.ComponentRigidbody": {
-                          "initialization": "TO_PIVOT",
-                          "friction": 0.2,
-                          "restitution": 0.2,
-                          "mass": 1,
-                          "dampTranslation": 0.1,
-                          "dampRotation": 0.1,
-                          "effectGravity": 1,
-                          "typeBody": "KINEMATIC",
-                          "typeCollider": "CUBE",
-                          "isTrigger": false,
-                          "id": 1,
-                          "pivot": {
-                            "translation": "[0, 0, 0]",
-                            "rotation": "[0, 0, 0]",
-                            "scaling": "[1, 1, 1]"
-                          },
-                          "Component": {
-                            "active": true
-                          }
-                        }
-                      }
-                    ]
+                    "ComponentTransform": [],
+                    "ComponentRigidbody": []
                   },
                   "children": []
                 }
@@ -467,20 +444,6 @@
       ],
       "idResource": "Graph|2023-02-12T12:53:21.592Z|23010",
       "type": "Graph"
-    }
-  },
-  "Material|2023-02-15T15:54:50.887Z|47181": {
-    "ƒ.Material": {
-      "name": "ShaderFlat",
-      "idResource": "Material|2023-02-15T15:54:50.887Z|47181",
-      "shader": "ShaderFlat",
-      "coat": {
-        "ƒ.CoatRemissive": {
-          "color": "[1, 1, 1, 1]",
-          "diffuse": 1,
-          "specular": 0
-        }
-      }
     }
   }
 }
