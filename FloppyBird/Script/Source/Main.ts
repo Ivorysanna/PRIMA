@@ -18,13 +18,17 @@ namespace FloppyBird {
     export let tubesCollection: f.Node;
     let tubesTimer: number = 0;
 
+    export let tubeSpeedVui: TubeSpeedUIHandler;
+
     async function start(_event: CustomEvent): Promise<void> {
+        tubeSpeedVui = new TubeSpeedUIHandler();
+
         // Load external json data tube config values
         console.debug("Loading tube config file...");
         let tubeConfigFileJsonResponse: Response = await fetch("tubeConfig.json");
         let tubeConfig = await tubeConfigFileJsonResponse.json();
         Tube.tubesIntervalSeconds = tubeConfig.tubesIntervalSeconds;
-        Tube.tubeSpeed = tubeConfig.tubeSpeed;
+        tubeSpeedVui.tubeSpeed = tubeConfig.tubeSpeed;
         console.debug("Tube config file loaded!");
 
         // Get viewport and floppybird reference

@@ -25,7 +25,7 @@ namespace FloppyBird {
             if (!GameStateManager.getInstance().isGameOver) {
                 const deltaTime: number = f.Loop.timeFrameGame / 1000;
                 const tubeContainerNode: f.Node = this.node;
-                tubeContainerNode.mtxLocal.translateX(-Tube.tubeSpeed * deltaTime);
+                tubeContainerNode.mtxLocal.translateX(-tubeSpeedVui.tubeSpeed * deltaTime);
 
                 // Remove tube if it's out of the viewport
                 if (tubeContainerNode.mtxLocal.translation.x < -3) {

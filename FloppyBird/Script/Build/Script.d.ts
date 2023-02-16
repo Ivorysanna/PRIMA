@@ -22,7 +22,7 @@ declare namespace FloppyBird {
     }
 }
 declare namespace FloppyBird {
-    class GameStateManager extends f.Mutable {
+    class GameStateManager {
         private static instance;
         private _isGameOver;
         private readonly EASY_MODE;
@@ -31,13 +31,13 @@ declare namespace FloppyBird {
         set isGameOver(value: boolean);
         get isGameOver(): boolean;
         get isEasyMode(): boolean;
-        protected reduceMutator(_mutator: f.Mutator): void;
     }
 }
 declare namespace FloppyBird {
     import f = FudgeCore;
     let gravity: f.Vector3;
     let tubesCollection: f.Node;
+    let tubeSpeedVui: TubeSpeedUIHandler;
 }
 declare namespace FloppyBird {
     import f = FudgeCore;
@@ -80,7 +80,6 @@ declare namespace FloppyBird {
         static readonly TUBE_COLLIDER_NODE_NAME = "TubeCollider";
         static readonly TUBE_NODE_NAME = "Tube";
         static tubesIntervalSeconds: number;
-        static tubeSpeed: number;
         static readonly tubeYDeviation = 0.7;
         static readonly tubeTexture: f.TextureImage;
         private readonly tubeMesh;
@@ -91,6 +90,14 @@ declare namespace FloppyBird {
          * This container node also contains the trigger collider between the tubes to use for score incrementing.
          */
         static createSetOfTubes(): f.Node;
+    }
+}
+declare namespace FloppyBird {
+    import f = FudgeCore;
+    class TubeSpeedUIHandler extends f.Mutable {
+        tubeSpeed: number;
+        constructor();
+        protected reduceMutator(_mutator: f.Mutator): void;
     }
 }
 declare namespace FloppyBird {

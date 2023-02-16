@@ -25,7 +25,7 @@ var FloppyBird;
             if (!FloppyBird.GameStateManager.getInstance().isGameOver) {
                 const deltaTime = f.Loop.timeFrameGame / 1000;
                 const tubeContainerNode = this.node;
-                tubeContainerNode.mtxLocal.translateX(-FloppyBird.Tube.tubeSpeed * deltaTime);
+                tubeContainerNode.mtxLocal.translateX(-FloppyBird.tubeSpeedVui.tubeSpeed * deltaTime);
                 // Remove tube if it's out of the viewport
                 if (tubeContainerNode.mtxLocal.translation.x < -3) {
                     console.log("Tubes removed");
@@ -120,12 +120,12 @@ var FloppyBird;
 })(FloppyBird || (FloppyBird = {}));
 var FloppyBird;
 (function (FloppyBird) {
-    class GameStateManager extends f.Mutable {
+    // https://refactoring.guru/design-patterns/singleton/typescript/example
+    class GameStateManager {
         static instance;
         _isGameOver = false;
         EASY_MODE = true;
         constructor() {
-            super();
         }
         static getInstance() {
             if (!GameStateManager.instance) {
@@ -142,7 +142,6 @@ var FloppyBird;
         get isEasyMode() {
             return this.EASY_MODE;
         }
-        reduceMutator(_mutator) { }
     }
     FloppyBird.GameStateManager = GameStateManager;
 })(FloppyBird || (FloppyBird = {}));
@@ -160,12 +159,13 @@ var FloppyBird;
     document.addEventListener("interactiveViewportStarted", start);
     let tubesTimer = 0;
     async function start(_event) {
+        FloppyBird.tubeSpeedVui = new FloppyBird.TubeSpeedUIHandler();
         // Load external json data tube config values
         console.debug("Loading tube config file...");
         let tubeConfigFileJsonResponse = await fetch("tubeConfig.json");
         let tubeConfig = await tubeConfigFileJsonResponse.json();
         FloppyBird.Tube.tubesIntervalSeconds = tubeConfig.tubesIntervalSeconds;
-        FloppyBird.Tube.tubeSpeed = tubeConfig.tubeSpeed;
+        FloppyBird.tubeSpeedVui.tubeSpeed = tubeConfig.tubeSpeed;
         console.debug("Tube config file loaded!");
         // Get viewport and floppybird reference
         viewportRef = _event.detail;
@@ -313,7 +313,6 @@ var FloppyBird;
         static TUBE_COLLIDER_NODE_NAME = "TubeCollider";
         static TUBE_NODE_NAME = "Tube";
         static tubesIntervalSeconds = 2;
-        static tubeSpeed = 0.5;
         static tubeYDeviation = 0.7;
         static tubeTexture = new f.TextureImage("Assets/brushed-metal_albedo.jpg");
         // Mesh and material
@@ -373,7 +372,23 @@ var FloppyBird;
     }
     FloppyBird.Tube = Tube;
 })(FloppyBird || (FloppyBird = {}));
-nam;
+var FloppyBird;
+(function (FloppyBird) {
+    var fui = FudgeUserInterface;
+    var f = FudgeCore;
+    class TubeSpeedUIHandler extends f.Mutable {
+        tubeSpeed = 0.5;
+        constructor() {
+            super();
+            let tubeSpeedVui = document.querySelector("div#tubeSpeed");
+            console.log(new fui.Controller(this, tubeSpeedVui));
+        }
+        reduceMutator(_mutator) {
+            /* */
+        }
+    }
+    FloppyBird.TubeSpeedUIHandler = TubeSpeedUIHandler;
+})(FloppyBird || (FloppyBird = {}));
 var FloppyBird;
 (function (FloppyBird) {
     // https://refactoring.guru/design-patterns/singleton/typescript/example
