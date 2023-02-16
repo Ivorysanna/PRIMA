@@ -157,7 +157,14 @@ var FloppyBird;
     // Add EventListener
     document.addEventListener("interactiveViewportStarted", start);
     let tubesTimer = 0;
-    function start(_event) {
+    async function start(_event) {
+        // Load external json data tube config values
+        console.debug("Loading tube config file...");
+        let tubeConfigFileJsonResponse = await fetch("tubeConfig.json");
+        let tubeConfig = await tubeConfigFileJsonResponse.json();
+        FloppyBird.Tube.tubesIntervalSeconds = tubeConfig.tubesIntervalSeconds;
+        FloppyBird.Tube.tubeSpeed = tubeConfig.tubeSpeed;
+        console.debug("Tube config file loaded!");
         // Get viewport and floppybird reference
         viewportRef = _event.detail;
         //TODO: Remove Debug Collider when done

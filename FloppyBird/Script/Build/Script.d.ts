@@ -78,8 +78,8 @@ declare namespace FloppyBird {
     class Tube extends f.Node {
         static readonly TUBE_COLLIDER_NODE_NAME = "TubeCollider";
         static readonly TUBE_NODE_NAME = "Tube";
-        static readonly tubesIntervalSeconds: number;
-        static readonly tubeSpeed = 0.5;
+        static tubesIntervalSeconds: number;
+        static tubeSpeed: number;
         static readonly tubeYDeviation = 0.7;
         static readonly tubeTexture: f.TextureImage;
         private readonly tubeMesh;

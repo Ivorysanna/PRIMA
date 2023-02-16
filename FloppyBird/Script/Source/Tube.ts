@@ -6,8 +6,8 @@ namespace FloppyBird {
         // Constants
         public static readonly TUBE_COLLIDER_NODE_NAME = "TubeCollider";
         public static readonly TUBE_NODE_NAME = "Tube";
-        public static readonly tubesIntervalSeconds: number = 2;
-        public static readonly tubeSpeed = 0.5;
+        public static tubesIntervalSeconds: number = 2;
+        public static tubeSpeed = 0.5;
         public static readonly tubeYDeviation = 0.7;
         public static readonly tubeTexture: f.TextureImage = new f.TextureImage("Assets/brushed-metal_albedo.jpg");
 

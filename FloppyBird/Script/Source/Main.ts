@@ -12,13 +12,21 @@ namespace FloppyBird {
     f.Physics.setGravity(gravity);
 
     // Add EventListener
-    document.addEventListener("interactiveViewportStarted", <EventListener>start);
+    document.addEventListener("interactiveViewportStarted", <EventListener>(<unknown>start));
 
     // Tubes stuff
     export let tubesCollection: f.Node;
     let tubesTimer: number = 0;
 
-    function start(_event: CustomEvent): void {
+    async function start(_event: CustomEvent): Promise<void> {
+        // Load external json data tube config values
+        console.debug("Loading tube config file...");
+        let tubeConfigFileJsonResponse: Response = await fetch("tubeConfig.json");
+        let tubeConfig = await tubeConfigFileJsonResponse.json();
+        Tube.tubesIntervalSeconds = tubeConfig.tubesIntervalSeconds;
+        Tube.tubeSpeed = tubeConfig.tubeSpeed;
+        console.debug("Tube config file loaded!");
+
         // Get viewport and floppybird reference
         viewportRef = _event.detail;
         //TODO: Remove Debug Collider when done
@@ -49,7 +57,6 @@ namespace FloppyBird {
 
     function update(_event: Event): void {
         f.Physics.simulate();
-        
 
         if (!GameStateManager.getInstance().isGameOver) {
             // Update tubes
