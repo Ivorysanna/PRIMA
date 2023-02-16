@@ -13,7 +13,7 @@ namespace FloppyBird {
 
         // Mesh and material
         private readonly tubeMesh = new f.MeshObj("TubeMesh", "Assets/tube.obj");
-        // private readonly tubeMaterial = new f.Material("Tube", f.ShaderFlatTextured, new f.CoatTextured(f.Color.CSS("White"), Tube.tubeTexture));
+        // private readonly tubeMaterial = new f.Material("Tube", f.ShaderFlat, new f.CoatColored(new f.Color(0.9, 0.9, 0.9, 1)));
         private readonly tubeMaterial = new f.Material("Tubes", f.ShaderFlat);
         // private readonly tube: fAid.Node = new fAid.Node("Tube", f.Matrix4x4.IDENTITY(), this.tubeMaterial, this.tubeMesh);
 
@@ -23,7 +23,6 @@ namespace FloppyBird {
             this.addComponent(new f.ComponentMesh(this.tubeMesh));
             this.addComponent(new f.ComponentMaterial(this.tubeMaterial));
             this.addComponent(new f.ComponentTransform());
-            this.addComponent(new ContinuousTubeMovement());
 
             // Set pivot point
             this.getComponent(f.ComponentMesh).mtxPivot.translateY(-2.25);
@@ -46,6 +45,7 @@ namespace FloppyBird {
         public static createSetOfTubes(): f.Node {
             const tubeContainerNode = new f.Node(this.TUBE_COLLIDER_NODE_NAME);
             tubeContainerNode.addComponent(new f.ComponentTransform());
+            tubeContainerNode.addComponent(new ContinuousTubeMovement());
 
             // Randomize spawn position
             const randomSpawnPosition: number = Math.random() * 2 * this.tubeYDeviation - this.tubeYDeviation;

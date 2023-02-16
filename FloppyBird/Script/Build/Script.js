@@ -16,7 +16,6 @@ var FloppyBird;
             super();
             this.addEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
             this.addEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
-            this.addEventListener("nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */, this.hndEvent);
         }
         // Activate the functions of this component as response to events
         hndEvent = (_event) => {
@@ -27,20 +26,18 @@ var FloppyBird;
                 case "componentRemove" /* f.EVENT.COMPONENT_REMOVE */:
                     this.removeEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
                     this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
-                    break;
-                case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
-                    this.node.addEventListener("renderPrepare" /* f.EVENT.RENDER_PREPARE */, this.update);
+                    this.node.removeEventListener("renderPrepare" /* f.EVENT.RENDER_PREPARE */, this.update);
                     break;
             }
         };
         update = (_event) => {
             const deltaTime = f.Loop.timeFrameGame / 1000;
-            const tubeNode = this.node;
-            tubeNode.mtxLocal.translateX(-FloppyBird.Tube.tubeSpeed * deltaTime);
+            const tubeContainerNode = this.node;
+            tubeContainerNode.mtxLocal.translateX(-FloppyBird.Tube.tubeSpeed * deltaTime);
             // Remove tube if it's out of the viewport
-            if (tubeNode.mtxLocal.translation.x < -3) {
-                console.log("Tube removed");
-                FloppyBird.tubesCollection.removeChild(tubeNode.getParent());
+            if (tubeContainerNode.mtxLocal.translation.x < -3) {
+                console.log("Tubes removed");
+                FloppyBird.tubesCollection.removeChild(tubeContainerNode);
             }
         };
     }
@@ -59,7 +56,6 @@ var FloppyBird;
                 return;
             this.addEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
             this.addEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
-            this.addEventListener("nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */, this.hndEvent);
         }
         // Activate the functions of this component as response to events
         hndEvent = (_event) => {
@@ -70,9 +66,8 @@ var FloppyBird;
                 case "componentRemove" /* f.EVENT.COMPONENT_REMOVE */:
                     this.removeEventListener("componentAdd" /* f.EVENT.COMPONENT_ADD */, this.hndEvent);
                     this.removeEventListener("componentRemove" /* f.EVENT.COMPONENT_REMOVE */, this.hndEvent);
-                    break;
-                case "nodeDeserialized" /* f.EVENT.NODE_DESERIALIZED */:
-                    this.addHnd();
+                    this.node.removeEventListener("renderPrepare" /* f.EVENT.RENDER_PREPARE */, this.update);
+                    this.rigidbody.removeEventListener("ColliderEnteredCollision" /* f.EVENT_PHYSICS.COLLISION_ENTER */, this.collisionHandler);
                     break;
             }
         };
@@ -311,7 +306,7 @@ var FloppyBird;
         static tubeTexture = new f.TextureImage("Assets/brushed-metal_albedo.jpg");
         // Mesh and material
         tubeMesh = new f.MeshObj("TubeMesh", "Assets/tube.obj");
-        // private readonly tubeMaterial = new f.Material("Tube", f.ShaderFlatTextured, new f.CoatTextured(f.Color.CSS("White"), Tube.tubeTexture));
+        // private readonly tubeMaterial = new f.Material("Tube", f.ShaderFlat, new f.CoatColored(new f.Color(0.9, 0.9, 0.9, 1)));
         tubeMaterial = new f.Material("Tubes", f.ShaderFlat);
         // private readonly tube: fAid.Node = new fAid.Node("Tube", f.Matrix4x4.IDENTITY(), this.tubeMaterial, this.tubeMesh);
         constructor(isRotatedDownward = false) {
@@ -319,7 +314,6 @@ var FloppyBird;
             this.addComponent(new f.ComponentMesh(this.tubeMesh));
             this.addComponent(new f.ComponentMaterial(this.tubeMaterial));
             this.addComponent(new f.ComponentTransform());
-            this.addComponent(new FloppyBird.ContinuousTubeMovement());
             // Set pivot point
             this.getComponent(f.ComponentMesh).mtxPivot.translateY(-2.25);
             // Add Collider
@@ -338,6 +332,7 @@ var FloppyBird;
         static createSetOfTubes() {
             const tubeContainerNode = new f.Node(this.TUBE_COLLIDER_NODE_NAME);
             tubeContainerNode.addComponent(new f.ComponentTransform());
+            tubeContainerNode.addComponent(new FloppyBird.ContinuousTubeMovement());
             // Randomize spawn position
             const randomSpawnPosition = Math.random() * 2 * this.tubeYDeviation - this.tubeYDeviation;
             const tubeLower = new Tube();

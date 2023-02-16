@@ -13,7 +13,6 @@ namespace FloppyBird {
 
             this.addEventListener(f.EVENT.COMPONENT_ADD, this.hndEvent);
             this.addEventListener(f.EVENT.COMPONENT_REMOVE, this.hndEvent);
-            this.addEventListener(f.EVENT.NODE_DESERIALIZED, this.hndEvent);
         }
 
         // Activate the functions of this component as response to events
@@ -25,9 +24,8 @@ namespace FloppyBird {
                 case f.EVENT.COMPONENT_REMOVE:
                     this.removeEventListener(f.EVENT.COMPONENT_ADD, this.hndEvent);
                     this.removeEventListener(f.EVENT.COMPONENT_REMOVE, this.hndEvent);
-                    break;
-                case f.EVENT.NODE_DESERIALIZED:
-                    this.addHnd();
+                    this.node.removeEventListener(f.EVENT.RENDER_PREPARE, this.update);
+                    this.rigidbody.removeEventListener(f.EVENT_PHYSICS.COLLISION_ENTER, this.collisionHandler);
                     break;
             }
         };
