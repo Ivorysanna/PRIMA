@@ -1,11 +1,5 @@
 declare namespace FloppyBird {
     import f = FudgeCore;
-    class Avatar extends f.ComponentScript {
-        static readonly iSubclass: number;
-    }
-}
-declare namespace FloppyBird {
-    import f = FudgeCore;
     class ContinuousTubeMovement extends f.ComponentScript {
         constructor();
         hndEvent: (_event: Event) => void;
@@ -16,23 +10,33 @@ declare namespace FloppyBird {
     import f = FudgeCore;
     class FloppyBirdPlayer extends f.ComponentScript {
         static readonly iSubclass: number;
+        private isSpaceKeyAlreadyPressed;
+        private rigidbody;
+        private jumpForce;
         constructor();
         hndEvent: (_event: Event) => void;
         private addHnd;
         private collisionHandler;
         private update;
-        private isSpaceKeyAlreadyPressed;
-        private rigidbody;
-        private jumpForce;
         private updateControls;
     }
 }
 declare namespace FloppyBird {
+    class GameStateManager {
+        private static instance;
+        private _isGameOver;
+        private readonly EASY_MODE;
+        private constructor();
+        static getInstance(): GameStateManager;
+        set isGameOver(value: boolean);
+        get isGameOver(): boolean;
+        get isEasyMode(): boolean;
+    }
+}
+declare namespace FloppyBird {
     import f = FudgeCore;
-    const EASY_MODE = true;
     let gravity: f.Vector3;
     let tubesCollection: f.Node;
-    let isGameOver: boolean;
 }
 declare namespace FloppyBird {
     import f = FudgeCore;

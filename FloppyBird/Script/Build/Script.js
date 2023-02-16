@@ -2,15 +2,6 @@
 var FloppyBird;
 (function (FloppyBird) {
     var f = FudgeCore;
-    f.Project.registerScriptNamespace(FloppyBird);
-    class Avatar extends f.ComponentScript {
-        static iSubclass = f.Component.registerSubclass(Avatar);
-    }
-    FloppyBird.Avatar = Avatar;
-})(FloppyBird || (FloppyBird = {}));
-var FloppyBird;
-(function (FloppyBird) {
-    var f = FudgeCore;
     class ContinuousTubeMovement extends f.ComponentScript {
         constructor() {
             super();
@@ -31,13 +22,15 @@ var FloppyBird;
             }
         };
         update = (_event) => {
-            const deltaTime = f.Loop.timeFrameGame / 1000;
-            const tubeContainerNode = this.node;
-            tubeContainerNode.mtxLocal.translateX(-FloppyBird.Tube.tubeSpeed * deltaTime);
-            // Remove tube if it's out of the viewport
-            if (tubeContainerNode.mtxLocal.translation.x < -3) {
-                console.log("Tubes removed");
-                FloppyBird.tubesCollection.removeChild(tubeContainerNode);
+            if (!FloppyBird.GameStateManager.getInstance().isGameOver) {
+                const deltaTime = f.Loop.timeFrameGame / 1000;
+                const tubeContainerNode = this.node;
+                tubeContainerNode.mtxLocal.translateX(-FloppyBird.Tube.tubeSpeed * deltaTime);
+                // Remove tube if it's out of the viewport
+                if (tubeContainerNode.mtxLocal.translation.x < -3) {
+                    console.log("Tubes removed");
+                    FloppyBird.tubesCollection.removeChild(tubeContainerNode);
+                }
             }
         };
     }
@@ -49,6 +42,9 @@ var FloppyBird;
     f.Project.registerScriptNamespace(FloppyBird); // Register the namespace to FUDGE for serialization
     class FloppyBirdPlayer extends f.ComponentScript {
         static iSubclass = f.Component.registerSubclass(FloppyBirdPlayer);
+        isSpaceKeyAlreadyPressed = false;
+        rigidbody;
+        jumpForce = new f.Vector3(0, 1, 0);
         constructor() {
             super();
             // Don't start when running in editor
@@ -91,8 +87,9 @@ var FloppyBird;
                 case "BorderBottom":
                 case FloppyBird.Tube.TUBE_NODE_NAME:
                     FloppyBird.PlaySoundManager.getInstance().playCollisionSound();
-                    FloppyBird.isGameOver = true;
-                    alert("GAME OVER");
+                    FloppyBird.GameStateManager.getInstance().isGameOver = true;
+                    const currentScore = FloppyBird.UIManager.getInstance().currentScore;
+                    alert(`GAME OVER ${currentScore} Tubes passed`);
                     // TODO: Better Game Over Screen maybe?
                     break;
                 default:
@@ -100,20 +97,12 @@ var FloppyBird;
             }
         }
         update = (_event) => {
-            // TODO gamestate als singleton, damit man gameover von überall updaten kann
-            if (!FloppyBird.isGameOver) {
+            if (!FloppyBird.GameStateManager.getInstance().isGameOver) {
                 //Controls
                 this.updateControls();
-                // Wiggle FloppyBird with sine function
-                // this.node.mtxLocal.rotateZ(180 * Math.sin(elapsedGameTime * 2));
-                // this.node.mtxLocal.rotateX(180 * Math.sin(elapsedGameTime * 1.5));
             }
         };
-        // TODO checkFloppyBirdCollision hier rein
         // Controls
-        isSpaceKeyAlreadyPressed = false;
-        rigidbody;
-        jumpForce = new f.Vector3(0, 1, 0);
         updateControls() {
             if (f.Keyboard.isPressedOne([f.KEYBOARD_CODE.SPACE])) {
                 if (!this.isSpaceKeyAlreadyPressed) {
@@ -129,26 +118,36 @@ var FloppyBird;
     }
     FloppyBird.FloppyBirdPlayer = FloppyBirdPlayer;
 })(FloppyBird || (FloppyBird = {}));
-// namespace Pinball {
-//     import f = FudgeCore;
-//     import fui = FudgeUserInterface;
-//     export class GameState extends f.Mutable {
-//         protected reduceMutator(_mutator: f.Mutator): void {/* */ }
-//         public frequency = 0;
-//         public speed = 0;
-//         private controller: fui.Controller;
-//         constructor(_config: {[key: string]: number}) {
-//             super();
-//             this.controller = new fui.Controller(this, document.querySelector("#UI"));
-//             console.log(this.controller);
-//         }
-//     }
-//   }
+var FloppyBird;
+(function (FloppyBird) {
+    // https://refactoring.guru/design-patterns/singleton/typescript/example
+    class GameStateManager {
+        static instance;
+        _isGameOver = false;
+        EASY_MODE = true;
+        constructor() { }
+        static getInstance() {
+            if (!GameStateManager.instance) {
+                GameStateManager.instance = new GameStateManager();
+            }
+            return GameStateManager.instance;
+        }
+        set isGameOver(value) {
+            this._isGameOver = value;
+        }
+        get isGameOver() {
+            return this._isGameOver;
+        }
+        get isEasyMode() {
+            return this.EASY_MODE;
+        }
+    }
+    FloppyBird.GameStateManager = GameStateManager;
+})(FloppyBird || (FloppyBird = {}));
 var FloppyBird;
 (function (FloppyBird) {
     var f = FudgeCore;
-    f.Debug.info("Main Program Template running!");
-    FloppyBird.EASY_MODE = true;
+    f.Debug.info("Main Program FloppyBird running!");
     let backgroundNode = new f.Node("Background");
     // Global components
     let viewportRef;
@@ -158,8 +157,6 @@ var FloppyBird;
     // Add EventListener
     document.addEventListener("interactiveViewportStarted", start);
     let tubesTimer = 0;
-    // Game flow
-    FloppyBird.isGameOver = false;
     function start(_event) {
         // Get viewport and floppybird reference
         viewportRef = _event.detail;
@@ -184,7 +181,7 @@ var FloppyBird;
     }
     function update(_event) {
         f.Physics.simulate();
-        if (!FloppyBird.isGameOver) {
+        if (!FloppyBird.GameStateManager.getInstance().isGameOver) {
             // Update tubes
             spawnTubes();
             // Move the backgrounds
@@ -228,8 +225,10 @@ var FloppyBird;
         masterVolume = 1;
         audioFileFlap;
         audioFileCollision;
+        // private audioFilePoint: f.Audio;
         cmpAudioFileFlap;
         cmpAudioFileCollision;
+        // private cmpAudioFilePoint: f.ComponentAudio;
         /**
          * The Singleton's constructor should always be private to prevent direct
          * construction calls with the `new` operator.
@@ -250,12 +249,16 @@ var FloppyBird;
         initializeAudio() {
             this.audioFileFlap = new f.Audio("Sounds/wing.wav");
             this.audioFileCollision = new f.Audio("Sounds/collision.wav");
+            // this.audioFilePoint = new f.Audio("Sounds/point.wav");
             this.cmpAudioFileFlap = new f.ComponentAudio(this.audioFileFlap, false, false);
             this.cmpAudioFileFlap.connect(true);
             this.cmpAudioFileFlap.volume = 1 * this.masterVolume;
             this.cmpAudioFileCollision = new f.ComponentAudio(this.audioFileCollision, false, false);
             this.cmpAudioFileCollision.connect(true);
             this.cmpAudioFileCollision.volume = 1 * this.masterVolume;
+            // this.cmpAudioFilePoint = new f.ComponentAudio(this.audioFilePoint, false, false);
+            // this.cmpAudioFilePoint.connect(true);
+            // this.cmpAudioFilePoint.volume = 1 * this.masterVolume;
         }
         playFlapSound() {
             this.cmpAudioFileFlap.play(true);
@@ -306,6 +309,7 @@ var FloppyBird;
         static tubeTexture = new f.TextureImage("Assets/brushed-metal_albedo.jpg");
         // Mesh and material
         tubeMesh = new f.MeshObj("TubeMesh", "Assets/tube.obj");
+        // Settings colors for the tubes with flat shading and textures didn't work
         // private readonly tubeMaterial = new f.Material("Tube", f.ShaderFlat, new f.CoatColored(new f.Color(0.9, 0.9, 0.9, 1)));
         tubeMaterial = new f.Material("Tubes", f.ShaderFlat);
         // private readonly tube: fAid.Node = new fAid.Node("Tube", f.Matrix4x4.IDENTITY(), this.tubeMaterial, this.tubeMesh);
@@ -339,7 +343,8 @@ var FloppyBird;
             tubeLower.mtxLocal.translateY(-randomSpawnPosition);
             tubeContainerNode.addChild(tubeLower);
             // Randomize gap size
-            const randomGapSize = Math.random() * 0.05 + (FloppyBird.EASY_MODE ? 0.8 : 0.4);
+            const constantGapSize = FloppyBird.GameStateManager.getInstance().isEasyMode ? 0.8 : 0.4;
+            const randomGapSize = Math.random() * 0.05 + constantGapSize;
             const tubeUpper = new Tube(true);
             tubeUpper.mtxLocal.translateY(randomSpawnPosition - randomGapSize);
             tubeContainerNode.addChild(tubeUpper);
@@ -348,6 +353,7 @@ var FloppyBird;
             tubeContainerNode.addChild(colliderNode);
             const rigidbodyCollider = new f.ComponentRigidbody(0, f.BODY_TYPE.KINEMATIC, f.COLLIDER_TYPE.CYLINDER, f.COLLISION_GROUP.DEFAULT, new f.Matrix4x4());
             rigidbodyCollider.mtxPivot.scale(new f.Vector3(0.1, 10, 4));
+            // Triggers don't influence anything, but they still trigger collision events
             rigidbodyCollider.isTrigger = true;
             colliderNode.addComponent(new f.ComponentTransform());
             colliderNode.addComponent(rigidbodyCollider);

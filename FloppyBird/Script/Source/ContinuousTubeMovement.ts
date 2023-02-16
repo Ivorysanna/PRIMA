@@ -22,14 +22,16 @@ namespace FloppyBird {
         };
 
         private update = (_event: Event): void => {
-            const deltaTime: number = f.Loop.timeFrameGame / 1000;
-            const tubeContainerNode: f.Node = this.node;
-            tubeContainerNode.mtxLocal.translateX(-Tube.tubeSpeed * deltaTime);
+            if (!GameStateManager.getInstance().isGameOver) {
+                const deltaTime: number = f.Loop.timeFrameGame / 1000;
+                const tubeContainerNode: f.Node = this.node;
+                tubeContainerNode.mtxLocal.translateX(-Tube.tubeSpeed * deltaTime);
 
-            // Remove tube if it's out of the viewport
-            if (tubeContainerNode.mtxLocal.translation.x < -3) {
-                console.log("Tubes removed");
-                tubesCollection.removeChild(tubeContainerNode);
+                // Remove tube if it's out of the viewport
+                if (tubeContainerNode.mtxLocal.translation.x < -3) {
+                    console.log("Tubes removed");
+                    tubesCollection.removeChild(tubeContainerNode);
+                }
             }
         };
     }

@@ -1,8 +1,6 @@
 namespace FloppyBird {
     import f = FudgeCore;
-    f.Debug.info("Main Program Template running!");
-
-    export const EASY_MODE = true;
+    f.Debug.info("Main Program FloppyBird running!");
 
     let backgroundNode: f.Node = new f.Node("Background");
 
@@ -19,9 +17,6 @@ namespace FloppyBird {
     // Tubes stuff
     export let tubesCollection: f.Node;
     let tubesTimer: number = 0;
-
-    // Game flow
-    export let isGameOver: boolean = false;
 
     function start(_event: CustomEvent): void {
         // Get viewport and floppybird reference
@@ -56,7 +51,7 @@ namespace FloppyBird {
         f.Physics.simulate();
         
 
-        if (!isGameOver) {
+        if (!GameStateManager.getInstance().isGameOver) {
             // Update tubes
             spawnTubes();
 

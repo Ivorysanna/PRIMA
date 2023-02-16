@@ -13,6 +13,8 @@ namespace FloppyBird {
 
         // Mesh and material
         private readonly tubeMesh = new f.MeshObj("TubeMesh", "Assets/tube.obj");
+
+        // Settings colors for the tubes with flat shading and textures didn't work
         // private readonly tubeMaterial = new f.Material("Tube", f.ShaderFlat, new f.CoatColored(new f.Color(0.9, 0.9, 0.9, 1)));
         private readonly tubeMaterial = new f.Material("Tubes", f.ShaderFlat);
         // private readonly tube: fAid.Node = new fAid.Node("Tube", f.Matrix4x4.IDENTITY(), this.tubeMaterial, this.tubeMesh);
@@ -55,11 +57,11 @@ namespace FloppyBird {
             tubeContainerNode.addChild(tubeLower);
 
             // Randomize gap size
-            const randomGapSize: number = Math.random() * 0.05 + (EASY_MODE ? 0.8 : 0.4);
+            const constantGapSize: number = GameStateManager.getInstance().isEasyMode ? 0.8 : 0.4;
+            const randomGapSize: number = Math.random() * 0.05 + constantGapSize;
 
             const tubeUpper = new Tube(true);
             tubeUpper.mtxLocal.translateY(randomSpawnPosition - randomGapSize);
-
             tubeContainerNode.addChild(tubeUpper);
 
             //Add Collider for point scoring
@@ -67,6 +69,7 @@ namespace FloppyBird {
             tubeContainerNode.addChild(colliderNode);
             const rigidbodyCollider: f.ComponentRigidbody = new f.ComponentRigidbody(0, f.BODY_TYPE.KINEMATIC, f.COLLIDER_TYPE.CYLINDER, f.COLLISION_GROUP.DEFAULT, new f.Matrix4x4());
             rigidbodyCollider.mtxPivot.scale(new f.Vector3(0.1, 10, 4));
+            // Triggers don't influence anything, but they still trigger collision events
             rigidbodyCollider.isTrigger = true;
             colliderNode.addComponent(new f.ComponentTransform());
             colliderNode.addComponent(rigidbodyCollider);
