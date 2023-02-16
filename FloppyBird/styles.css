@@ -8,6 +8,17 @@ html, body {
 
 dialog { 
   text-align: center; 
+  background-color: rgba(166, 250, 145, 0.753);
+  border-radius: 10px;
+  padding: 30px 50px;
+  border: none;
+}
+
+.instructions{
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #000;
 }
 
 canvas.fullscreen { 
