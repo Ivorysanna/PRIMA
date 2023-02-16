@@ -27,6 +27,7 @@ namespace FloppyBird {
         }
 
         public incrementScore() {
+            PlaySoundManager.getInstance().playPointSound();
             this.currentScore++;
         }
 

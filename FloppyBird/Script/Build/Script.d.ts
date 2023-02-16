@@ -19,18 +19,19 @@ declare namespace FloppyBird {
         private collisionHandler;
         private update;
         private updateControls;
+        private resetPlayerPosition;
     }
 }
 declare namespace FloppyBird {
     class GameStateManager {
         private static instance;
-        private _isGameOver;
+        isGameOver: boolean;
+        isPlayerControllable: boolean;
         private readonly EASY_MODE;
         private constructor();
         static getInstance(): GameStateManager;
-        set isGameOver(value: boolean);
-        get isGameOver(): boolean;
         get isEasyMode(): boolean;
+        reinitializeGame(): void;
     }
 }
 declare namespace FloppyBird {
@@ -38,6 +39,7 @@ declare namespace FloppyBird {
     let gravity: f.Vector3;
     let tubesCollection: f.Node;
     let tubeSpeedVui: TubeSpeedUIHandler;
+    function resetTubes(): void;
 }
 declare namespace FloppyBird {
     import f = FudgeCore;
@@ -47,8 +49,10 @@ declare namespace FloppyBird {
         masterVolume: number;
         private audioFileFlap;
         private audioFileCollision;
+        private audioFilePoint;
         private cmpAudioFileFlap;
         private cmpAudioFileCollision;
+        private cmpAudioFilePoint;
         /**
          * The Singleton's constructor should always be private to prevent direct
          * construction calls with the `new` operator.
@@ -64,6 +68,7 @@ declare namespace FloppyBird {
         initializeAudio(): void;
         playFlapSound(): void;
         playCollisionSound(): void;
+        playPointSound(): void;
     }
 }
 declare namespace FloppyBird {

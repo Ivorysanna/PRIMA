@@ -51,7 +51,7 @@ namespace FloppyBird {
         // Initialize Audio
         PlaySoundManager.getInstance().initializeAudio();
 
-        // Get tubes collection
+        // Set tubes collection reference
         tubesCollection = viewportRef.getBranch().getChildrenByName("Tubes")[0];
 
         // Start frame loop
@@ -99,6 +99,12 @@ namespace FloppyBird {
                 backgroundNode.removeChild(eachBackground);
                 backgroundNode.appendChild(new ScrollingBackground(16));
             }
+        });
+    }
+
+    export function resetTubes() {
+        tubesCollection.getChildren().forEach((eachTube) => {
+            tubesCollection.removeChild(eachTube);
         });
     }
 }

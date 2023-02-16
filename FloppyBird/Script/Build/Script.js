@@ -73,6 +73,7 @@ var FloppyBird;
             this.rigidbody.addEventListener("ColliderEnteredCollision" /* f.EVENT_PHYSICS.COLLISION_ENTER */, this.collisionHandler);
         }
         collisionHandler(_event) {
+            // const floppyBirdReference: FloppyBirdPlayer = <FloppyBirdPlayer>_event.target;
             const otherCollider = _event.cmpRigidbody;
             const collidedNode = otherCollider.node;
             if (!collidedNode) {
@@ -85,19 +86,27 @@ var FloppyBird;
                     collidedNode.removeComponent(collidedNode.getComponent(f.ComponentRigidbody));
                     break;
                 case "BorderBottom":
-                case FloppyBird.Tube.TUBE_NODE_NAME:
-                    FloppyBird.PlaySoundManager.getInstance().playCollisionSound();
                     FloppyBird.GameStateManager.getInstance().isGameOver = true;
+                    FloppyBird.PlaySoundManager.getInstance().playCollisionSound();
                     const currentScore = FloppyBird.UIManager.getInstance().currentScore;
-                    alert(`GAME OVER ${currentScore} Tubes passed`);
+                    alert(`GAME OVER - ${currentScore} Tubes passed`);
+                    console.debug(_event);
+                    this.node.getComponent(FloppyBirdPlayer).resetPlayerPosition();
+                    FloppyBird.resetTubes();
+                    FloppyBird.UIManager.getInstance().resetScore();
                     // TODO: Better Game Over Screen maybe?
+                    break;
+                case FloppyBird.Tube.TUBE_NODE_NAME:
+                    FloppyBird.GameStateManager.getInstance().isPlayerControllable = false;
+                    this.node.getComponent(f.ComponentRigidbody).applyLinearImpulse(new f.Vector3(-0.4, 0.6, 0));
+                    collidedNode.removeComponent(collidedNode.getComponent(f.ComponentRigidbody));
                     break;
                 default:
                     break;
             }
         }
         update = (_event) => {
-            if (!FloppyBird.GameStateManager.getInstance().isGameOver) {
+            if (!FloppyBird.GameStateManager.getInstance().isGameOver && FloppyBird.GameStateManager.getInstance().isPlayerControllable) {
                 //Controls
                 this.updateControls();
             }
@@ -115,6 +124,12 @@ var FloppyBird;
                 this.isSpaceKeyAlreadyPressed = false;
             }
         }
+        resetPlayerPosition() {
+            this.node.mtxWorld.translation = new f.Vector3(0, 0, 0);
+            this.node.mtxWorld.rotation = new f.Vector3(0, 0, 0);
+            this.node.getComponent(f.ComponentRigidbody).setVelocity(new f.Vector3(0, 0, 0));
+            FloppyBird.GameStateManager.getInstance().reinitializeGame();
+        }
     }
     FloppyBird.FloppyBirdPlayer = FloppyBirdPlayer;
 })(FloppyBird || (FloppyBird = {}));
@@ -123,7 +138,8 @@ var FloppyBird;
     // https://refactoring.guru/design-patterns/singleton/typescript/example
     class GameStateManager {
         static instance;
-        _isGameOver = false;
+        isGameOver = false;
+        isPlayerControllable = true;
         EASY_MODE = true;
         constructor() {
         }
@@ -133,14 +149,12 @@ var FloppyBird;
             }
             return GameStateManager.instance;
         }
-        set isGameOver(value) {
-            this._isGameOver = value;
-        }
-        get isGameOver() {
-            return this._isGameOver;
-        }
         get isEasyMode() {
             return this.EASY_MODE;
+        }
+        reinitializeGame() {
+            this.isGameOver = false;
+            this.isPlayerControllable = true;
         }
     }
     FloppyBird.GameStateManager = GameStateManager;
@@ -182,7 +196,7 @@ var FloppyBird;
         viewportRef.camera = cmpCamera;
         // Initialize Audio
         FloppyBird.PlaySoundManager.getInstance().initializeAudio();
-        // Get tubes collection
+        // Set tubes collection reference
         FloppyBird.tubesCollection = viewportRef.getBranch().getChildrenByName("Tubes")[0];
         // Start frame loop
         f.Loop.addEventListener("loopFrame" /* f.EVENT.LOOP_FRAME */, update);
@@ -223,6 +237,12 @@ var FloppyBird;
             }
         });
     }
+    function resetTubes() {
+        FloppyBird.tubesCollection.getChildren().forEach((eachTube) => {
+            FloppyBird.tubesCollection.removeChild(eachTube);
+        });
+    }
+    FloppyBird.resetTubes = resetTubes;
 })(FloppyBird || (FloppyBird = {}));
 var FloppyBird;
 (function (FloppyBird) {
@@ -234,10 +254,10 @@ var FloppyBird;
         masterVolume = 1;
         audioFileFlap;
         audioFileCollision;
-        // private audioFilePoint: f.Audio;
+        audioFilePoint;
         cmpAudioFileFlap;
         cmpAudioFileCollision;
-        // private cmpAudioFilePoint: f.ComponentAudio;
+        cmpAudioFilePoint;
         /**
          * The Singleton's constructor should always be private to prevent direct
          * construction calls with the `new` operator.
@@ -258,22 +278,25 @@ var FloppyBird;
         initializeAudio() {
             this.audioFileFlap = new f.Audio("Sounds/wing.wav");
             this.audioFileCollision = new f.Audio("Sounds/collision.wav");
-            // this.audioFilePoint = new f.Audio("Sounds/point.wav");
+            this.audioFilePoint = new f.Audio("Sounds/point.wav");
             this.cmpAudioFileFlap = new f.ComponentAudio(this.audioFileFlap, false, false);
             this.cmpAudioFileFlap.connect(true);
             this.cmpAudioFileFlap.volume = 1 * this.masterVolume;
             this.cmpAudioFileCollision = new f.ComponentAudio(this.audioFileCollision, false, false);
             this.cmpAudioFileCollision.connect(true);
             this.cmpAudioFileCollision.volume = 1 * this.masterVolume;
-            // this.cmpAudioFilePoint = new f.ComponentAudio(this.audioFilePoint, false, false);
-            // this.cmpAudioFilePoint.connect(true);
-            // this.cmpAudioFilePoint.volume = 1 * this.masterVolume;
+            this.cmpAudioFilePoint = new f.ComponentAudio(this.audioFilePoint, false, false);
+            this.cmpAudioFilePoint.connect(true);
+            this.cmpAudioFilePoint.volume = 1 * this.masterVolume;
         }
         playFlapSound() {
             this.cmpAudioFileFlap.play(true);
         }
         playCollisionSound() {
             this.cmpAudioFileCollision.play(true);
+        }
+        playPointSound() {
+            this.cmpAudioFilePoint.play(true);
         }
     }
     FloppyBird.PlaySoundManager = PlaySoundManager;
@@ -330,7 +353,7 @@ var FloppyBird;
             this.getComponent(f.ComponentMesh).mtxPivot.translateY(-2.25);
             // Add Collider
             let rigidbody = new f.ComponentRigidbody(0, f.BODY_TYPE.KINEMATIC, f.COLLIDER_TYPE.CYLINDER, f.COLLISION_GROUP.DEFAULT, new f.Matrix4x4());
-            rigidbody.mtxPivot.scale(new f.Vector3(0.22, 2.234, 1));
+            rigidbody.mtxPivot.scale(new f.Vector3(0.25, 2.234, 1));
             rigidbody.mtxPivot.translate(new f.Vector3(0.01, -0.53, 0));
             this.addComponent(rigidbody);
             if (isRotatedDownward) {
@@ -413,6 +436,7 @@ var FloppyBird;
             return this._currentScore;
         }
         incrementScore() {
+            FloppyBird.PlaySoundManager.getInstance().playPointSound();
             this.currentScore++;
         }
         resetScore() {

@@ -30,7 +30,7 @@ namespace FloppyBird {
 
             // Add Collider
             let rigidbody: f.ComponentRigidbody = new f.ComponentRigidbody(0, f.BODY_TYPE.KINEMATIC, f.COLLIDER_TYPE.CYLINDER, f.COLLISION_GROUP.DEFAULT, new f.Matrix4x4());
-            rigidbody.mtxPivot.scale(new f.Vector3(0.22, 2.234, 1));
+            rigidbody.mtxPivot.scale(new f.Vector3(0.25, 2.234, 1));
             rigidbody.mtxPivot.translate(new f.Vector3(0.01, -0.53, 0));
             this.addComponent(rigidbody);
 

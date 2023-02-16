@@ -41,6 +41,7 @@ namespace FloppyBird {
         }
 
         private collisionHandler(_event: f.EventPhysics): void {
+            // const floppyBirdReference: FloppyBirdPlayer = <FloppyBirdPlayer>_event.target;
             const otherCollider: f.ComponentRigidbody = _event.cmpRigidbody;
             const collidedNode: f.Node = otherCollider.node;
             if (!collidedNode) {
@@ -53,12 +54,20 @@ namespace FloppyBird {
                     collidedNode.removeComponent(collidedNode.getComponent(f.ComponentRigidbody));
                     break;
                 case "BorderBottom":
-                case Tube.TUBE_NODE_NAME:
-                    PlaySoundManager.getInstance().playCollisionSound();
                     GameStateManager.getInstance().isGameOver = true;
+                    PlaySoundManager.getInstance().playCollisionSound();
                     const currentScore: number = UIManager.getInstance().currentScore;
-                    alert(`GAME OVER ${currentScore} Tubes passed`);
+                    alert(`GAME OVER - ${currentScore} Tubes passed`);
+                    console.debug(_event);
+                    this.node.getComponent(FloppyBirdPlayer).resetPlayerPosition();
+                    resetTubes();
+                    UIManager.getInstance().resetScore();
                     // TODO: Better Game Over Screen maybe?
+                    break;
+                case Tube.TUBE_NODE_NAME:
+                    GameStateManager.getInstance().isPlayerControllable = false;
+                    this.node.getComponent(f.ComponentRigidbody).applyLinearImpulse(new f.Vector3(-0.4, 0.6, 0));
+                    collidedNode.removeComponent(collidedNode.getComponent(f.ComponentRigidbody));
                     break;
                 default:
                     break;
@@ -66,7 +75,7 @@ namespace FloppyBird {
         }
 
         private update = (_event: Event): void => {
-            if (!GameStateManager.getInstance().isGameOver) {
+            if (!GameStateManager.getInstance().isGameOver && GameStateManager.getInstance().isPlayerControllable) {
                 //Controls
                 this.updateControls();
             }
@@ -83,6 +92,13 @@ namespace FloppyBird {
             } else {
                 this.isSpaceKeyAlreadyPressed = false;
             }
+        }
+
+        private resetPlayerPosition(): void {
+            this.node.mtxWorld.translation = new f.Vector3(0, 0, 0);
+            this.node.mtxWorld.rotation = new f.Vector3(0, 0, 0);
+            this.node.getComponent(f.ComponentRigidbody).setVelocity(new f.Vector3(0, 0, 0));
+            GameStateManager.getInstance().reinitializeGame();
         }
     }
 }

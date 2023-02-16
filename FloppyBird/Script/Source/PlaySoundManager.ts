@@ -9,11 +9,11 @@ namespace FloppyBird {
 
         private audioFileFlap: f.Audio;
         private audioFileCollision: f.Audio;
-        // private audioFilePoint: f.Audio;
+        private audioFilePoint: f.Audio;
 
         private cmpAudioFileFlap: f.ComponentAudio;
         private cmpAudioFileCollision: f.ComponentAudio;
-        // private cmpAudioFilePoint: f.ComponentAudio;
+        private cmpAudioFilePoint: f.ComponentAudio;
 
         /**
          * The Singleton's constructor should always be private to prevent direct
@@ -37,7 +37,7 @@ namespace FloppyBird {
         public initializeAudio() {
             this.audioFileFlap = new f.Audio("Sounds/wing.wav");
             this.audioFileCollision = new f.Audio("Sounds/collision.wav");
-            // this.audioFilePoint = new f.Audio("Sounds/point.wav");
+            this.audioFilePoint = new f.Audio("Sounds/point.wav");
 
             this.cmpAudioFileFlap = new f.ComponentAudio(this.audioFileFlap, false, false);
             this.cmpAudioFileFlap.connect(true);
@@ -47,9 +47,9 @@ namespace FloppyBird {
             this.cmpAudioFileCollision.connect(true);
             this.cmpAudioFileCollision.volume = 1 * this.masterVolume;
 
-            // this.cmpAudioFilePoint = new f.ComponentAudio(this.audioFilePoint, false, false);
-            // this.cmpAudioFilePoint.connect(true);
-            // this.cmpAudioFilePoint.volume = 1 * this.masterVolume;
+            this.cmpAudioFilePoint = new f.ComponentAudio(this.audioFilePoint, false, false);
+            this.cmpAudioFilePoint.connect(true);
+            this.cmpAudioFilePoint.volume = 1 * this.masterVolume;
         }
 
         public playFlapSound() {
@@ -60,9 +60,9 @@ namespace FloppyBird {
             this.cmpAudioFileCollision.play(true);
         }
 
-        // public playPointSound() {
-        //     this.cmpAudioFilePoint.play(true);
-        // }
+        public playPointSound() {
+            this.cmpAudioFilePoint.play(true);
+        }
 
     }
 }

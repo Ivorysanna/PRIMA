@@ -3,7 +3,8 @@ namespace FloppyBird {
     export class GameStateManager{
         private static instance: GameStateManager;
 
-        private _isGameOver: boolean = false;
+        public isGameOver: boolean = false;
+        public isPlayerControllable: boolean = true;
         private readonly EASY_MODE = true;
 
         private constructor() {
@@ -16,16 +17,13 @@ namespace FloppyBird {
             return GameStateManager.instance;
         }
 
-        public set isGameOver(value: boolean) {
-            this._isGameOver = value;
-        }
-
-        public get isGameOver(): boolean {
-            return this._isGameOver;
-        }
-
         public get isEasyMode(): boolean {
             return this.EASY_MODE;
+        }
+
+        public reinitializeGame(): void {
+            this.isGameOver = false;
+            this.isPlayerControllable = true;
         }
     }
 }
