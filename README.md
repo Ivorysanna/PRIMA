@@ -49,3 +49,5 @@ In der VUI mit der Maus den Regler bewegen.
 |  B | Physics           | Es wurden Collisions und Force verwendet. Collision mit Floppy Bird und den Tubes und Floppy Bird und den Punkte-Collidern (liegen zwischen den Tube-Paaren) Force wurde verwendet um Floppy Bird in die positive y-Richtung zu "schubsen". Zusätzlich wirkt die Gravitation auf Floppy Bird.|
 |  E | Animations        | Für jedes zweite Tube-Paar wurde eine Animation erstellt. Diese bewegen sich leicht in der y-Achse um ein etwas schwereres Hindernis zu bieten. |
 
+### Note
+Zu den Tubes konnte kein Material hinzugefügt werden. (Fehler: Shader and coar don't match)
