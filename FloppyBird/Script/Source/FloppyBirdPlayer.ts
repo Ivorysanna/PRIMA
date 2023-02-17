@@ -8,7 +8,8 @@ namespace FloppyBird {
         private rigidbody: f.ComponentRigidbody;
         private jumpForce: f.Vector3 = new f.Vector3(0, 1, 0);
 
-        private static readonly BOTTOM_KILL_ZONE: number = -1.4;
+        private static readonly BOTTOM_KILL_ZONE_Y: number = -1.4;
+        private static readonly TOP_KILL_ZONE_Y: number = 1.15;
 
         private initialPlayerPosition: f.Vector3;
 
@@ -61,7 +62,8 @@ namespace FloppyBird {
                     break;
                 case Tube.TUBE_NODE_NAME:
                     GameStateManager.getInstance().isPlayerControllable = false;
-                    this.node.getComponent(f.ComponentRigidbody).applyLinearImpulse(new f.Vector3(-0.25, 0.6, 0));
+                    const rigidbody = this.node.getComponent(f.ComponentRigidbody);
+                    rigidbody.applyLinearImpulse(new f.Vector3(-0.25, 0.6, 0));
                     collidedNode.removeComponent(collidedNode.getComponent(f.ComponentRigidbody));
                     break;
                 default:
@@ -74,17 +76,22 @@ namespace FloppyBird {
                 if (GameStateManager.getInstance().isPlayerControllable) {
                     //Controls
                     this.updateControls();
-
-                    console.log("🚀 ~ file: FloppyBirdPlayer.ts:78 ~ FloppyBirdPlayer ~ this.node.mtxLocal.translation.y", this.node.mtxLocal.translation.y);
                 }
 
-                if (this.node.mtxLocal.translation.y < FloppyBirdPlayer.BOTTOM_KILL_ZONE) {
+                if (this.node.mtxLocal.translation.y < FloppyBirdPlayer.BOTTOM_KILL_ZONE_Y) {
                     GameStateManager.getInstance().isGameOver = true;
                     PlaySoundManager.getInstance().playCollisionSound();
 
                     UIManager.getInstance().resetScore();
                     resetTubes();
                     this.node.getComponent(FloppyBirdPlayer).resetPlayerPosition();
+                }
+
+                if (this.node.mtxLocal.translation.y > FloppyBirdPlayer.TOP_KILL_ZONE_Y && GameStateManager.getInstance().isPlayerControllable) {
+                    GameStateManager.getInstance().isPlayerControllable = false;
+                    const rigidbody = this.node.getComponent(f.ComponentRigidbody);
+                    rigidbody.setVelocity(new f.Vector3(0, 0, 0));
+                    rigidbody.applyLinearImpulse(new f.Vector3(-0.2, 0, 0));
                 }
             }
         };

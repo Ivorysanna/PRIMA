@@ -212,24 +212,7 @@
                 }
               ]
             },
-            "children": [
-              {
-                "ƒ.Node": {
-                  "name": "FloppyBirdWingRight",
-                  "active": true,
-                  "components": {},
-                  "children": []
-                }
-              },
-              {
-                "ƒ.Node": {
-                  "name": "FloppyBirdWingLeft",
-                  "active": true,
-                  "components": {},
-                  "children": []
-                }
-              }
-            ]
+            "children": []
           }
         },
         {
@@ -237,27 +220,7 @@
             "name": "CollisionBorder",
             "active": true,
             "components": {},
-            "children": [
-              {
-                "ƒ.Node": {
-                  "name": "BoderLeft",
-                  "active": true,
-                  "components": {},
-                  "children": []
-                }
-              },
-              {
-                "ƒ.Node": {
-                  "name": "BorderBottom",
-                  "active": true,
-                  "components": {
-                    "ComponentTransform": [],
-                    "ComponentRigidbody": []
-                  },
-                  "children": []
-                }
-              }
-            ]
+            "children": []
           }
         },
         {

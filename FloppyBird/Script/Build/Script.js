@@ -45,7 +45,8 @@ var FloppyBird;
         isSpaceKeyAlreadyPressed = false;
         rigidbody;
         jumpForce = new f.Vector3(0, 1, 0);
-        static BOTTOM_KILL_ZONE = -1.4;
+        static BOTTOM_KILL_ZONE_Y = -1.4;
+        static TOP_KILL_ZONE_Y = 1.15;
         initialPlayerPosition;
         constructor() {
             super();
@@ -90,7 +91,8 @@ var FloppyBird;
                     break;
                 case FloppyBird.Tube.TUBE_NODE_NAME:
                     FloppyBird.GameStateManager.getInstance().isPlayerControllable = false;
-                    this.node.getComponent(f.ComponentRigidbody).applyLinearImpulse(new f.Vector3(-0.25, 0.6, 0));
+                    const rigidbody = this.node.getComponent(f.ComponentRigidbody);
+                    rigidbody.applyLinearImpulse(new f.Vector3(-0.25, 0.6, 0));
                     collidedNode.removeComponent(collidedNode.getComponent(f.ComponentRigidbody));
                     break;
                 default:
@@ -102,14 +104,19 @@ var FloppyBird;
                 if (FloppyBird.GameStateManager.getInstance().isPlayerControllable) {
                     //Controls
                     this.updateControls();
-                    console.log("🚀 ~ file: FloppyBirdPlayer.ts:78 ~ FloppyBirdPlayer ~ this.node.mtxLocal.translation.y", this.node.mtxLocal.translation.y);
                 }
-                if (this.node.mtxLocal.translation.y < FloppyBirdPlayer.BOTTOM_KILL_ZONE) {
+                if (this.node.mtxLocal.translation.y < FloppyBirdPlayer.BOTTOM_KILL_ZONE_Y) {
                     FloppyBird.GameStateManager.getInstance().isGameOver = true;
                     FloppyBird.PlaySoundManager.getInstance().playCollisionSound();
                     FloppyBird.UIManager.getInstance().resetScore();
                     FloppyBird.resetTubes();
                     this.node.getComponent(FloppyBirdPlayer).resetPlayerPosition();
+                }
+                if (this.node.mtxLocal.translation.y > FloppyBirdPlayer.TOP_KILL_ZONE_Y && FloppyBird.GameStateManager.getInstance().isPlayerControllable) {
+                    FloppyBird.GameStateManager.getInstance().isPlayerControllable = false;
+                    const rigidbody = this.node.getComponent(f.ComponentRigidbody);
+                    rigidbody.setVelocity(new f.Vector3(0, 0, 0));
+                    rigidbody.applyLinearImpulse(new f.Vector3(-0.2, 0, 0));
                 }
             }
         };
@@ -390,7 +397,7 @@ var FloppyBird;
             const colliderNode = new f.Node("TubeCollider");
             tubeContainerNode.addChild(colliderNode);
             const rigidbodyCollider = new f.ComponentRigidbody(0, f.BODY_TYPE.KINEMATIC, f.COLLIDER_TYPE.CYLINDER, f.COLLISION_GROUP.DEFAULT, new f.Matrix4x4());
-            rigidbodyCollider.mtxPivot.scale(new f.Vector3(0.1, 10, 4));
+            rigidbodyCollider.mtxPivot.scale(new f.Vector3(0.2, 10, 1));
             // Triggers don't influence anything, but they still trigger collision events
             rigidbodyCollider.isTrigger = true;
             colliderNode.addComponent(new f.ComponentTransform());

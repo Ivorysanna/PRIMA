@@ -13,7 +13,8 @@ declare namespace FloppyBird {
         private isSpaceKeyAlreadyPressed;
         private rigidbody;
         private jumpForce;
-        private static readonly BOTTOM_KILL_ZONE;
+        private static readonly BOTTOM_KILL_ZONE_Y;
+        private static readonly TOP_KILL_ZONE_Y;
         private initialPlayerPosition;
         constructor();
         hndEvent: (_event: Event) => void;

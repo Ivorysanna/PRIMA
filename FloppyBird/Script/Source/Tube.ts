@@ -70,7 +70,7 @@ namespace FloppyBird {
             const colliderNode = new f.Node("TubeCollider");
             tubeContainerNode.addChild(colliderNode);
             const rigidbodyCollider: f.ComponentRigidbody = new f.ComponentRigidbody(0, f.BODY_TYPE.KINEMATIC, f.COLLIDER_TYPE.CYLINDER, f.COLLISION_GROUP.DEFAULT, new f.Matrix4x4());
-            rigidbodyCollider.mtxPivot.scale(new f.Vector3(0.1, 10, 4));
+            rigidbodyCollider.mtxPivot.scale(new f.Vector3(0.2, 10, 1));
             // Triggers don't influence anything, but they still trigger collision events
             rigidbodyCollider.isTrigger = true;
             colliderNode.addComponent(new f.ComponentTransform());
