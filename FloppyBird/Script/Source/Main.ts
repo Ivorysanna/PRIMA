@@ -33,8 +33,7 @@ namespace FloppyBird {
 
         // Get viewport and floppybird reference
         viewportRef = _event.detail;
-        //TODO: Remove Debug Collider when done
-        viewportRef.physicsDebugMode = f.PHYSICS_DEBUGMODE.COLLIDERS;
+        // viewportRef.physicsDebugMode = f.PHYSICS_DEBUGMODE.COLLIDERS;
 
         viewportRef.getBranch().appendChild(backgroundNode);
 
@@ -89,8 +88,6 @@ namespace FloppyBird {
     }
 
     function moveBackgrounds() {
-        // TODO das hier als custom component auf die backgrounds selbst
-        // TODO: Move the background images
         const backgrounds: ScrollingBackground[] = <ScrollingBackground[]>backgroundNode.getChildren();
         backgrounds.forEach((eachBackground) => {
             eachBackground.moveBackground(-ScrollingBackground.backgroundVelocity);

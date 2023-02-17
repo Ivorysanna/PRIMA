@@ -194,7 +194,6 @@ var FloppyBird;
         console.debug("Tube config file loaded!");
         // Get viewport and floppybird reference
         viewportRef = _event.detail;
-        //TODO: Remove Debug Collider when done
         // viewportRef.physicsDebugMode = f.PHYSICS_DEBUGMODE.COLLIDERS;
         viewportRef.getBranch().appendChild(backgroundNode);
         backgroundNode.appendChild(new FloppyBird.ScrollingBackground(0));
