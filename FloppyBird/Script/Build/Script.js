@@ -195,7 +195,7 @@ var FloppyBird;
         // Get viewport and floppybird reference
         viewportRef = _event.detail;
         //TODO: Remove Debug Collider when done
-        viewportRef.physicsDebugMode = f.PHYSICS_DEBUGMODE.COLLIDERS;
+        // viewportRef.physicsDebugMode = f.PHYSICS_DEBUGMODE.COLLIDERS;
         viewportRef.getBranch().appendChild(backgroundNode);
         backgroundNode.appendChild(new FloppyBird.ScrollingBackground(0));
         backgroundNode.appendChild(new FloppyBird.ScrollingBackground(8));
