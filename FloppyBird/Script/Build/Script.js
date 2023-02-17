@@ -45,6 +45,8 @@ var FloppyBird;
         isSpaceKeyAlreadyPressed = false;
         rigidbody;
         jumpForce = new f.Vector3(0, 1, 0);
+        static BOTTOM_KILL_ZONE = -1.4;
+        initialPlayerPosition;
         constructor() {
             super();
             // Don't start when running in editor
@@ -70,6 +72,7 @@ var FloppyBird;
         addHnd() {
             this.node.addEventListener("renderPrepare" /* f.EVENT.RENDER_PREPARE */, this.update);
             this.rigidbody = this.node.getComponent(f.ComponentRigidbody);
+            this.initialPlayerPosition = this.node.mtxLocal.translation.clone;
             this.rigidbody.addEventListener("ColliderEnteredCollision" /* f.EVENT_PHYSICS.COLLISION_ENTER */, this.collisionHandler);
         }
         collisionHandler(_event) {
@@ -85,17 +88,6 @@ var FloppyBird;
                     FloppyBird.UIManager.getInstance().incrementScore();
                     collidedNode.removeComponent(collidedNode.getComponent(f.ComponentRigidbody));
                     break;
-                case "BorderBottom":
-                    FloppyBird.GameStateManager.getInstance().isGameOver = true;
-                    FloppyBird.PlaySoundManager.getInstance().playCollisionSound();
-                    const currentScore = FloppyBird.UIManager.getInstance().currentScore;
-                    alert(`GAME OVER - ${currentScore} Tubes passed`);
-                    console.debug(_event);
-                    this.node.getComponent(FloppyBirdPlayer).resetPlayerPosition();
-                    FloppyBird.resetTubes();
-                    FloppyBird.UIManager.getInstance().resetScore();
-                    // TODO: Better Game Over Screen maybe?
-                    break;
                 case FloppyBird.Tube.TUBE_NODE_NAME:
                     FloppyBird.GameStateManager.getInstance().isPlayerControllable = false;
                     this.node.getComponent(f.ComponentRigidbody).applyLinearImpulse(new f.Vector3(-0.25, 0.6, 0));
@@ -106,9 +98,19 @@ var FloppyBird;
             }
         }
         update = (_event) => {
-            if (!FloppyBird.GameStateManager.getInstance().isGameOver && FloppyBird.GameStateManager.getInstance().isPlayerControllable) {
-                //Controls
-                this.updateControls();
+            if (!FloppyBird.GameStateManager.getInstance().isGameOver) {
+                if (FloppyBird.GameStateManager.getInstance().isPlayerControllable) {
+                    //Controls
+                    this.updateControls();
+                    console.log("🚀 ~ file: FloppyBirdPlayer.ts:78 ~ FloppyBirdPlayer ~ this.node.mtxLocal.translation.y", this.node.mtxLocal.translation.y);
+                }
+                if (this.node.mtxLocal.translation.y < FloppyBirdPlayer.BOTTOM_KILL_ZONE) {
+                    FloppyBird.GameStateManager.getInstance().isGameOver = true;
+                    FloppyBird.PlaySoundManager.getInstance().playCollisionSound();
+                    FloppyBird.UIManager.getInstance().resetScore();
+                    FloppyBird.resetTubes();
+                    this.node.getComponent(FloppyBirdPlayer).resetPlayerPosition();
+                }
             }
         };
         // Controls
@@ -125,12 +127,11 @@ var FloppyBird;
             }
         }
         resetPlayerPosition() {
-            console.log("Resetting Player Position");
-            console.log("🚀 ~ file: FloppyBirdPlayer.ts:100 ~ FloppyBirdPlayer ~ resetPlayerPosition ~ this", this);
-            const transformComponent = this.node.getComponent(f.ComponentTransform);
-            transformComponent.mtxLocal.translation = new f.Vector3(2, 2, 0);
-            transformComponent.mtxLocal.rotation = new f.Vector3(0, 0, 0);
-            this.node.getComponent(f.ComponentRigidbody).setVelocity(new f.Vector3(0, 0, 0));
+            const rigidbody = this.node.getComponent(f.ComponentRigidbody);
+            // Reset the player position, rotation and velocity
+            rigidbody.setPosition(this.initialPlayerPosition);
+            rigidbody.setRotation(new f.Vector3(0, 0, 0));
+            rigidbody.setVelocity(new f.Vector3(0, 0, 0));
             FloppyBird.GameStateManager.getInstance().reinitializeGame();
         }
     }
@@ -206,16 +207,16 @@ var FloppyBird;
         f.Loop.start(); // start the game loop to continously draw the viewport, update the audiosystem and drive the physics i/a
     }
     function update(_event) {
-        f.Physics.simulate();
         if (!FloppyBird.GameStateManager.getInstance().isGameOver) {
             // Update tubes
             spawnTubes();
             // Move the backgrounds
             moveBackgrounds();
+            // Draw viewport
+            viewportRef.draw();
+            f.AudioManager.default.update();
+            f.Physics.simulate();
         }
-        // Draw viewport
-        viewportRef.draw();
-        f.AudioManager.default.update();
     }
     // Update the tubes
     function spawnTubes() {
@@ -241,8 +242,9 @@ var FloppyBird;
         });
     }
     function resetTubes() {
-        FloppyBird.tubesCollection.getChildren().forEach((eachTube) => {
-            FloppyBird.tubesCollection.removeChild(eachTube);
+        tubesTimer = 0;
+        FloppyBird.tubesCollection.getChildren().forEach((eachTubeContainer) => {
+            FloppyBird.tubesCollection.removeChild(eachTubeContainer);
         });
     }
     FloppyBird.resetTubes = resetTubes;
@@ -339,7 +341,7 @@ var FloppyBird;
         static TUBE_COLLIDER_NODE_NAME = "TubeCollider";
         static TUBE_NODE_NAME = "Tube";
         static tubesIntervalSeconds = 2;
-        static tubeYDeviation = 0.7;
+        static tubeYDeviation = 0.5;
         static tubeTexture = new f.TextureImage("Assets/brushed-metal_albedo.jpg");
         static specialTubeFrequency = 1;
         static specialTubeCounter = 0;

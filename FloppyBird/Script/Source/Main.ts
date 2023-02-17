@@ -60,19 +60,19 @@ namespace FloppyBird {
     }
 
     function update(_event: Event): void {
-        f.Physics.simulate();
-
         if (!GameStateManager.getInstance().isGameOver) {
             // Update tubes
             spawnTubes();
 
             // Move the backgrounds
             moveBackgrounds();
-        }
 
-        // Draw viewport
-        viewportRef.draw();
-        f.AudioManager.default.update();
+            // Draw viewport
+            viewportRef.draw();
+            f.AudioManager.default.update();
+
+            f.Physics.simulate();
+        }
     }
 
     // Update the tubes
@@ -103,8 +103,9 @@ namespace FloppyBird {
     }
 
     export function resetTubes() {
-        tubesCollection.getChildren().forEach((eachTube) => {
-            tubesCollection.removeChild(eachTube);
+        tubesTimer = 0;
+        tubesCollection.getChildren().forEach((eachTubeContainer) => {
+            tubesCollection.removeChild(eachTubeContainer);
         });
     }
 }

@@ -210,20 +210,14 @@
                     }
                   }
                 }
-              ],
-              "JointWelding": []
+              ]
             },
             "children": [
               {
                 "ƒ.Node": {
                   "name": "FloppyBirdWingRight",
                   "active": true,
-                  "components": {
-                    "ComponentMesh": [],
-                    "ComponentMaterial": [],
-                    "ComponentTransform": [],
-                    "ComponentRigidbody": []
-                  },
+                  "components": {},
                   "children": []
                 }
               },
@@ -257,45 +251,8 @@
                   "name": "BorderBottom",
                   "active": true,
                   "components": {
-                    "ComponentTransform": [
-                      {
-                        "ƒ.ComponentTransform": {
-                          "local": {
-                            "translation": "[0, -1.4000002145767212, 0]",
-                            "rotation": "[0, 0, 0]",
-                            "scaling": "[10, 0.3999996781349182, 0.7999999523162842]"
-                          },
-                          "Component": {
-                            "active": true
-                          }
-                        }
-                      }
-                    ],
-                    "ComponentRigidbody": [
-                      {
-                        "ƒ.ComponentRigidbody": {
-                          "initialization": "TO_PIVOT",
-                          "friction": 0.2,
-                          "restitution": 0.2,
-                          "mass": 1,
-                          "dampTranslation": 0.1,
-                          "dampRotation": 0.1,
-                          "effectGravity": 1,
-                          "typeBody": "KINEMATIC",
-                          "typeCollider": "CUBE",
-                          "isTrigger": false,
-                          "id": 1,
-                          "pivot": {
-                            "translation": "[0, 0, 0]",
-                            "rotation": "[0, 0, 0]",
-                            "scaling": "[1, 1, 1]"
-                          },
-                          "Component": {
-                            "active": true
-                          }
-                        }
-                      }
-                    ]
+                    "ComponentTransform": [],
+                    "ComponentRigidbody": []
                   },
                   "children": []
                 }

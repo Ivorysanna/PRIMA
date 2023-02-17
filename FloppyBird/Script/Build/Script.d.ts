@@ -13,6 +13,8 @@ declare namespace FloppyBird {
         private isSpaceKeyAlreadyPressed;
         private rigidbody;
         private jumpForce;
+        private static readonly BOTTOM_KILL_ZONE;
+        private initialPlayerPosition;
         constructor();
         hndEvent: (_event: Event) => void;
         private addHnd;
@@ -85,7 +87,7 @@ declare namespace FloppyBird {
         static readonly TUBE_COLLIDER_NODE_NAME = "TubeCollider";
         static readonly TUBE_NODE_NAME = "Tube";
         static tubesIntervalSeconds: number;
-        static readonly tubeYDeviation = 0.7;
+        static readonly tubeYDeviation = 0.5;
         static readonly tubeTexture: f.TextureImage;
         static specialTubeFrequency: number;
         static specialTubeCounter: number;
