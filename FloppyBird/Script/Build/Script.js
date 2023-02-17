@@ -236,8 +236,6 @@ var FloppyBird;
         }
     }
     function moveBackgrounds() {
-        // TODO das hier als custom component auf die backgrounds selbst
-        // TODO: Move the background images
         const backgrounds = backgroundNode.getChildren();
         backgrounds.forEach((eachBackground) => {
             eachBackground.moveBackground(-FloppyBird.ScrollingBackground.backgroundVelocity);
@@ -347,7 +345,7 @@ var FloppyBird;
         static TUBE_COLLIDER_NODE_NAME = "TubeCollider";
         static TUBE_NODE_NAME = "Tube";
         static tubesIntervalSeconds = 2;
-        static tubeYDeviation = 0.5;
+        static tubeYDeviation = 0.36;
         static tubeTexture = new f.TextureImage("Assets/brushed-metal_albedo.jpg");
         static specialTubeFrequency = 1;
         static specialTubeCounter = 0;
