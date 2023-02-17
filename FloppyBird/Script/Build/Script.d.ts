@@ -87,6 +87,8 @@ declare namespace FloppyBird {
         static tubesIntervalSeconds: number;
         static readonly tubeYDeviation = 0.7;
         static readonly tubeTexture: f.TextureImage;
+        static specialTubeFrequency: number;
+        static specialTubeCounter: number;
         private readonly tubeMesh;
         private readonly tubeMaterial;
         constructor(isRotatedDownward?: boolean);
@@ -95,6 +97,12 @@ declare namespace FloppyBird {
          * This container node also contains the trigger collider between the tubes to use for score incrementing.
          */
         static createSetOfTubes(): f.Node;
+    }
+}
+declare namespace FloppyBird {
+    import f = FudgeCore;
+    class TubeAnimation {
+        static getAnimatorForOscillatingTubes(oscillationRange?: number): f.ComponentAnimator;
     }
 }
 declare namespace FloppyBird {

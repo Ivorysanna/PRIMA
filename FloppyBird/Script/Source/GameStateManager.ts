@@ -5,7 +5,7 @@ namespace FloppyBird {
 
         public isGameOver: boolean = false;
         public isPlayerControllable: boolean = true;
-        private readonly EASY_MODE = true;
+        private readonly EASY_MODE = false;
 
         private constructor() {
         }

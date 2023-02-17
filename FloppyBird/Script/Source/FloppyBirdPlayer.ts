@@ -66,7 +66,7 @@ namespace FloppyBird {
                     break;
                 case Tube.TUBE_NODE_NAME:
                     GameStateManager.getInstance().isPlayerControllable = false;
-                    this.node.getComponent(f.ComponentRigidbody).applyLinearImpulse(new f.Vector3(-0.4, 0.6, 0));
+                    this.node.getComponent(f.ComponentRigidbody).applyLinearImpulse(new f.Vector3(-0.25, 0.6, 0));
                     collidedNode.removeComponent(collidedNode.getComponent(f.ComponentRigidbody));
                     break;
                 default:
@@ -95,8 +95,13 @@ namespace FloppyBird {
         }
 
         private resetPlayerPosition(): void {
-            this.node.mtxWorld.translation = new f.Vector3(0, 0, 0);
-            this.node.mtxWorld.rotation = new f.Vector3(0, 0, 0);
+            console.log("Resetting Player Position");
+            console.log("🚀 ~ file: FloppyBirdPlayer.ts:100 ~ FloppyBirdPlayer ~ resetPlayerPosition ~ this", this);
+
+            const transformComponent = this.node.getComponent(f.ComponentTransform);
+
+            transformComponent.mtxLocal.translation = new f.Vector3(2, 2, 0);
+            transformComponent.mtxLocal.rotation = new f.Vector3(0, 0, 0);
             this.node.getComponent(f.ComponentRigidbody).setVelocity(new f.Vector3(0, 0, 0));
             GameStateManager.getInstance().reinitializeGame();
         }

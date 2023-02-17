@@ -181,7 +181,7 @@
                     "restitution": 0.2,
                     "mass": 1,
                     "dampTranslation": 0.1,
-                    "dampRotation": 0.1,
+                    "dampRotation": 200,
                     "effectGravity": 1,
                     "typeBody": "DYNAMIC",
                     "typeCollider": "CUBE",
@@ -210,14 +210,20 @@
                     }
                   }
                 }
-              ]
+              ],
+              "JointWelding": []
             },
             "children": [
               {
                 "ƒ.Node": {
                   "name": "FloppyBirdWingRight",
                   "active": true,
-                  "components": {},
+                  "components": {
+                    "ComponentMesh": [],
+                    "ComponentMaterial": [],
+                    "ComponentTransform": [],
+                    "ComponentRigidbody": []
+                  },
                   "children": []
                 }
               },

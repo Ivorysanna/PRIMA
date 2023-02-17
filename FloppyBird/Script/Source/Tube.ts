@@ -10,6 +10,9 @@ namespace FloppyBird {
         public static readonly tubeYDeviation = 0.7;
         public static readonly tubeTexture: f.TextureImage = new f.TextureImage("Assets/brushed-metal_albedo.jpg");
 
+        public static specialTubeFrequency = 1;
+        public static specialTubeCounter = 0;
+
         // Mesh and material
         private readonly tubeMesh = new f.MeshObj("TubeMesh", "Assets/tube.obj");
 
@@ -72,6 +75,15 @@ namespace FloppyBird {
             rigidbodyCollider.isTrigger = true;
             colliderNode.addComponent(new f.ComponentTransform());
             colliderNode.addComponent(rigidbodyCollider);
+
+            // Add Animation script for oscillating tubes
+            if (this.specialTubeCounter >= this.specialTubeFrequency) {
+                tubeContainerNode.addComponent(TubeAnimation.getAnimatorForOscillatingTubes());
+                this.specialTubeCounter = 0;
+            } else {
+                this.specialTubeCounter++;
+            }
+
 
             // Move tubes to their starting position (offscreen)
             tubeContainerNode.mtxLocal.translateX(1.8);

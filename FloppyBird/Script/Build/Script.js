@@ -98,7 +98,7 @@ var FloppyBird;
                     break;
                 case FloppyBird.Tube.TUBE_NODE_NAME:
                     FloppyBird.GameStateManager.getInstance().isPlayerControllable = false;
-                    this.node.getComponent(f.ComponentRigidbody).applyLinearImpulse(new f.Vector3(-0.4, 0.6, 0));
+                    this.node.getComponent(f.ComponentRigidbody).applyLinearImpulse(new f.Vector3(-0.25, 0.6, 0));
                     collidedNode.removeComponent(collidedNode.getComponent(f.ComponentRigidbody));
                     break;
                 default:
@@ -125,8 +125,11 @@ var FloppyBird;
             }
         }
         resetPlayerPosition() {
-            this.node.mtxWorld.translation = new f.Vector3(0, 0, 0);
-            this.node.mtxWorld.rotation = new f.Vector3(0, 0, 0);
+            console.log("Resetting Player Position");
+            console.log("🚀 ~ file: FloppyBirdPlayer.ts:100 ~ FloppyBirdPlayer ~ resetPlayerPosition ~ this", this);
+            const transformComponent = this.node.getComponent(f.ComponentTransform);
+            transformComponent.mtxLocal.translation = new f.Vector3(2, 2, 0);
+            transformComponent.mtxLocal.rotation = new f.Vector3(0, 0, 0);
             this.node.getComponent(f.ComponentRigidbody).setVelocity(new f.Vector3(0, 0, 0));
             FloppyBird.GameStateManager.getInstance().reinitializeGame();
         }
@@ -140,7 +143,7 @@ var FloppyBird;
         static instance;
         isGameOver = false;
         isPlayerControllable = true;
-        EASY_MODE = true;
+        EASY_MODE = false;
         constructor() {
         }
         static getInstance() {
@@ -338,6 +341,8 @@ var FloppyBird;
         static tubesIntervalSeconds = 2;
         static tubeYDeviation = 0.7;
         static tubeTexture = new f.TextureImage("Assets/brushed-metal_albedo.jpg");
+        static specialTubeFrequency = 1;
+        static specialTubeCounter = 0;
         // Mesh and material
         tubeMesh = new f.MeshObj("TubeMesh", "Assets/tube.obj");
         // Settings colors for the tubes with flat shading and textures didn't work
@@ -388,12 +393,61 @@ var FloppyBird;
             rigidbodyCollider.isTrigger = true;
             colliderNode.addComponent(new f.ComponentTransform());
             colliderNode.addComponent(rigidbodyCollider);
+            // Add Animation script for oscillating tubes
+            if (this.specialTubeCounter >= this.specialTubeFrequency) {
+                tubeContainerNode.addComponent(FloppyBird.TubeAnimation.getAnimatorForOscillatingTubes());
+                this.specialTubeCounter = 0;
+            }
+            else {
+                this.specialTubeCounter++;
+            }
             // Move tubes to their starting position (offscreen)
             tubeContainerNode.mtxLocal.translateX(1.8);
             return tubeContainerNode;
         }
     }
     FloppyBird.Tube = Tube;
+})(FloppyBird || (FloppyBird = {}));
+var FloppyBird;
+(function (FloppyBird) {
+    var f = FudgeCore;
+    class TubeAnimation {
+        static getAnimatorForOscillatingTubes(oscillationRange = 0.1) {
+            const time0 = 0;
+            const time1 = 2000;
+            const time2 = 4000;
+            const time3 = 6000;
+            const value0 = 0;
+            const value1 = oscillationRange;
+            const value2 = -oscillationRange;
+            const value3 = 0;
+            const animationSequenceOscillating = new f.AnimationSequence();
+            animationSequenceOscillating.addKey(new f.AnimationKey(time0, value0));
+            animationSequenceOscillating.addKey(new f.AnimationKey(time1, value1));
+            animationSequenceOscillating.addKey(new f.AnimationKey(time2, value2));
+            animationSequenceOscillating.addKey(new f.AnimationKey(time3, value3));
+            const animStructure = {
+                components: {
+                    ComponentTransform: [
+                        {
+                            "f.ComponentTransform": {
+                                mtxLocal: {
+                                    translation: {
+                                        y: animationSequenceOscillating,
+                                    },
+                                },
+                            },
+                        },
+                    ],
+                },
+            };
+            const animation = new f.Animation("tubeAnimation", animStructure, 60);
+            const cmpAnimator = new f.ComponentAnimator(animation, f.ANIMATION_PLAYMODE["LOOP"], f.ANIMATION_PLAYBACK["TIMEBASED_CONTINOUS"]);
+            cmpAnimator.scale = 1;
+            return cmpAnimator;
+        }
+    }
+    FloppyBird.TubeAnimation = TubeAnimation;
 })(FloppyBird || (FloppyBird = {}));
 var FloppyBird;
 (function (FloppyBird) {
